@@ -873,50 +873,7 @@
                 </div> 
             @endif
             <!-- top sellers -->
-        
-        @if ($business_mode == 'multi')
-            @if(count($top_sellers) > 0)
-                <div class="col-md-6 mt-2 mt-md-0 seller-card" >
-                    <div class="card" style="min-height: 383px;">
-                        <div class="card-body">
-                            <div class="row d-flex justify-content-between">
-                                <div class="seller-list-title">
-                                    <span style="font-weight: 600;font-size: 18px;">{{ \App\CPU\translate('sellers')}}</span>
-                                </div>
-                                <div class="seller-list-view-all">
-                                    <a class="text-capitalize view-all-text"
-                                    href="{{route('sellers')}}">{{ \App\CPU\translate('view_all')}}
-                                    <i class="czi-arrow-{{Session::get('direction') === "rtl" ? 'left-circle mr-1 ml-n1 mt-1 float-left' : 'right-circle ml-1 mr-n1'}}"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="row d-flex justify-content-between mt-3">
-                                @foreach($top_sellers as $key=>$seller)
-                                    @if ($key<10)
-                                    
-                                        @if($seller->shop)
-                                            <div style="margin: 5px;">
-                                                <center>
-                                                    <a href="{{route('shopView',['id'=>$seller['id']])}}">
-                                                        <img
-                                                            style="vertical-align: middle; padding: 2%;width:100px;height: 100px;border-radius: 50%"
-                                                            onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'"
-                                                            src="{{asset("storage/app/public/shop")}}/{{$seller->shop->image}}">
-                                                        <p class="text-center small ">{{Str::limit($seller->shop->name, 14)}}</p>
-                                                    </a>
-                                                </center>
-                                            </div>
-                                        @endif
-                                    @endif
-                                @endforeach    
-                            </div>
-                        </div>    
-                    </div>    
-                </div> 
-            @endif  
-        @endif   
-        </div>
-    </div>
+
     
     
     <div class="container rtl mt-3">
