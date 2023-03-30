@@ -5,197 +5,60 @@
 @push('css_or_js')
     <link rel="stylesheet" media="screen"
           href="{{asset('public/assets/front-end')}}/vendor/nouislider/distribute/nouislider.min.css"/>
+    <link rel="stylesheet" href="{{ asset('public/assets/front-end/css/bootstrap-select.min.css') }}">
 
     <style>
-        .headerTitle {
-            font-size: 24px;
-            font-weight: 600;
-            margin-top: 1rem;
-        }
-
-        body {
-            font-family: 'Titillium Web', sans-serif
-        }
-
-        .product-qty span {
-            font-size: 14px;
-            color: #6A6A6A;
-        }
-
-        .font-nameA {
-
-            display: inline-block;
-            margin-top: 5px !important;
-            font-size: 13px !important;
-            color: #030303;
-        }
-
-        .font-name {
-            font-weight: 600;
-            font-size: 15px;
-            padding-bottom: 6px;
-            color: #030303;
-        }
-
-        .modal-footer {
-            border-top: none;
-        }
-
         .cz-sidebar-body h3:hover + .divider-role {
             border-bottom: 3px solid {{$web_config['primary_color']}} !important;
-            transition: .2s ease-in-out;
         }
-
-        label {
-            font-size: 15px;
-            margin-bottom: 8px;
-            color: #030303;
-
-        }
-
-        .nav-pills .nav-link.active {
-            box-shadow: none;
-            color: #ffffff !important;
-        }
-
-        .modal-header {
-            border-bottom: none;
-        }
-
-        .nav-pills .nav-link {
-            padding-top: .575rem;
-            padding-bottom: .575rem;
-            background-color: #ffffff;
-            color: #050b16 !important;
-            font-size: .9375rem;
-            border: 1px solid #e4dfdf;
-        }
-
-        .nav-pills .nav-link :hover {
-            padding-top: .575rem;
-            padding-bottom: .575rem;
-            background-color: #ffffff;
-            color: #050b16 !important;
-            font-size: .9375rem;
-            border: 1px solid #e4dfdf;
-        }
-
         .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-            color: #fff;
             background-color: {{$web_config['primary_color']}};
         }
 
         .iconHad {
             color: {{$web_config['primary_color']}};
-            padding: 4px;
         }
-
-        .iconSp {
-            margin-top: 0.70rem;
-        }
-
-        .fa-lg {
-            padding: 4px;
-        }
-
-        .fa-trash {
-            color: #FF4D4D;
-        }
-
         .namHad {
-            color: #030303;
-            position: absolute;
             padding-{{Session::get('direction') === "rtl" ? 'right' : 'left'}}: 13px;
-            padding-top: 8px;
         }
-
-        .donate-now {
-            list-style-type: none;
-            margin: 25px 0 0 0;
-            padding: 0;
-        }
-
         .donate-now li {
-            float: left;
             margin: {{Session::get('direction') === "rtl" ? '0 0 0 5px' : '0 5px 0 0'}};
-            width: 100px;
-            height: 40px;
-            position: relative;
-            padding: 22px;
-            text-align: center;
         }
-
-        .donate-now label,
-        .donate-now input {
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-        }
-
-        .donate-now input[type="radio"] {
-            opacity: 0.01;
-            z-index: 100;
-        }
-
         .donate-now input[type="radio"]:checked + label,
         .Checked + label {
             background: {{$web_config['primary_color']}};
-            color: white !important;
-            border-radius: 7px;
+        }
+        .filter-option{
+            display: block;
+            width: 100%;
+            height: calc(1.5em + 1.25rem + 2px);
+            padding: 0.625rem 1rem;
+            font-size: .9375rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #4b566b;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #dae1e7;
+            border-radius: 0.3125rem;
+            box-shadow: 0 0 0 0 transparent;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
 
-        .donate-now label {
-            padding: 5px;
-            border: 1px solid #CCC;
-            cursor: pointer;
-            z-index: 90;
-        }
-
-        .donate-now label:hover {
-            background: #DDD;
-        }
-
-        #edit{
-            cursor: pointer;
-        }
-        .pac-container { z-index: 100000 !important; }
-
-        @media (max-width: 600px) {
-            .sidebar_heading h1 {
-                text-align: center;
-                color: aliceblue;
-                padding-bottom: 17px;
-                font-size: 19px;
-            }
-        }
-        #location_map_canvas{
-            height: 100%;
-        }
-        @media only screen and (max-width: 768px) {
-            /* For mobile phones: */
-            #location_map_canvas{
-                height: 200px;
-            }
+        .btn-light + .dropdown-menu{
+            transform: none !important;
+            top: 41px !important;
         }
     </style>
 @endpush
 
 @section('content')
-<div class="container pb-5 mb-2 mb-md-4 mt-3 rtl" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
+<div class="container pb-5 mb-2 mb-md-4 rtl __account-address" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
+    <h2 class="text-center py-3 m-0 headerTitle">{{\App\CPU\translate('UPDATE_ADDRESSES')}}</h2>
     <div class="row">
         <!-- Sidebar-->
     @include('web-views.partials._profile-aside')
-    <section class="col-lg-9 mt-3 col-md-9">
-        <div class="row">
-            <div class="col-lg-12 col-md-12  d-flex justify-content-between overflow-hidden">
-                <div class="col-md-4">
-                    <h1 class="h3  mb-0 folot-left headerTitle">{{\App\CPU\translate('UPDATE_ADDRESSES')}}</h1>
-                </div>
-            </div>
-        </div>
+    <section class="col-lg-9 col-md-9">
 
             <div class="card">
                 <div class="card-body">
@@ -203,7 +66,7 @@
                         <form action="{{route('address-update')}}" method="post">
                             @csrf
                             <div class="row pb-1">
-                                <div class="col-md-6" style="display: flex">
+                                <div class="col-md-6">
                                     <!-- Nav pills -->
                                     <input type="hidden" name="id" value="{{$shippingAddress->id}}">
                                     <ul class="donate-now">
@@ -221,7 +84,7 @@
                                         </li>
                                     </ul>
                                 </div>
-                                <div class="col-md-6" style="display: flex">
+                                <div class="col-md-6">
                                     <!-- Nav pills -->
                                     <input type="hidden" id="is_billing" value="{{$shippingAddress->is_billing}}">
                                     <ul class="donate-now">
@@ -259,10 +122,34 @@
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label for="zip_code">{{\App\CPU\translate('zip_code')}}</label>
-                                    <input class="form-control" type="number" id="zip_code" name="zip" value="{{$shippingAddress->zip}}" required>
+                                    @if($zip_restrict_status)
+                                        <select name="zip" class="form-control selectpicker" data-live-search="true" id="" required>
+                                            @foreach($delivery_zipcodes as $zip)
+                                                <option value="{{ $zip->zipcode }}" {{ $zip->zipcode == $shippingAddress->zip? 'selected' : ''}}>{{ $zip->zipcode }}</option>
+                                            @endforeach
+                                        </select>
+                                    @else
+                                        <input class="form-control" type="text" id="zip_code" name="zip" value="{{$shippingAddress->zip}}" required>
+                                    @endif
                                 </div>
                             </div>
-                            
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label for="city">{{\App\CPU\translate('Country')}}</label>
+                                    <select name="country" class="form-control selectpicker" data-live-search="true" id="" required>
+                                        @if($country_restrict_status)
+                                            @foreach($delivery_countries as $country)
+                                                <option value="{{$country['name']}}" {{ $country['name'] == $shippingAddress->country? 'selected' : ''}}>{{$country['name']}}</option>
+                                            @endforeach
+                                        @else
+                                            @foreach(COUNTRIES as $country)
+                                                <option value="{{ $country['name'] }}" {{ $shippingAddress->country == $country['name']? 'selected' : '' }}>{{ $country['name'] }}</option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                            </div>
+
                             <div class="form-row">
                                 <div class="form-group col-md-12">
                                     <label for="own_address">{{\App\CPU\translate('address')}}</label>
@@ -270,8 +157,8 @@
                                         type="text"  name="address" required>{{$shippingAddress->address}}</textarea>
                                 </div>
                                 <div class="form-group col-md-12">
-                                    <input id="pac-input" class="controls rounded" style="height: 3em;width:fit-content;" title="{{\App\CPU\translate('search_your_location_here')}}" type="text" placeholder="{{\App\CPU\translate('search_here')}}"/>
-                                    <div style="height: 200px;" id="location_map_canvas"></div>
+                                    <input id="pac-input" class="controls rounded __inline-46" title="{{\App\CPU\translate('search_your_location_here')}}" type="text" placeholder="{{\App\CPU\translate('search_here')}}"/>
+                                    <div class="__h-200px" id="location_map_canvas"></div>
                                 </div>
                             </div>
                             @php($shipping_latitude=$shippingAddress->latitude)
@@ -283,8 +170,8 @@
                                 name="longitude" class="form-control"
                                 placeholder="Ex : 103.344322" id="longitude" value="{{$shipping_longitude??0}}" required readonly>
                             <div class="modal-footer">
-                                <button type="button" class="closeB btn btn-secondary" data-dismiss="modal">{{\App\CPU\translate('close')}}</button>
-                                <button type="submit" class="btn btn-primary">{{\App\CPU\translate('update')}}  </button>
+                                <a href="{{ route('account-address') }}" class="closeB btn btn-secondary">{{\App\CPU\translate('close')}}</a>
+                                <button type="submit" class="btn btn--primary">{{\App\CPU\translate('update')}}  </button>
                             </div>
                         </form>
                     </div>
@@ -297,6 +184,7 @@
 
 @push('script')
 <script src="https://maps.googleapis.com/maps/api/js?key={{\App\CPU\Helpers::get_business_settings('map_api_key')}}&libraries=places&v=3.49"></script>
+<script src="{{ asset('public/assets/front-end/js/bootstrap-select.min.js') }}"></script>
 <script>
 
     function initAutocomplete() {

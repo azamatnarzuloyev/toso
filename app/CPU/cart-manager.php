@@ -73,6 +73,17 @@ class CartManager
         return $cart;
     }
 
+    public static function get_cart_for_api($request, $group_id=null)
+    {
+        if ($group_id == null) {
+            $cart = Cart::whereIn('cart_group_id', CartManager::get_cart_group_ids($request))->get();
+        } else {
+            $cart = Cart::where('cart_group_id', $group_id)->get();
+        }
+
+        return $cart;
+    }
+
     public static function get_cart_group_ids($request = null)
     {
         $user = Helpers::get_customer($request);
@@ -92,16 +103,57 @@ class CartManager
     {
         $cost = 0;
         if ($group_id == null) {
-            $order_wise_shipping_cost = CartShipping::whereIn('cart_group_id', CartManager::get_cart_group_ids())->sum('shipping_cost');
-            $cart_shipping_cost = Cart::whereIn('cart_group_id', CartManager::get_cart_group_ids())->sum('shipping_cost');
+            $cart_shipping_cost = Cart::where(['product_type'=>'physical'])->whereIn('cart_group_id', CartManager::get_cart_group_ids())->sum('shipping_cost');
+            $order_wise_shipping_cost = CartShipping::whereHas('cart', function ($query){
+                    $query->where(['product_type'=>'physical']);
+                })
+                ->whereIn('cart_group_id', CartManager::get_cart_group_ids())->sum('shipping_cost');
             $cost = $order_wise_shipping_cost + $cart_shipping_cost;
         } else {
-            $data = CartShipping::where('cart_group_id', $group_id)->first();
+            $data = CartShipping::whereHas('cart', function ($query){
+                $query->where(['product_type'=>'physical']);
+            })->where('cart_group_id', $group_id)->first();
+
             $order_wise_shipping_cost = isset($data) ? $data->shipping_cost : 0;
-            $cart_shipping_cost = Cart::where('cart_group_id', $group_id)->sum('shipping_cost');
+            $cart_shipping_cost = Cart::where(['cart_group_id'=> $group_id,'product_type'=>'physical'])->sum('shipping_cost');
             $cost = $order_wise_shipping_cost + $cart_shipping_cost;
         }
         return $cost;
+    }
+
+    public static function order_wise_shipping_discount()
+    {
+        if (auth('customer')->check()) {
+            $shippingMethod=\App\CPU\Helpers::get_business_settings('shipping_method');
+            $cart_group_ids = CartManager::get_cart_group_ids();
+
+            $amount = 0;
+            if(count($cart_group_ids) > 0){
+
+                foreach($cart_group_ids as $cart){
+                    $cart_data = Cart::where('cart_group_id', $cart)->first();
+                    if( $shippingMethod == 'inhouse_shipping') {
+                        $admin_shipping = \App\Model\ShippingType::where('seller_id', 0)->first();
+                        $shipping_type = isset($admin_shipping) == true ? $admin_shipping->shipping_type : 'order_wise';
+                    }else{
+                        if ($cart_data->seller_is == 'admin') {
+                            $admin_shipping = \App\Model\ShippingType::where('seller_id', 0)->first();
+                            $shipping_type = isset($admin_shipping) == true ? $admin_shipping->shipping_type : 'order_wise';
+                        } else {
+                            $seller_shipping = \App\Model\ShippingType::where('seller_id', $cart_data->seller_id)->first();
+                            $shipping_type = isset($seller_shipping) == true ? $seller_shipping->shipping_type : 'order_wise';
+                        }
+                    }
+
+                    if($shipping_type == 'order_wise' && session('coupon_type') == 'free_delivery' && (session('coupon_seller_id')=='0' || (is_null(session('coupon_seller_id')) && $cart_data->seller_is=='admin') || (session('coupon_seller_id') == $cart_data->seller_id && $cart_data->seller_is=='seller'))){
+                        $amount += CartManager::get_shipping_cost($cart);
+                    }
+                }
+            }
+
+            return $amount;
+
+        }
     }
 
     public static function cart_total($cart)
@@ -147,8 +199,9 @@ class CartManager
         $total = 0;
         if (!empty($cart)) {
             foreach ($cart as $item) {
+                $tax = $item['tax_model']=='include'? 0 : $item['tax'];
                 $product_subtotal = ($item['price'] * $item['quantity'])
-                    + ($item['tax'] * $item['quantity'])
+                    + ($tax * $item['quantity'])
                     - $item['discount'] * $item['quantity'];
                 $total += $product_subtotal;
             }
@@ -164,6 +217,8 @@ class CartManager
         Cart::whereIn('cart_group_id', $cart_ids)->delete();
 
         session()->forget('coupon_code');
+        session()->forget('coupon_type');
+        session()->forget('coupon_bearer');
         session()->forget('coupon_discount');
         session()->forget('payment_method');
         session()->forget('shipping_method_id');
@@ -181,7 +236,7 @@ class CartManager
 
         $user = Helpers::get_customer($request);
         $product = Product::find($request->id);
-        
+
         //check the color enabled or disabled for the product
         if ($request->has('color')) {
             $str = Color::where('code', $request['color'])->first()->name;
@@ -229,12 +284,13 @@ class CartManager
             }
         }
 
-        $cart['color'] = $request->has('color') ? $request['color'] : null;
-        $cart['product_id'] = $product->id;
-        $cart['choices'] = json_encode($choices);
+        $cart['color']          = $request->has('color') ? $request['color'] : null;
+        $cart['product_id']     = $product->id;
+        $cart['product_type']   = $product->product_type;
+        $cart['choices']        = json_encode($choices);
 
         //chek if out of stock
-        if ($product['current_stock'] < $request['quantity']) {
+        if (($product['product_type'] == 'physical') && ($product['current_stock'] < $request['quantity'])) {
             return [
                 'status' => 0,
                 'message' => translate('out_of_stock!')
@@ -288,6 +344,7 @@ class CartManager
         /*$data['shipping_method_id'] = $shipping_id;*/
         $cart['price'] = $price;
         $cart['tax'] = $tax;
+        $cart['tax_model'] = $product->tax_model;
         $cart['slug'] = $product->slug;
         $cart['name'] = $product->name;
         $cart['discount'] = Helpers::get_product_discount($product, $price);
@@ -295,7 +352,7 @@ class CartManager
         $cart['thumbnail'] = $product->thumbnail;
         $cart['seller_id'] = ($product->added_by == 'admin') ? 1 : $product->user_id;
         $cart['seller_is'] = $product->added_by;
-        $cart['shipping_cost'] = CartManager::get_shipping_cost_for_product_category_wise($product,$request['quantity']);
+        $cart['shipping_cost'] = $product->product_type == 'physical' ? CartManager::get_shipping_cost_for_product_category_wise($product,$request['quantity']):0;
         if ($product->added_by == 'seller') {
             $cart['shop_info'] = Shop::where(['seller_id' => $product->user_id])->first()->name;
         } else {
@@ -308,7 +365,7 @@ class CartManager
         {
             $admin_shipping = ShippingType::where('seller_id',0)->first();
             $shipping_type = isset($admin_shipping)==true?$admin_shipping->shipping_type:'order_wise';
-            
+
         }else{
             if($product->added_by == 'admin'){
                 $admin_shipping = ShippingType::where('seller_id',0)->first();
@@ -352,7 +409,7 @@ class CartManager
                     }
                 }
             }
-        } else if ($product['current_stock'] < $request->quantity) {
+        } else if (($product['product_type'] == 'physical') && $product['current_stock'] < $request->quantity) {
             $status = 0;
             $qty = $cart['quantity'];
         }
@@ -362,7 +419,7 @@ class CartManager
             $cart['quantity'] = $request->quantity;
             $cart['shipping_cost'] =  CartManager::get_shipping_cost_for_product_category_wise($product,$request->quantity);
         }
-        
+
         $cart->save();
 
         return [
@@ -381,7 +438,7 @@ class CartManager
         {
             $admin_shipping = ShippingType::where('seller_id',0)->first();
             $shipping_type = isset($admin_shipping)==true?$admin_shipping->shipping_type:'order_wise';
-            
+
         }else{
             if($product->added_by == 'admin'){
                 $admin_shipping = ShippingType::where('seller_id',0)->first();
@@ -412,8 +469,8 @@ class CartManager
                     $category_shipping_cost = CategoryShippingCost::where('seller_id',$product->user_id)->where('category_id',$categoryID)->first();
                 }
             }
-            
-            
+
+
 
             if($category_shipping_cost->multiply_qty == 1)
             {
@@ -422,15 +479,15 @@ class CartManager
                 $cost = $category_shipping_cost->cost;
             }
 
-            
+
         }else if($shipping_type == 'product_wise'){
-            
+
             if($product->multiply_qty == 1)
             {
                 $cost = $qty * $product->shipping_cost;
             }else{
                 $cost = $product->shipping_cost;
-            } 
+            }
         }else{
             $cost = 0;
         }

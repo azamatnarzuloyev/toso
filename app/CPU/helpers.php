@@ -137,7 +137,7 @@ class Helpers
 
     public static function rating_count($product_id, $rating)
     {
-        return Review::where(['product_id' => $product_id, 'rating' => $rating])->count();
+        return Review::where(['product_id' => $product_id, 'rating' => $rating])->whereNull('delivery_man_id')->count();
     }
 
     public static function get_business_settings($name)
@@ -192,48 +192,61 @@ class Helpers
 
     public static function set_data_format($data)
     {
-        try {
-            $variation = [];
-            $data['category_ids'] = json_decode($data['category_ids']);
-            $data['images'] = json_decode($data['images']);
-            $data['colors'] = Color::whereIn('code', json_decode($data['colors']))->get(['name', 'code']);
-            $attributes = [];
-            if (json_decode($data['attributes']) != null) {
-                foreach (json_decode($data['attributes']) as $attribute) {
-                    $attributes[] = (integer)$attribute;
-                }
-            }
-            $data['attributes'] = $attributes;
-            $data['choice_options'] = json_decode($data['choice_options']);
-            foreach (json_decode($data['variation'], true) as $var) {
-                $variation[] = [
-                    'type' => $var['type'],
-                    'price' => (double)$var['price'],
-                    'sku' => $var['sku'],
-                    'qty' => (integer)$var['qty'],
-                ];
-            }
-            $data['variation'] = $variation;
-        } catch (\Exception $exception) {
-            info($exception);
+        $colors = is_array($data['colors']) ? $data['colors'] : json_decode($data['colors']);
+        $query_data = Color::whereIn('code', $colors)->pluck('name', 'code')->toArray();
+        $color_final = [];
+        foreach ($query_data as $key => $color) {
+            $color_final[] = array(
+                'name' => $color,
+                'code' => $key,
+            );
         }
+
+        $variation = [];
+        $data['category_ids'] = is_array($data['category_ids']) ? $data['category_ids'] : json_decode($data['category_ids']);
+        $data['images'] = is_array($data['images']) ? $data['images'] : json_decode($data['images']);
+        $data['color_image'] = isset($data['color_image']) ? (is_array($data['color_image']) ? $data['color_image'] : json_decode($data['color_image'])) : null;
+        $data['colors_formatted'] = $color_final;
+        $attributes = [];
+        if ((is_array($data['attributes']) ? $data['attributes'] : json_decode($data['attributes'])) != null) {
+            $attributes_arr = is_array($data['attributes']) ? $data['attributes'] : json_decode($data['attributes']);
+            foreach ($attributes_arr as $attribute) {
+                $attributes[] = (integer)$attribute;
+            }
+        }
+        $data['attributes'] = $attributes;
+        $data['choice_options'] = is_array($data['choice_options']) ? $data['choice_options'] : json_decode($data['choice_options']);
+        $variation_arr = is_array($data['variation']) ? $data['variation'] : json_decode($data['variation'], true);
+        foreach ($variation_arr as $var) {
+            $variation[] = [
+                'type' => $var['type'],
+                'price' => (double)$var['price'],
+                'sku' => $var['sku'],
+                'qty' => (integer)$var['qty'],
+            ];
+        }
+        $data['variation'] = $variation;
 
         return $data;
     }
 
+
     public static function product_data_formatting($data, $multi_data = false)
     {
-        $storage = [];
-        if ($multi_data == true) {
-            foreach ($data as $item) {
-                $storage[] = Helpers::set_data_format($item);
+        if($data) {
+            $storage = [];
+            if ($multi_data == true) {
+                foreach ($data as $item) {
+                    $storage[] = Helpers::set_data_format($item);
+                }
+                $data = $storage;
+            } else {
+                $data = Helpers::set_data_format($data);;
             }
-            $data = $storage;
-        } else {
-            $data = Helpers::set_data_format($data);;
-        }
 
-        return $data;
+            return $data;
+        }
+        return null;
     }
 
     public static function units()
@@ -244,7 +257,7 @@ class Helpers
 
     public static function remove_invalid_charcaters($str)
     {
-        return str_ireplace(['\'', '"', ',', ';', '<', '>', '?'], ' ', $str);
+        return str_ireplace(['\'', '"', ',', ';', '<', '>', '?'], ' ', preg_replace('/\s\s+/', ' ', $str));
     }
 
     public static function saveJSONFile($code, $data)
@@ -367,7 +380,7 @@ class Helpers
     {
         $user_role = auth('admin')->user()->role;
         $permission = $user_role->module_access;
-        if (isset($permission) && $user_role->status == 1  && in_array($mod_name, (array)json_decode($permission)) == true) {
+        if (isset($permission) && $user_role->status == 1 && in_array($mod_name, (array)json_decode($permission)) == true) {
             return true;
         }
 
@@ -383,8 +396,14 @@ class Helpers
         if ($currency_model == 'multi_currency') {
             Helpers::currency_load();
             $code = session('currency_code') == null ? 'USD' : session('currency_code');
+            if($code == 'USD'){
+                return $price;
+            }
             $currency = Currency::where('code', $code)->first();
             $price = floatval($price) / floatval($currency->exchange_rate);
+
+            $usd_currency = Currency::where('code', 'USD')->first();
+            $price = $usd_currency->exchange_rate < 1 ? (floatval($price) * floatval($usd_currency->exchange_rate)) : (floatval($price) / floatval($usd_currency->exchange_rate));
         } else {
             $price = floatval($price);
         }
@@ -414,6 +433,10 @@ class Helpers
             $data = BusinessSetting::where('type', 'delivery_boy_assign_message')->first()->value;
         } elseif ($status == 'ord_start') {
             $data = BusinessSetting::where('type', 'delivery_boy_start_message')->first()->value;
+        } elseif ($status == 'expected_delivery_date') {
+            $data = BusinessSetting::where('type', 'delivery_boy_expected_delivery_date_message')->first()->value;
+        } elseif ($status == 'canceled') {
+            $data = BusinessSetting::where('type', 'order_canceled')->first()->value;
         } else {
             $data = '{"status":"0","message":""}';
         }
@@ -426,6 +449,9 @@ class Helpers
         return $res['message'];
     }
 
+    /**
+     * Device wise notification send
+     */
     public static function send_push_notif_to_device($fcm_token, $data)
     {
         $key = BusinessSetting::where(['type' => 'push_notification_key'])->first()->value;
@@ -498,7 +524,7 @@ class Helpers
                 "title":"' . $data->title . '",
                 "body" : "' . $data->description . '",
                 "image" : "' . $image . '",
-                "title_loc_key":"' . $data['order_id'] . '",
+                "title_loc_key":null,
                 "is_read": 0,
                 "icon" : "new",
                 "sound" : "default"
@@ -590,13 +616,9 @@ class Helpers
         } else {
             $oldValue = env($envKey);
         }
-//        $oldValue = var_export(env($envKey), true);
 
         if (strpos($str, $envKey) !== false) {
             $str = str_replace("{$envKey}={$oldValue}", "{$envKey}={$envValue}", $str);
-
-//            dd("{$envKey}={$envValue}");
-//            dd($str);
         } else {
             $str .= "{$envKey}={$envValue}\n";
         }
@@ -627,18 +649,40 @@ class Helpers
 
     public static function sales_commission($order)
     {
+        $discount_amount = 0;
+        if ($order->coupon_code) {
+            $coupon = Coupon::where(['code' => $order->coupon_code])->first();
+            if ($coupon) {
+                $discount_amount = $coupon->coupon_type == 'free_delivery' ? 0 : $order['discount_amount'];
+            }
+        }
         $order_summery = OrderManager::order_summary($order);
-        $order_total = $order_summery['subtotal'] - $order_summery['total_discount_on_product'] - $order['discount_amount'];
-        $commission_amount = 0;
+        $order_total = $order_summery['subtotal'] - $order_summery['total_discount_on_product'] - $discount_amount;
+        $commission_amount = self::seller_sales_commission($order['seller_is'], $order['seller_id'], $order_total);
 
-        if ($order['seller_is'] == 'seller') {
-            $seller = Seller::find($order['seller_id']);
+        return $commission_amount;
+    }
+
+    public static function sales_commission_before_order($cart_group_id, $coupon_discount)
+    {
+        $carts = CartManager::get_cart($cart_group_id);
+        $cart_summery = OrderManager::order_summary_before_place_order($carts, $coupon_discount);
+        $commission_amount = self::seller_sales_commission($carts[0]['seller_is'], $carts[0]['seller_id'], $cart_summery['order_total']);
+
+        return $commission_amount;
+    }
+
+    public static function seller_sales_commission($seller_is, $seller_id, $order_total)
+    {
+        $commission_amount = 0;
+        if ($seller_is == 'seller') {
+            $seller = Seller::find($seller_id);
             if (isset($seller) && $seller['sales_commission_percentage'] !== null) {
                 $commission = $seller['sales_commission_percentage'];
             } else {
                 $commission = Helpers::get_business_settings('sales_commission');
             }
-            $commission_amount = (($order_total / 100) * $commission);
+            $commission_amount = number_format(($order_total / 100) * $commission, 2);
         }
         return $commission_amount;
     }
@@ -653,9 +697,9 @@ class Helpers
         $decimal_point_settings = Helpers::get_business_settings('decimal_point_settings');
         $position = Helpers::get_business_settings('currency_symbol_position');
         if (!is_null($position) && $position == 'left') {
-            $string = currency_symbol() . '' . number_format($amount, $decimal_point_settings);
+            $string = currency_symbol() . '' . number_format($amount, (!empty($decimal_point_settings) ? $decimal_point_settings : 0));
         } else {
-            $string = number_format($amount, $decimal_point_settings) . '' . currency_symbol();
+            $string = number_format($amount, !empty($decimal_point_settings) ? $decimal_point_settings : 0) . '' . currency_symbol();
         }
         return $string;
     }
@@ -668,7 +712,6 @@ class Helpers
         } else {
             return 25;
         }
-
     }
 
     public static function gen_mpdf($view, $file_prefix, $file_postfix)
@@ -715,7 +758,7 @@ function translate($key)
     try {
         $lang_array = include(base_path('resources/lang/' . $local . '/messages.php'));
         $processed_key = ucfirst(str_replace('_', ' ', Helpers::remove_invalid_charcaters($key)));
-
+        $key = Helpers::remove_invalid_charcaters($key);
         if (!array_key_exists($key, $lang_array)) {
             $lang_array[$key] = $processed_key;
             $str = "<?php return " . var_export($lang_array, true) . ";";
@@ -729,4 +772,172 @@ function translate($key)
     }
 
     return $result;
+}
+
+function auto_translator($q, $sl, $tl)
+{
+    $res = file_get_contents("https://translate.googleapis.com/translate_a/single?client=gtx&ie=UTF-8&oe=UTF-8&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&dt=at&sl=" . $sl . "&tl=" . $tl . "&hl=hl&q=" . urlencode($q), $_SERVER['DOCUMENT_ROOT'] . "/transes.html");
+    $res = json_decode($res);
+    return str_replace('_',' ',$res[0][0][0]);
+}
+
+function getLanguageCode(string $country_code): string
+{
+    $locales = array('af-ZA',
+        'am-ET',
+        'ar-AE',
+        'ar-BH',
+        'ar-DZ',
+        'ar-EG',
+        'ar-IQ',
+        'ar-JO',
+        'ar-KW',
+        'ar-LB',
+        'ar-LY',
+        'ar-MA',
+        'ar-OM',
+        'ar-QA',
+        'ar-SA',
+        'ar-SY',
+        'ar-TN',
+        'ar-YE',
+        'az-Cyrl-AZ',
+        'az-Latn-AZ',
+        'be-BY',
+        'bg-BG',
+        'bn-BD',
+        'bs-Cyrl-BA',
+        'bs-Latn-BA',
+        'cs-CZ',
+        'da-DK',
+        'de-AT',
+        'de-CH',
+        'de-DE',
+        'de-LI',
+        'de-LU',
+        'dv-MV',
+        'el-GR',
+        'en-AU',
+        'en-BZ',
+        'en-CA',
+        'en-GB',
+        'en-IE',
+        'en-JM',
+        'en-MY',
+        'en-NZ',
+        'en-SG',
+        'en-TT',
+        'en-US',
+        'en-ZA',
+        'en-ZW',
+        'es-AR',
+        'es-BO',
+        'es-CL',
+        'es-CO',
+        'es-CR',
+        'es-DO',
+        'es-EC',
+        'es-ES',
+        'es-GT',
+        'es-HN',
+        'es-MX',
+        'es-NI',
+        'es-PA',
+        'es-PE',
+        'es-PR',
+        'es-PY',
+        'es-SV',
+        'es-US',
+        'es-UY',
+        'es-VE',
+        'et-EE',
+        'fa-IR',
+        'fi-FI',
+        'fil-PH',
+        'fo-FO',
+        'fr-BE',
+        'fr-CA',
+        'fr-CH',
+        'fr-FR',
+        'fr-LU',
+        'fr-MC',
+        'he-IL',
+        'hi-IN',
+        'hr-BA',
+        'hr-HR',
+        'hu-HU',
+        'hy-AM',
+        'id-ID',
+        'ig-NG',
+        'is-IS',
+        'it-CH',
+        'it-IT',
+        'ja-JP',
+        'ka-GE',
+        'kk-KZ',
+        'kl-GL',
+        'km-KH',
+        'ko-KR',
+        'ky-KG',
+        'lb-LU',
+        'lo-LA',
+        'lt-LT',
+        'lv-LV',
+        'mi-NZ',
+        'mk-MK',
+        'mn-MN',
+        'ms-BN',
+        'ms-MY',
+        'mt-MT',
+        'nb-NO',
+        'ne-NP',
+        'nl-BE',
+        'nl-NL',
+        'pl-PL',
+        'prs-AF',
+        'ps-AF',
+        'pt-BR',
+        'pt-PT',
+        'ro-RO',
+        'ru-RU',
+        'rw-RW',
+        'sv-SE',
+        'si-LK',
+        'sk-SK',
+        'sl-SI',
+        'sq-AL',
+        'sr-Cyrl-BA',
+        'sr-Cyrl-CS',
+        'sr-Cyrl-ME',
+        'sr-Cyrl-RS',
+        'sr-Latn-BA',
+        'sr-Latn-CS',
+        'sr-Latn-ME',
+        'sr-Latn-RS',
+        'sw-KE',
+        'tg-Cyrl-TJ',
+        'th-TH',
+        'tk-TM',
+        'tr-TR',
+        'uk-UA',
+        'ur-PK',
+        'uz-Cyrl-UZ',
+        'uz-Latn-UZ',
+        'vi-VN',
+        'wo-SN',
+        'yo-NG',
+        'zh-CN',
+        'zh-HK',
+        'zh-MO',
+        'zh-SG',
+        'zh-TW');
+
+    foreach ($locales as $locale) {
+        $locale_region = explode('-',$locale);
+        if (strtoupper($country_code) == $locale_region[1]) {
+            return $locale_region[0];
+        }
+    }
+
+    return "en";
 }

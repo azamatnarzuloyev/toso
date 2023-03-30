@@ -60,4 +60,17 @@ class Order extends Model
     {
         return $this->belongsTo(DeliveryMan::class,'delivery_man_id');
     }
+
+    public function delivery_man_review()
+    {
+        return $this->hasOne(Review::class,'order_id');
+    }
+
+    public function order_transaction(){
+        return $this->hasOne(OrderTransaction::class, 'order_id');
+    }
+
+    public function coupon(){
+        return $this->belongsTo(Coupon::class, 'coupon_code', 'code');
+    }
 }

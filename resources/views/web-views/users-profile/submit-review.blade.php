@@ -13,7 +13,7 @@
         <section class="col-lg-9  col-md-9">
             <div class="card">
                 <div class="card-header">
-                    <h5 style="margin-left: 20px;">{{\App\CPU\translate('submit_a_review')}}</h3>
+                    <h5 class="__ml-20">{{\App\CPU\translate('submit_a_review')}}</h5>
                 </div>
                 <div class="card-body">
                     <form action="{{route('review.store')}}" method="post" enctype="multipart/form-data">
@@ -23,11 +23,11 @@
                             <div class="form-group">
                                 <label for="exampleInputEmail1">{{\App\CPU\translate('rating')}}</label>
                                 <select class="form-control" name="rating">
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
+                                    <option value="1">{{\App\CPU\translate('1')}}</option>
+                                    <option value="2">{{\App\CPU\translate('2')}}</option>
+                                    <option value="3">{{\App\CPU\translate('3')}}</option>
+                                    <option value="4">{{\App\CPU\translate('4')}}</option>
+                                    <option value="5">{{\App\CPU\translate('5')}}</option>
                                 </select>
                             </div>
 
@@ -41,13 +41,14 @@
                             <div class="form-group">
                                 <label for="exampleInputEmail1">{{\App\CPU\translate('attachment')}}</label>
                                 <div class="row coba"></div>
+                                <div class="mt-1 text-info">{{\App\CPU\translate('File type: jpg, jpeg, png. Maximum size: 2MB')}}</div>
                             </div>
 
                         </div>
                         <div class="modal-footer">
                             <a href="{{ URL::previous() }}" class="btn btn-secondary">{{\App\CPU\translate('back')}}</a>
-                            
-                            <button type="submit" class="btn btn-primary">{{\App\CPU\translate('submit')}}</button>
+
+                            <button type="submit" class="btn btn--primary">{{\App\CPU\translate('submit')}}</button>
                         </div>
                     </form>
                 </div>
@@ -67,7 +68,6 @@
                 maxCount: 5,
                 rowHeight: '150px',
                 groupClassName: 'col-md-4',
-                maxFileSize: '',
                 placeholderImage: {
                     image: '{{asset('public/assets/front-end/img/image-place-holder.png')}}',
                     width: '100%'

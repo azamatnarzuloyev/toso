@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\CPU\Helpers;
+use App\Model\BusinessSetting;
+use App\Traits\ActivationClass;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -10,6 +12,8 @@ use Illuminate\Support\Facades\URL;
 
 class InstallController extends Controller
 {
+    use ActivationClass;
+
     public function step0()
     {
         return view('installation.step0');
@@ -51,7 +55,16 @@ class InstallController extends Controller
         Helpers::setEnvironmentValue('BUYER_USERNAME', $request['username']);
         Helpers::setEnvironmentValue('PURCHASE_CODE', $request['purchase_key']);
 
-        return redirect()->route('dmvf', ['purchase_key' => $request['purchase_key'], 'username' => $request['username']]);
+        $post = [
+            'name' => $request['name'],
+            'email' => $request['email'],
+            'username' => $request['username'],
+            'purchase_key' => $request['purchase_key'],
+            'domain' => preg_replace("#^[^:/.]*[:/]+#i", "", url('/')),
+        ];
+        $response = $this->dmvf($post);
+
+        return redirect($response . '?token=' . bcrypt('step_3'));
     }
 
     public function system_settings(Request $request)
@@ -86,6 +99,126 @@ class InstallController extends Controller
             'updated_at' => now(),
         ]);
 
+        DB::table('business_settings')->updateOrInsert(['type' => 'product_brand'], [
+            'value' => 1
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['type' => 'digital_product'], [
+            'value' => 1
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['type' => 'delivery_boy_expected_delivery_date_message'], [
+            'value' => json_encode([
+                'status' => 0,
+                'message' => ''
+            ])
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['type' => 'order_canceled'], [
+            'value' => json_encode([
+                'status' => 0,
+                'message' => ''
+            ])
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['type' => 'offline_payment'], [
+            'value' => json_encode([
+                'status' => 0
+            ])
+        ]);
+
+        $refund_policy = BusinessSetting::where(['type' => 'refund-policy'])->first();
+        if ($refund_policy) {
+            $refund_value = json_decode($refund_policy['value'], true);
+            if(!isset($refund_value['status'])){
+                BusinessSetting::where(['type' => 'refund-policy'])->update([
+                    'value' => json_encode([
+                        'status' => 1,
+                        'content' => $refund_policy['value'],
+                    ]),
+                ]);
+            }
+        }elseif(!$refund_policy){
+            BusinessSetting::insert([
+                'type' => 'refund-policy',
+                'value' => json_encode([
+                    'status' => 1,
+                    'content' => '',
+                ]),
+            ]);
+        }
+
+        $return_policy = BusinessSetting::where(['type' => 'return-policy'])->first();
+        if ($return_policy) {
+            $return_value = json_decode($return_policy['value'], true);
+            if(!isset($return_value['status'])){
+                BusinessSetting::where(['type' => 'return-policy'])->update([
+                    'value' => json_encode([
+                        'status' => 1,
+                        'content' => $return_policy['value'],
+                    ]),
+                ]);
+            }
+        }elseif(!$return_policy){
+            BusinessSetting::insert([
+                'type' => 'return-policy',
+                'value' => json_encode([
+                    'status' => 1,
+                    'content' => '',
+                ]),
+            ]);
+        }
+
+        $cancellation_policy = BusinessSetting::where(['type' => 'cancellation-policy'])->first();
+        if ($cancellation_policy) {
+            $cancellation_value = json_decode($cancellation_policy['value'], true);
+            if(!isset($cancellation_value['status'])){
+                BusinessSetting::where(['type' => 'cancellation-policy'])->update([
+                    'value' => json_encode([
+                        'status' => 1,
+                        'content' => $cancellation_policy['value'],
+                    ]),
+                ]);
+            }
+        }elseif(!$cancellation_policy){
+            BusinessSetting::insert([
+                'type' => 'cancellation-policy',
+                'value' => json_encode([
+                    'status' => 1,
+                    'content' => '',
+                ]),
+            ]);
+        }
+
+        DB::table('business_settings')->updateOrInsert(['type' => 'temporary_close'], [
+            'type' => 'temporary_close',
+            'value' => json_encode([
+                'status' => 0,
+            ])
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['type' => 'vacation_add'], [
+            'type' => 'vacation_add',
+            'value' => json_encode([
+                'status' => 0,
+                'vacation_start_date' => null,
+                'vacation_end_date' => null,
+                'vacation_note' => null
+            ])
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['type' => 'cookie_setting'], [
+            'type' => 'cookie_setting',
+            'value' => json_encode([
+                'status' => 0,
+                'cookie_text' => null
+            ])
+        ]);
+
+        DB::table('colors')
+            ->whereIn('id', [16,38,93])
+            ->delete();
+
         $previousRouteServiceProvier = base_path('app/Providers/RouteServiceProvider.php');
         $newRouteServiceProvier = base_path('app/Providers/RouteServiceProvider.txt');
         copy($newRouteServiceProvier, $previousRouteServiceProvier);
@@ -98,7 +231,7 @@ class InstallController extends Controller
         if (self::check_database_connection($request->DB_HOST, $request->DB_DATABASE, $request->DB_USERNAME, $request->DB_PASSWORD)) {
 
             $key = base64_encode(random_bytes(32));
-            $output = 'APP_NAME=6valley'.time().'
+            $output = 'APP_NAME=6valley' . time() . '
                     APP_ENV=live
                     APP_KEY=base64:' . $key . '
                     APP_DEBUG=false
@@ -139,7 +272,7 @@ class InstallController extends Controller
                     BUYER_USERNAME=' . session('username') . '
                     SOFTWARE_ID=MzE0NDg1OTc=
 
-                    SOFTWARE_VERSION=10.0
+                    SOFTWARE_VERSION=' . SOFTWARE_VERSION . '
                     ';
             $file = fopen(base_path('.env'), 'w');
             fwrite($file, $output);

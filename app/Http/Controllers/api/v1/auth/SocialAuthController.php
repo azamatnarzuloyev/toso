@@ -20,7 +20,7 @@ class SocialAuthController extends Controller
             'token' => 'required',
             'unique_id' => 'required',
             'email' => 'required',
-            'medium' => 'required|in:google,facebook',
+            'medium' => 'required|in:google,facebook,apple',
         ]);
 
         if ($validator->fails()) {
@@ -39,6 +39,28 @@ class SocialAuthController extends Controller
             } elseif ($request['medium'] == 'facebook') {
                 $res = $client->request('GET', 'https://graph.facebook.com/' . $unique_id . '?access_token=' . $token . '&&fields=name,email');
                 $data = json_decode($res->getBody()->getContents(), true);
+            } elseif ($request['medium'] == 'apple') {
+//                $res = $client->request('GET', 'https://graph.facebook.com/' . $unique_id . '?access_token=' . $token . '&&fields=name,email');
+//                $data = json_decode($res->getBody()->getContents(), true);
+                $socialLogin = BusinessSetting::where('type', 'social_login')->first();
+                $client_id = '';
+                $client_secret = '';
+                foreach(json_decode($socialLogin['value'], true) as $key => $social){
+                    if($social['login_medium'] == 'apple'){
+                        $client_id = $social['service_id'];
+                        $client_secret = $social['client_secret'];
+                    }
+                }
+                $apple_data = [
+                    'grant_type' => 'authorization_code',
+                    'redirect_uri' => 'www.test.com',
+                    'client_id' => $client_id,
+                    'client_secret' => $client_secret,
+                    'code' => $request['token']
+                ];
+                $response = Request::create('/oauth/token', 'POST', $apple_data);
+                $data = json_decode($response->getBody()->getContent(), true);
+                dd($data);
             }
         } catch (\Exception $exception) {
             return response()->json(['error' => 'wrong credential.']);
@@ -118,10 +140,10 @@ class SocialAuthController extends Controller
         $user = User::where(['temporary_token' => $request->temporary_token])->first();
         $user->phone = $request->phone;
         $user->save();
-        
+
 
         $phone_verification = BusinessSetting::where('type', 'phone_verification')->first();
-        
+
         if($phone_verification->value == 1)
         {
             return response()->json([

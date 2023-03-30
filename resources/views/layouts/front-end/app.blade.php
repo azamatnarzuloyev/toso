@@ -38,17 +38,14 @@
     <link rel="stylesheet" href="{{asset('public/assets/front-end')}}/css/home.css"/>
     <link rel="stylesheet" href="{{asset('public/assets/front-end')}}/css/responsive1.css"/>
 
-    
+
+    <link rel="stylesheet" href="{{asset('public/assets/front-end')}}/css/style.css">
     {{--dont touch this--}}
     <meta name="_token" content="{{csrf_token()}}">
     {{--dont touch this--}}
     <!--to make http ajax request to https-->
     <!--<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">-->
     <style>
-        body {
-            background-color: #f7f8fa94;
-        }
-
         .rtl {
             direction: {{ Session::get('direction') }};
         }
@@ -63,18 +60,10 @@
 
         .dropdown-item:hover, .dropdown-item:focus {
             color: {{$web_config['primary_color']}};
-            text-decoration: none;
-            background-color: rgba(0, 0, 0, 0)
         }
 
         .dropdown-item.active, .dropdown-item:active {
             color: {{$web_config['secondary_color']}};
-            text-decoration: none;
-            background-color: rgba(0, 0, 0, 0)
-        }
-
-        .topbar a {
-            color: black !important;
         }
 
         .navbar-light .navbar-tool-icon-box {
@@ -83,285 +72,22 @@
 
         .search_button {
             background-color: {{$web_config['primary_color']}};
-            border: none;
         }
 
-        .nav-link {
-            color: white !important;
-        }
 
         .navbar-stuck-menu {
             background-color: {{$web_config['primary_color']}};
-            min-height: 0;
-            padding-top: 0;
-            padding-bottom: 0;
-        }
-
-        .mega-nav {
-            background: white;
-            position: relative;
-            margin-top: 6px;
-            line-height: 17px;
-            width: 304px;
-            border-radius: 3px;
         }
 
         .mega-nav .nav-item .nav-link {
-            padding-top: 11px !important;
             color: {{$web_config['primary_color']}}                           !important;
-            font-size: 20px;
-            font-weight: 600;
-            padding-left: 20px !important;
         }
-
-        .nav-item .dropdown-toggle::after {
-            margin-left: 20px !important;
-        }
-
-        .navbar-tool-text {
-            padding-left: 5px !important;
-            font-size: 16px;
-        }
-
-        .navbar-tool-text > small {
-            color: #4b566b !important;
-        }
-
-        .modal-header .nav-tabs .nav-item .nav-link {
-            color: black !important;
-            /*border: 1px solid #E2F0FF;*/
-        }
-
-        .checkbox-alphanumeric::after,
-        .checkbox-alphanumeric::before {
-            content: '';
-            display: table;
-        }
-
-        .checkbox-alphanumeric::after {
-            clear: both;
-        }
-
-        .checkbox-alphanumeric input {
-            left: -9999px;
-            position: absolute;
-        }
-
-        .checkbox-alphanumeric label {
-            width: 2.25rem;
-            height: 2.25rem;
-            float: left;
-            padding: 0.375rem 0;
-            margin-right: 0.375rem;
-            display: block;
-            color: #818a91;
-            font-size: 0.875rem;
-            font-weight: 400;
-            text-align: center;
-            background: transparent;
-            text-transform: uppercase;
-            border: 1px solid #e6e6e6;
-            border-radius: 2px;
-            -webkit-transition: all 0.3s ease;
-            -moz-transition: all 0.3s ease;
-            -o-transition: all 0.3s ease;
-            -ms-transition: all 0.3s ease;
-            transition: all 0.3s ease;
-            transform: scale(0.95);
-        }
-
-        .checkbox-alphanumeric-circle label {
-            border-radius: 100%;
-        }
-
-        .checkbox-alphanumeric label > img {
-            max-width: 100%;
-        }
-
         .checkbox-alphanumeric label:hover {
-            cursor: pointer;
             border-color: {{$web_config['primary_color']}};
-        }
-
-        .checkbox-alphanumeric input:checked ~ label {
-            transform: scale(1.1);
-            border-color: red !important;
-        }
-
-        .checkbox-alphanumeric--style-1 label {
-            width: auto;
-            padding-left: 1rem;
-            padding-right: 1rem;
-            border-radius: 2px;
-        }
-
-        .d-table.checkbox-alphanumeric--style-1 {
-            width: 100%;
-        }
-
-        .d-table.checkbox-alphanumeric--style-1 label {
-            width: 100%;
-        }
-
-        /* CUSTOM COLOR INPUT */
-        .checkbox-color::after,
-        .checkbox-color::before {
-            content: '';
-            display: table;
-        }
-
-        .checkbox-color::after {
-            clear: both;
-        }
-
-        .checkbox-color input {
-            left: -9999px;
-            position: absolute;
-        }
-
-        .checkbox-color label {
-            width: 2.25rem;
-            height: 2.25rem;
-            float: left;
-            padding: 0.375rem;
-            margin-right: 0.375rem;
-            display: block;
-            font-size: 0.875rem;
-            text-align: center;
-            opacity: 0.7;
-            border: 2px solid #d3d3d3;
-            border-radius: 50%;
-            -webkit-transition: all 0.3s ease;
-            -moz-transition: all 0.3s ease;
-            -o-transition: all 0.3s ease;
-            -ms-transition: all 0.3s ease;
-            transition: all 0.3s ease;
-            transform: scale(0.95);
-        }
-
-        .checkbox-color-circle label {
-            border-radius: 100%;
-        }
-
-        .checkbox-color label:hover {
-            cursor: pointer;
-            opacity: 1;
-        }
-
-        .checkbox-color input:checked ~ label {
-            transform: scale(1.1);
-            opacity: 1;
-            border-color: red !important;
-        }
-
-        .checkbox-color input:checked ~ label:after {
-            content: "\f121";
-            font-family: "Ionicons";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-        }
-
-        .card-img-top img, figure {
-            max-width: 200px;
-            max-height: 200px !important;
-            vertical-align: middle;
-        }
-
-        .product-card {
-            box-shadow: 1px 1px 6px #00000014;
-            border-radius: 5px;
-        }
-
-        .product-card .card-header {
-            text-align: center;
-            background: white 0% 0% no-repeat padding-box;
-            border-radius: 5px 5px 0px 0px;
-            border-bottom: white !important;
-        }
-
-        .product-title {
-            font-family: 'Roboto', sans-serif !important;
-            font-weight: 400 !important;
-            font-size: 22px !important;
-            color: #000000 !important;
-        }
-
-        .feature_header span {
-            font-weight: 700;
-            font-size: 25px;
-            text-transform: uppercase;
-        }
-
-        html[dir="ltr"] .feature_header span {
-            padding-right: 15px;
-        }
-
-        html[dir="rtl"] .feature_header span {
-            padding-left: 15px;
-        }
-
-        @media (max-width: 768px ) {
-            .feature_header {
-                margin-top: 0;
-                display: flex;
-                justify-content: flex-start !important;
-
-            }
-
-            .store-contents {
-                justify-content: center;
-            }
-
-            .feature_header span {
-                padding-right: 0;
-                padding-left: 0;
-                font-weight: 700;
-                font-size: 25px;
-                text-transform: uppercase;
-            }
-
-            .view_border {
-                margin: 16px 0px;
-                border-top: 2px solid #E2F0FF !important;
-            }
-
-        }
-
-        .scroll-bar {
-            max-height: calc(100vh - 100px);
-            overflow-y: auto !important;
-        }
-
-        ::-webkit-scrollbar-track {
-            box-shadow: inset 0 0 5px white;
-            border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar {
-            width: 3px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: rgba(194, 194, 194, 0.38) !important;
-            border-radius: 5px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
             background: {{$web_config['secondary_color']}}        !important;
-        }
-
-        .mobileshow {
-            display: none;
-        }
-
-        @media screen and (max-width: 500px) {
-            .mobileshow {
-                display: block;
-            }
         }
 
         [type="radio"] {
@@ -376,76 +102,24 @@
         }
 
         [type="radio"] + span:after {
-            content: '';
-            display: inline-block;
-            width: 1.1em;
-            height: 1.1em;
-            vertical-align: -0.10em;
-            border-radius: 1em;
-            border: 0.35em solid #fff;
             box-shadow: 0 0 0 0.10em{{$web_config['secondary_color']}};
-            margin-left: 0.75em;
-            transition: 0.5s ease all;
         }
 
         [type="radio"]:checked + span:after {
             background: {{$web_config['secondary_color']}};
             box-shadow: 0 0 0 0.10em{{$web_config['secondary_color']}};
         }
-
-        [type="radio"]:focus + span::before {
-            font-size: 1.2em;
-            line-height: 1;
-            vertical-align: -0.125em;
-        }
-
-
-        .checkbox-color label {
-            box-shadow: 0px 3px 6px #0000000D;
-            border: none;
-            border-radius: 3px !important;
-            max-height: 35px;
-        }
-
-        .checkbox-color input:checked ~ label {
-            transform: scale(1.1);
-            opacity: 1;
-            border: 1px solid #ffb943 !important;
-        }
-
-        .checkbox-color input:checked ~ label:after {
-            font-family: "Ionicons", serif;
-            position: absolute;
-            content: "\2713" !important;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-        }
-
         .navbar-tool .navbar-tool-label {
-            position: absolute;
-            top: -.3125rem;
-            right: -.3125rem;
-            width: 1.25rem;
-            height: 1.25rem;
-            border-radius: 50%;
             background-color: {{$web_config['secondary_color']}}!important;
-            color: #fff;
-            font-size: .75rem;
-            font-weight: 500;
-            text-align: center;
-            line-height: 1.25rem;
         }
 
-        .btn-primary {
+        .btn--primary {
             color: #fff;
             background-color: {{$web_config['primary_color']}}!important;
             border-color: {{$web_config['primary_color']}}!important;
         }
 
-        .btn-primary:hover {
+        .btn--primary:hover {
             color: #fff;
             background-color: {{$web_config['primary_color']}}!important;
             border-color: {{$web_config['primary_color']}}!important;
@@ -468,15 +142,11 @@
         }
 
         .text-accent {
-            font-family: 'Roboto', sans-serif;
-            font-weight: 700;
-            font-size: 18px;
             color: {{$web_config['primary_color']}};
         }
 
         a:hover {
             color: {{$web_config['secondary_color']}};
-            text-decoration: none
         }
 
         .active-menu {
@@ -490,14 +160,10 @@
         }
 
         .page-item.active .page-link {
-            z-index: 3;
-            color: #fff;
             background-color: {{$web_config['primary_color']}};
-            border-color: rgba(0, 0, 0, 0)
         }
 
         .btn-outline-accent:not(:disabled):not(.disabled):active, .btn-outline-accent:not(:disabled):not(.disabled).active, .show > .btn-outline-accent.dropdown-toggle {
-            color: #fff;
             background-color: {{$web_config['secondary_color']}};
             border-color: {{$web_config['secondary_color']}};
         }
@@ -508,7 +174,6 @@
         }
 
         .btn-outline-primary:hover {
-            color: #fff;
             background-color: {{$web_config['secondary_color']}};
             border-color: {{$web_config['secondary_color']}};
         }
@@ -517,13 +182,7 @@
             box-shadow: 0 0 0 0{{$web_config['secondary_color']}};
         }
 
-        .btn-outline-primary.disabled, .btn-outline-primary:disabled {
-            color: #6f6f6f;
-            background-color: transparent
-        }
-
         .btn-outline-primary:not(:disabled):not(.disabled):active, .btn-outline-primary:not(:disabled):not(.disabled).active, .show > .btn-outline-primary.dropdown-toggle {
-            color: #fff;
             background-color: {{$web_config['primary_color']}};
             border-color: {{$web_config['primary_color']}};
         }
@@ -531,116 +190,14 @@
         .btn-outline-primary:not(:disabled):not(.disabled):active:focus, .btn-outline-primary:not(:disabled):not(.disabled).active:focus, .show > .btn-outline-primary.dropdown-toggle:focus {
             box-shadow: 0 0 0 0{{$web_config['primary_color']}};
         }
-
-        .feature_header span {
-            background-color: #fafafc !important
-        }
-
-        .discount-top-f {
-            position: absolute;
-        }
-
-        html[dir="ltr"] .discount-top-f {
-            left: 0;
-        }
-
-        html[dir="rtl"] .discount-top-f {
-            right: 0;
-        }
-
         .for-discoutn-value {
             background: {{$web_config['primary_color']}};
-
         }
-
-        .czi-star-filled {
-            color: #fea569 !important;
-        }
-
-        .flex-start {
-            display: flex;
-            justify-content: flex-start;
-        }
-
-        .flex-center {
-            display: flex;
-            justify-content: center;
-        }
-
-        .flex-around {
-            display: flex;
-            justify-content: space-around;
-        }
-
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .row-reverse {
-            display: flex;
-            flex-direction: row-reverse;
-        }
-
-        .count-value {
-            width: 1.25rem;
-            height: 1.25rem;
-            border-radius: 50%;
-            color: #fff;
-            font-size: 0.75rem;
-            font-weight: 500;
-            text-align: center;
-            line-height: 1.25rem;
-        }
-    </style>
-
-    <!--for product-->
-    <style>
-        .stock-out {
-            position: absolute;
-            top: 40% !important;
-            color: white !important;
-            font-weight: 900;
-            font-size: 15px;
-        }
-
-        html[dir="ltr"] .stock-out {
-            left: 35% !important;
-        }
-
-        html[dir="rtl"] .stock-out {
-            right: 35% !important;
-        }
-
-        .product-card {
-            height: 100%;
-        }
-
-        .badge-style {
-            left: 75% !important;
-            margin-top: -2px !important;
-            background: transparent !important;
-            color: black !important;
-        }
-
-        html[dir="ltr"] .badge-style {
-            right: 0 !important;
-        }
-
-        html[dir="rtl"] .badge-style {
-            left: 0 !important;
-        }
-    </style>
-
-    <style>
         .dropdown-menu {
-            min-width: 304px !important;
             margin-{{Session::get('direction') === "rtl" ? 'right' : 'left'}}: -8px !important;
-            border-top-left-radius: 0px;
-            border-top-right-radius: 0px;
         }
     </style>
-    
+
     @php($google_tag_manager_id = \App\CPU\Helpers::get_business_settings('google_tag_manager_id'))
     @if($google_tag_manager_id )
     <!-- Google Tag Manager -->
@@ -650,7 +207,7 @@
         'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
         })(window,document,'script','dataLayer','{{$google_tag_manager_id}}');</script>
     <!-- End Google Tag Manager -->
-        
+
     @endif
 
     @php($pixel_analytices_user_code =\App\CPU\Helpers::get_business_settings('pixel_analytics'))
@@ -669,7 +226,7 @@
             fbq('track', 'PageView');
             </script>
             <noscript>
-            <img height="1" width="1" style="display:none" 
+            <img height="1" width="1" style="display:none"
                 src="https://www.facebook.com/tr?id={your-pixel-id-goes-here}&ev=PageView&noscript=1"/>
             </noscript>
         <!-- End Facebook Pixel Code -->
@@ -713,18 +270,29 @@
 <!-- Footer-->
 @include('layouts.front-end.partials._footer')
 <!-- Toolbar for handheld devices-->
-<!--<div class="cz-handheld-toolbar" id="toolbar">
-    {{--@include('layouts.front-end.partials._toolbar')--}}
-    </div>-->
 
 <!-- Back To Top Button-->
 <a class="btn-scroll-top" href="#top" data-scroll>
     <span class="btn-scroll-top-tooltip text-muted font-size-sm mr-2">Top</span><i
         class="btn-scroll-top-icon czi-arrow-up"> </i>
 </a>
+<div class="__floating-btn">
+    @php($whatsapp = \App\CPU\Helpers::get_business_settings('whatsapp'))
+    @if(isset($whatsapp['status']) && $whatsapp['status'] == 1 )
+        <div class="wa-widget-send-button">
+            <a href="https://web.whatsapp.com/send/?phone={{ $whatsapp['phone'] }}?text=Hello%20there!" target="_blank">
+                <img src="{{asset('public/assets/front-end/img/whatsapp.svg')}}" class="wa-messenger-svg-whatsapp wh-svg-icon" alt="Chat with us on WhatsApp">
+            </a>
+        </div>
+    @endif
 
-<!-- Vendor scrits: js libraries and plugins-->
+{{--    @php($messenger = \App\CPU\Helpers::get_business_settings('messenger'))--}}
+{{--    @if(isset($messenger['status']) && $messenger['status']==1)--}}
+{{--        {!! $messenger['script'] !!}--}}
+{{--    @endif--}}
 
+    <!-- Vendor scrits: js libraries and plugins-->
+</div>
 
 {{--<script src="{{asset('public/assets/front-end')}}/vendor/jquery/dist/jquery.slim.min.js"></script>--}}
 <script src="{{asset('public/assets/front-end')}}/vendor/jquery/dist/jquery-2.2.4.min.js"></script>
@@ -922,13 +490,18 @@
 
     function removeFromCart(key) {
         $.post('{{ route('cart.remove') }}', {_token: '{{ csrf_token() }}', key: key}, function (response) {
-            console.log(response)
+            $('#cod-for-cart').hide();
             updateNavCart();
             $('#cart-summary').empty().html(response.data);
             toastr.info('{{\App\CPU\translate('Item has been removed from cart')}}', {
                 CloseButton: true,
                 ProgressBar: true
             });
+            let segment_array = window.location.pathname.split('/');
+            let segment = segment_array[segment_array.length - 1];
+            if(segment === 'checkout-payment' || segment === 'checkout-details'){
+                location.reload();
+            }
         });
     }
 
@@ -944,10 +517,12 @@
 
             fieldName = $(this).attr('data-field');
             type = $(this).attr('data-type');
+            productType = $(this).attr('product-type');
             var input = $("input[name='" + fieldName + "']");
             var currentVal = parseInt(input.val());
 
             if (!isNaN(currentVal)) {
+                console.log(productType)
                 if (type == 'minus') {
 
                     if (currentVal > input.attr('min')) {
@@ -959,10 +534,11 @@
 
                 } else if (type == 'plus') {
 
-                    if (currentVal < input.attr('max')) {
+                    if (currentVal < input.attr('max') || (productType === 'digital')) {
                         input.val(currentVal + 1).change();
                     }
-                    if (parseInt(input.val()) == input.attr('max')) {
+
+                    if ((parseInt(input.val()) == input.attr('max')) && (productType === 'physical')) {
                         $(this).attr('disabled', true);
                     }
 
@@ -977,7 +553,7 @@
         });
 
         $('.input-number').change(function () {
-
+            productType = $(this).attr('product-type');
             minValue = parseInt($(this).attr('min'));
             maxValue = parseInt($(this).attr('max'));
             valueCurrent = parseInt($(this).val());
@@ -989,11 +565,11 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Cart',
-                    text: '{{\App\CPU\translate('Sorry, the minimum value was reached')}}'
+                    text: '{{\App\CPU\translate('Sorry, the minimum order quantity does not match')}}'
                 });
                 $(this).val($(this).data('oldValue'));
             }
-            if (valueCurrent <= maxValue) {
+            if (productType === 'digital' || valueCurrent <= maxValue) {
                 $(".btn-number[data-type='plus'][data-field='" + name + "']").removeAttr('disabled')
             } else {
                 Swal.fire({
@@ -1034,8 +610,15 @@
         });
     }
 
-    function updateCartQuantity(key) {
-        var quantity = $("#cartQuantity" + key).children("option:selected").val();
+    function updateCartQuantity(minimum_order_qty, key) {
+        /* var quantity = $("#cartQuantity" + key).children("option:selected").val(); */
+        var quantity = $("#cartQuantity" + key).val();
+        if(minimum_order_qty > quantity ) {
+            toastr.error('{{\App\CPU\translate("minimum_order_quantity_cannot_be_less_than_")}}' + minimum_order_qty);
+            $("#cartQuantity" + key).val(minimum_order_qty);
+            return false;
+        }
+
         $.post('{{route('cart.updateQuantity')}}', {
             _token: '{{csrf_token()}}',
             key: key,
@@ -1070,7 +653,6 @@
                 url: '{{ route('cart.variant_price') }}',
                 data: $('#add-to-cart-form').serializeArray(),
                 success: function (data) {
-                    console.log(data)
                     $('#add-to-cart-form #chosen_price_div').removeClass('d-none');
                     $('#add-to-cart-form #chosen_price_div #chosen_price').html(data.price);
                     $('#set-tax-amount').html(data.tax);
@@ -1244,7 +826,47 @@
         })
     }
 </script>
+<script>
+    $('.filter-show-btn').on('click', function(){
+        $('#shop-sidebar').toggleClass('show')
+    })
+</script>
 
+<script>
+    @php($cookie = $web_config['cookie_setting'] ? json_decode($web_config['cookie_setting']['value'], true):null)
+    let cookie_content = `
+        <div class="cookie-section">
+            <div class="container">
+                <div class="d-flex flex-wrap align-items-center justify-content-between column-gap-4 row-gap-3">
+                    <div class="text-wrapper">
+                        <h5 class="title">{{\App\CPU\translate('Your_Privacy_Matter')}}</h5>
+                        <div>{{ $cookie ? $cookie['cookie_text'] : '' }}</div>
+                    </div>
+                    <div class="btn-wrapper">
+                        <span class="text-white cursor-pointer" id="cookie-reject">{{\App\CPU\translate('no')}}, {{\App\CPU\translate('thanks')}}</span>
+                        <button class="btn btn-success cookie-accept" id="cookie-accept">{{\App\CPU\translate('yes')}}, {{\App\CPU\translate('i_Accept')}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    $(document).on('click','#cookie-accept',function() {
+        document.cookie = '6valley_cookie_consent=accepted; max-age=' + 60 * 60 * 24 * 30;
+        $('#cookie-section').hide();
+    });
+    $(document).on('click','#cookie-reject',function() {
+        document.cookie = '6valley_cookie_consent=reject; max-age=' + 60 * 60 * 24;
+        $('#cookie-section').hide();
+    });
+
+    $(document).ready(function() {
+        if (document.cookie.indexOf("6valley_cookie_consent=accepted") !== -1) {
+            $('#cookie-section').hide();
+        }else{
+            $('#cookie-section').html(cookie_content).show();
+        }
+    });
+</script>
 @stack('script')
 
 </body>

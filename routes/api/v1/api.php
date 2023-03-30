@@ -110,10 +110,16 @@ Route::group(['namespace' => 'api\v1', 'prefix' => 'v1', 'middleware' => ['api_l
         Route::get('info', 'CustomerController@info');
         Route::put('update-profile', 'CustomerController@update_profile');
         Route::put('cm-firebase-token', 'CustomerController@update_cm_firebase_token');
+        Route::get('account-delete/{id}','CustomerController@account_delete');
+
+        Route::get('get-restricted-country-list','CustomerController@get_restricted_country_list');
+        Route::get('get-restricted-zip-list','CustomerController@get_restricted_zip_list');
 
         Route::group(['prefix' => 'address'], function () {
             Route::get('list', 'CustomerController@address_list');
+            Route::get('get/{id}', 'CustomerController@get_address');
             Route::post('add', 'CustomerController@add_new_address');
+            Route::put('update', 'CustomerController@update_address');
             Route::delete('/', 'CustomerController@delete_address');
         });
 
@@ -133,16 +139,21 @@ Route::group(['namespace' => 'api\v1', 'prefix' => 'v1', 'middleware' => ['api_l
         Route::group(['prefix' => 'order'], function () {
             Route::get('list', 'CustomerController@get_order_list');
             Route::get('details', 'CustomerController@get_order_details');
+            Route::get('get-order-by-id', 'CustomerController@get_order_by_id');
             Route::get('place', 'OrderController@place_order');
+            Route::get('place-by-offline-payment', 'OrderController@place_order_by_offline_payment');
+            Route::get('place-by-wallet', 'OrderController@place_order_by_wallet');
             Route::get('refund', 'OrderController@refund_request');
             Route::post('refund-store', 'OrderController@store_refund');
             Route::get('refund-details', 'OrderController@refund_details');
+            Route::post('deliveryman-reviews/submit', 'ProductController@submit_deliveryman_review')->middleware('auth:api');
+            Route::get('digital-product-download/{id}', 'OrderController@digital_product_download');
         });
         // Chatting
         Route::group(['prefix' => 'chat'], function () {
-            Route::get('/', 'ChatController@chat_with_seller');
-            Route::get('messages', 'ChatController@messages');
-            Route::post('send-message', 'ChatController@messages_store');
+            Route::get('list/{type}', 'ChatController@list');
+            Route::get('get-messages/{type}/{id}', 'ChatController@get_message');
+            Route::post('send-message/{type}', 'ChatController@send_message');
         });
 
         //wallet
@@ -168,6 +179,7 @@ Route::group(['namespace' => 'api\v1', 'prefix' => 'v1', 'middleware' => ['api_l
     Route::group(['prefix' => 'seller'], function () {
         Route::get('/', 'SellerController@get_seller_info');
         Route::get('{seller_id}/products', 'SellerController@get_seller_products');
+        Route::get('{seller_id}/all-products', 'SellerController@get_seller_all_products');
         Route::get('top', 'SellerController@get_top_sellers');
         Route::get('all', 'SellerController@get_all_sellers');
     });
@@ -176,7 +188,7 @@ Route::group(['namespace' => 'api\v1', 'prefix' => 'v1', 'middleware' => ['api_l
         Route::get('apply', 'CouponController@apply');
     });
 
-    
+
 
     //map api
     Route::group(['prefix' => 'mapapi'], function () {

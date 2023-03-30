@@ -20,6 +20,8 @@ class Chatting extends Model
         'updated_at' => 'datetime',
     ];
 
+    protected $guarded=[];
+
     public function seller_info()
     {
         return $this->belongsTo(Seller::class, 'seller_id');
@@ -33,5 +35,14 @@ class Chatting extends Model
     public function shop()
     {
         return $this->belongsTo(Shop::class, 'shop_id');
+    }
+
+    public function delivery_man()
+    {
+        return $this->belongsTo(DeliveryMan::class, 'delivery_man_id');
+    }
+
+    public function admin(){
+        return $this->belongsTo(Admin::class, 'admin_id');
     }
 }

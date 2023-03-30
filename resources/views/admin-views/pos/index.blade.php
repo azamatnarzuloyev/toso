@@ -1,398 +1,96 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- Title -->
-    <title>@yield('title')</title>
-    <!-- Favicon -->
-    <link rel="shortcut icon" href="">
-    <!-- Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&amp;display=swap" rel="stylesheet">
-    <!-- CSS Implementing Plugins -->
-    <link rel="stylesheet" href="{{asset('public/assets/back-end')}}/css/vendor.min.css">
-    <link rel="stylesheet" href="{{asset('public/assets/back-end')}}/vendor/icon-set/style.css">
-    <!-- CSS Front Template -->
-    <meta name="_token" content="{{ csrf_token() }}">
-    <link rel="stylesheet" href="{{asset('public/assets/back-end')}}/css/theme.minc619.css?v=1.0">
-    @stack('css_or_js')
+@extends('layouts.back-end.app')
 
-    <style>
-        .scroll-bar {
-            max-height: calc(100vh - 100px);
-            overflow-y: auto !important;
-        }
-
-        ::-webkit-scrollbar-track {
-            box-shadow: inset 0 0 1px #cfcfcf;
-            /*border-radius: 5px;*/
-        }
-
-        ::-webkit-scrollbar {
-            width: 3px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            /*border-radius: 5px;*/
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #FC6A57;
-        }
-        .deco-none {
-            color: inherit;
-            text-decoration: inherit;
-        }
-        .qcont{
-            text-transform: lowercase;
-        }
-        .qcont:first-letter {
-            text-transform: capitalize;
-        }
-
-
-
-        .navbar-vertical .nav-link {
-            color: #ffffff;
-        }
-
-        .navbar .nav-link:hover {
-            color: #C6FFC1;
-        }
-
-        .navbar .active > .nav-link, .navbar .nav-link.active, .navbar .nav-link.show, .navbar .show > .nav-link {
-            color: #C6FFC1;
-        }
-
-        .navbar-vertical .active .nav-indicator-icon, .navbar-vertical .nav-link:hover .nav-indicator-icon, .navbar-vertical .show > .nav-link > .nav-indicator-icon {
-            color: #C6FFC1;
-        }
-
-        .nav-subtitle {
-            display: block;
-            color: #fffbdf91;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: .03125rem;
-        }
-
-        .navbar-vertical .navbar-nav.nav-tabs .active .nav-link, .navbar-vertical .navbar-nav.nav-tabs .active.nav-link {
-            border-left-color: #C6FFC1;
-        }
-        .item-box{
-            height:250px;
-            width:150px;
-            padding:3px;
-        }
-
-        .header-item{
-            width:10rem;
-        }
-        @media only screen and (min-width: 768px) {
-            .view-web-site-info {
-                display: none;
-            }
-        
-        }
-    </style>
-
-    <script src="{{asset('public/assets/back-end')}}/vendor/hs-navbar-vertical-aside/hs-navbar-vertical-aside-mini-cache.js"></script>
-    <link rel="stylesheet" href="{{asset('public/assets/back-end')}}/css/toastr.css">
-</head>
-
-<body class="footer-offset">
-{{--loader--}}
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <div id="loading" style="display: none;">
-                <div style="position: fixed;z-index: 9999; left: 40%;top: 37% ;width: 100%">
-                    <img width="200" src="{{asset('public/assets/admin/img/loader.gif')}}">
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{{--loader--}}
-<!-- JS Preview mode only -->
-    <header id="header"
-            class="col-12 navbar navbar-expand-lg navbar-fixed navbar-height navbar-flush navbar-container navbar-bordered">
-        <div class="navbar-nav-wrap">
-            <div class="navbar-brand-wrapper">
-                <!-- Logo Div-->
-                @php($e_commerce_logo=\App\Model\BusinessSetting::where(['type'=>'company_web_logo'])->first()->value)
-                <a class="navbar-brand" href="{{route('admin.dashboard')}}" aria-label="Front" style="padding-top: 0!important;padding-bottom: 0!important;">
-                    <img class=""
-                         style="max-height: 42px;"
-                         onerror="this.src='{{asset('public/assets/back-end/img/160x160/img2.jpg')}}'"
-                         src="{{asset("storage/app/public/company/$e_commerce_logo")}}"
-                         alt="Logo">
-                </a>         
-            </div>
-            <!-- Secondary Content -->
-            <div class="navbar-nav-wrap-content-right">
-                <!-- Navbar -->
-                <ul class="navbar-nav align-items-center flex-row">
-                    <li class="nav-item d-none d-sm-inline-block">
-                        <div class="hs-unfold">
-                            <a title="Website home"
-                               class="js-hs-unfold-invoker btn btn-icon btn-ghost-secondary rounded-circle"
-                               href="{{route('home')}}" target="_blank">
-                                <i class="tio-globe"></i>
-                                {{--<span class="btn-status btn-sm-status btn-status-danger"></span>--}}
-                            </a>
-                        </div>
-                    </li>
-                    @if(\App\CPU\Helpers::module_permission_check('support_section'))
-                    <li class="nav-item d-none d-sm-inline-block">
-                        <!-- Notification -->
-                        <div class="hs-unfold">
-                            <a class="js-hs-unfold-invoker btn btn-icon btn-ghost-secondary rounded-circle"
-                               href="{{route('admin.contact.list')}}">
-                                <i class="tio-email"></i>
-                                @php($message=\App\Model\Contact::where('seen',0)->count())
-                                @if($message!=0)
-                                    <span class="btn-status btn-status-danger">{{ $message }}</span>
-                                @endif
-                            </a>
-                        </div>
-                        <!-- End Notification -->
-                    </li>
-                    @endif
-                    <li class="nav-item d-sm-inline-block">
-                        <!-- short cut key -->
-                        <div class="hs-unfold">
-                            <a id="short-cut" class="js-hs-unfold-invoker btn btn-icon btn-ghost-secondary rounded-circle"
-                              data-toggle="modal" data-target="#short-cut-keys" title="{{\App\CPU\translate('short_cut_keys')}}">
-                                <i class="tio-keyboard"></i>
-    
-                            </a>
-                        </div>
-                        <!-- End short cut key -->
-                    </li>
-                    <li class="nav-item view-web-site-info">
-                        <div class="hs-unfold" >
-                            <a style="background-color: rgb(255, 255, 255)" onclick="openInfoWeb()" href="javascript:" class="js-hs-unfold-invoker btn btn-icon btn-ghost-secondary rounded-circle">
-                                <i class="tio-info"></i>
-                            </a>
-                        </div>
-                    </li>
-                    <li class="nav-item d-none d-sm-inline-block">
-                        <!-- Notification -->
-                        <div class="hs-unfold">
-                            <a class="js-hs-unfold-invoker btn btn-icon btn-ghost-secondary rounded-circle"
-                               href="{{route('admin.pos.orders')}}">
-                                <i class="tio-shopping-cart-outlined"></i>
-                                {{--<span class="btn-status btn-sm-status btn-status-danger"></span>--}}
-                            </a>
-                        </div>
-                        <!-- End Notification -->
-                    </li>
-
-                    <li class="nav-item">
-                        <!-- Account -->
-                        <div class="hs-unfold">
-                            <a class="js-hs-unfold-invoker navbar-dropdown-account-wrapper" href="javascript:;"
-                               data-hs-unfold-options='{
-                                     "target": "#accountNavbarDropdown",
-                                     "type": "css-animation"
-                                   }'>
-                                <div class="avatar avatar-sm avatar-circle">
-                                    <img class="avatar-img"
-                                        onerror="this.src='{{asset('public/assets/back-end/img/160x160/img1.jpg')}}'"
-                                        src="{{asset('storage/app/public/admin')}}/{{auth('admin')->user()->image}}"
-                                        alt="Image">
-                                    <span class="avatar-status avatar-sm-status avatar-status-success"></span>
-                                </div>
-                            </a>
-
-                            <div id="accountNavbarDropdown"
-                                 class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-right navbar-dropdown-menu navbar-dropdown-account"
-                                 style="width: 16rem;">
-                                <div class="dropdown-item-text">
-                                    <div class="media align-items-center text-break">
-                                        <div class="avatar avatar-sm avatar-circle mr-2">
-                                            <img class="avatar-img"
-                                                 onerror="this.src='{{asset('public/assets/back-end/img/160x160/img1.jpg')}}'"
-                                                 src="{{asset('storage/app/public/admin')}}/{{auth('admin')->user()->image}}"
-                                                 alt="Owner image">
-                                        </div>
-                                        <div class="media-body">
-                                            <span class="card-title h5">{{ auth('admin')->user()->f_name }}</span>
-                                            <span class="card-text">{{ auth('admin')->user()->email }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="dropdown-divider"></div>
-
-                                <a class="dropdown-item"
-                                   href="{{route('admin.profile.update',auth('admin')->user()->id)}}">
-                                    <span class="text-truncate pr-2" title="Settings">Settings</span>
-                                </a>
-
-                                <div class="dropdown-divider"></div>
-
-                                <a class="dropdown-item" href="javascript:" onclick="Swal.fire({
-                                    title: 'Do you want to logout?',
-                                    showDenyButton: true,
-                                    showCancelButton: true,
-                                    confirmButtonColor: '#FC6A57',
-                                    cancelButtonColor: '#363636',
-                                    confirmButtonText: `Yes`,
-                                    denyButtonText: `Don't Logout`,
-                                    }).then((result) => {
-                                    if (result.value) {
-                                    location.href='{{route('admin.auth.logout')}}';
-                                    } else{
-                                    Swal.fire('Canceled', '', 'info')
-                                    }
-                                    })">
-                                    <span class="text-truncate pr-2" title="Sign out">{{\App\CPU\translate('sign_out')}}</span>
-                                </a>
-                            </div>
-                        </div>
-                        <!-- End Account -->
-                    </li>
-                </ul>
-                <!-- End Navbar -->
-            </div>
-            <!-- End Secondary Content -->
-        </div>
-        <div id="website_info" style="display:none;background-color:rgb(165, 164, 164);width:100%;border-radius:0px 0px 5px 5px;">
-            <div style="padding: 20px;">
-                
-                <div style="background:white;padding: 2px;border-radius: 5px;margin-top:10px;">
-                    <a title="Website home" class="p-2"
-                        href="{{route('home')}}" target="_blank">
-                        <i class="tio-globe"></i>
-                        {{--<span class="btn-status btn-sm-status btn-status-danger"></span>--}}
-                        {{\App\CPU\translate('view_website')}}
-                    </a>
-                </div>
-                @if(\App\CPU\Helpers::module_permission_check('support_section'))
-                    <div style="background:white;padding: 2px;border-radius: 5px;margin-top:10px;">
-                        <a class="p-2"
-                            href="{{route('admin.contact.list')}}">
-                            <i class="tio-email"></i>
-                            {{\App\CPU\translate('message')}}
-                            @php($message=\App\Model\Contact::where('seen',0)->count())
-                            @if($message!=0)
-                                <span class="">({{ $message }})</span>
-                            @endif
-                        </a>
-                    </div>
-                @endif
-        
-            </div>
-        </div>
-    </header>
-<!-- END ONLY DEV -->
-<main id="content" role="main" class="main pointer-event">
+@section('title', \App\CPU\translate('POS'))
+@section('content')
 <!-- Content -->
 	<!-- ========================= SECTION CONTENT ========================= -->
-	<section class="section-content padding-y-sm bg-default mt-1">
+	<section class="section-content pt-5">
 		<div class="container-fluid">
 			<div class="row">
-				<div class="col-md-8 card padding-y-sm ">
-                    <div class="card-header">
-                        <div class="row w-100 d-flex justify-content-between">
-                            <div class="col-sm-6 col-md-12 col-lg-5 mb-2">
-                                <form  class="col-sm-12 col-md-12 col-lg-12">
-                                    <!-- Search -->
-                                    <div class="input-group-overlay input-group-merge input-group-flush">
-                                        <div class="input-group-prepend">
-                                            <div class="input-group-text">
-                                                <i class="tio-search"></i>
-                                            </div>
-                                        </div>
-                                        <input id="search" autocomplete="off" type="text" value="{{$keyword?$keyword:''}}" 
-                                                name="search" class="form-control search-bar-input" placeholder="{{\App\CPU\translate('Search here')}}" 
-                                                aria-label="Search here">
-                                        <diV class="card search-card w-4" style="position: absolute;z-index: 1;width: 100%;">
-                                            <div id="search-box" class="card-body search-result-box" style="display: none;"></div>
-                                        </diV>
+				<div class="col-lg-7 mb-4 mb-lg-0">
+                    <div class="card">
+                        <h5 class="p-3 m-0 bg-light">{{\App\CPU\translate('Product_Section')}}</h5>
+                        <div class="px-3 py-4">
+                            <div class="row gy-1">
+                                <div class="col-sm-6">
+                                    <div class="input-group d-flex justify-content-end" >
+                                        <select name="category" id="category" class="form-control js-select2-custom w-100" title="select category" onchange="set_category_filter(this.value)">
+                                            <option value="">{{\App\CPU\translate('All Categories')}}</option>
+                                            @foreach ($categories as $item)
+                                            <option value="{{$item->id}}" {{$category==$item->id?'selected':''}}>{{$item->name}}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
-                                    <!-- End Search -->
-                                </form>
-                            </div>
-                            <div class="col-12 col-sm-6 col-md-12 col-lg-5">
-                                <div class="input-group float-right" >
-                                    <select name="category" id="category" class="form-control js-select2-custom mx-1" title="select category" onchange="set_category_filter(this.value)">
-                                        <option value="">{{\App\CPU\translate('All Categories')}}</option>
-                                        @foreach ($categories as $item)
-                                        <option value="{{$item->id}}" {{$category==$item->id?'selected':''}}>{{$item->name}}</option>
-                                        @endforeach
-                                    </select>
                                 </div>
+                                <div class="col-sm-6">
+                                    <form class="">
+                                        <!-- Search -->
+                                        <div class="input-group-overlay input-group-merge input-group-custom">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">
+                                                    <i class="tio-search"></i>
+                                                </div>
+                                            </div>
+                                            <input id="search" autocomplete="off" type="text" value="{{$keyword?$keyword:''}}"
+                                                    name="search" class="form-control search-bar-input" placeholder="{{\App\CPU\translate('Search by Name')}}"
+                                                    aria-label="Search here">
+                                            <diV class="card pos-search-card w-4 position-absolute z-index-1 w-100">
+                                                <div id="pos-search-box" class="card-body search-result-box d--none"></div>
+                                            </diV>
+                                        </div>
+                                        <!-- End Search -->
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body pt-2" id="items">
+                            <div class="pos-item-wrap">
+                                @foreach($products as $product)
+                                    @include('admin-views.pos._single_product',['product'=>$product])
+                                @endforeach
                             </div>
                         </div>
 
-                    </div>
-					<div class="card-body" id="items">
-                        <div class="d-flex flex-wrap mt-2 mb-3" style="justify-content: space-around;">
-                            @foreach($products as $product)
-                                <div class="item-box">
-                                    @include('admin-views.pos._single_product',['product'=>$product])
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="row">
-                            <div class="col-12" style="overflow-x: scroll;">
+                        <div class="table-responsive mt-4">
+                            <div class="px-4 d-flex justify-content-lg-end">
+                                <!-- Pagination -->
                                 {!!$products->withQueryString()->links()!!}
                             </div>
                         </div>
                     </div>
 				</div>
-				<div class="col-md-4 padding-y-sm mt-2">
-                    <div class="card pr-1 pl-1">
-                        
-                            <div class="row mt-2">
-                                <div class="form-group mt-1 col-12 w-i6">
-                                <select onchange="customer_change(this.value);" id='customer' name="customer_id" data-placeholder="Walk In Customer" class="js-data-example-ajax form-control">
+				<div class="col-lg-5 mb-5">
+                    <div class="card billing-section-wrap">
+                        <h5 class="p-3 m-0 bg-light">{{\App\CPU\translate('Billing_Section')}}</h5>
+                        <div class="card-body">
+                            <div class="form-group d-flex gap-2">
+                                <select onchange="customer_change(this.value);" id='customer' name="customer_id" data-placeholder="Walk In Customer" class="js-data-example-ajax form-control form-ellipsis">
                                     <option value="0">{{\App\CPU\translate('walking_customer')}}</option>
                                 </select>
-                                <!-- <button class="btn btn-sm btn-white btn-outline-primary ml-1" type="button" title="Add Customer">
-                                    <i class="tio-add-circle text-dark"></i>
-                                </button> -->
-                                </div>
+                                <button class="btn btn-success rounded text-nowrap" id="add_new_customer" type="button" data-toggle="modal" data-target="#add-customer" title="Add Customer">
+                                    <i class="tio-add"></i>
+                                    {{ \App\CPU\translate('customer')}}
+                                </button>
                             </div>
-                            <div class="row">
-                                <div class="form-group mt-1 col-12 col-lg-6 mb-0">
-                                    <button class="w-100 d-inline-block btn btn-success rounded" id="add_new_customer" type="button" data-toggle="modal" data-target="#add-customer" title="Add Customer">
-                                       <i class="tio-add-circle-outlined"></i> {{ \App\CPU\translate('customer')}}
-                                    </button>
-                                </div>
-                                <div class="form-group mt-1 col-12 col-lg-6 mb-0">
-                                    <a class="w-100 d-inline-block btn btn-warning rounded" onclick="new_order()">
-                                        {{ \App\CPU\translate('new_order')}}
-                                    </a>
-                                </div>
+                            <div class="form-group">
+                                <label class="text-capitalize title-color d-flex align-items-center flex-wrap gap-1">
+                                    {{\App\CPU\translate('current_customer')}} :
+                                    <span class="mb-0" id="current_customer"></span>
+                                </label>
                             </div>
-                            <div class="row mt-2">
-                                <div class="form-group col-12 mb-0">
-                                    <label class="input-label text-capitalize border p-1" >{{\App\CPU\translate('current_customer')}} : <span class="style-i4 mb-0 p-1" id="current_customer"></span></label>
-                                </div>
+                            <div class="d-flex gap-2 flex-wrap flex-sm-nowrap mb-3">
+                                <select id='cart_id' name="cart_id" class=" form-control js-select2-custom" onchange="cart_change(this.value);">
+                                </select>
+                                <a class="btn btn-secondary rounded text-nowrap" onclick="clear_cart()">
+                                    {{ \App\CPU\translate('clear_cart')}}
+                                </a>
+                                <a class="btn btn-info rounded text-nowrap" onclick="new_order()">
+                                    {{ \App\CPU\translate('new_order')}}
+                                </a>
                             </div>
-                            <div class="row mb-2">
-                                <div class="form-group mt-1 col-12 col-lg-6 mt-2 mb-0">
-                                    <select id='cart_id' name="cart_id"
-                                            class=" form-control js-select2-custom" onchange="cart_change(this.value);">
-                                    </select>
-                                </div>
-    
-                                <div class="form-group mt-1 col-12 col-lg-6 mt-2 mb-0">
-                                    <a class="w-100 d-inline-block btn btn-danger rounded" onclick="clear_cart()">
-                                        {{ \App\CPU\translate('clear_cart')}}
-                                    </a>
-                                </div>
+                            <div id="cart" class="pb-5">
+                                @include('admin-views.pos._cart',['cart_id'=>$cart_id])
                             </div>
-                        
-                        <div class='w-100' id="cart">
-                            @include('admin-views.pos._cart',['cart_id'=>$cart_id])
                         </div>
                     </div>
 				</div>
@@ -401,8 +99,8 @@
 	</section>
 
     <!-- End Content -->
-    <div class="modal fade" id="quick-view" tabindex="-1">
-        <div class="modal-dialog">
+    <div class="modal fade pt-5" id="quick-view" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content" id="quick-view-modal">
 
             </div>
@@ -412,7 +110,7 @@
     @php($order=\App\Model\Order::find(session('last_order')))
     @if($order)
     @php(session(['last_order'=> false]))
-    <div class="modal fade" id="print-invoice" tabindex="-1">
+    <div class="modal fade py-5" id="print-invoice" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -421,16 +119,16 @@
                     <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body row" style="font-family: emoji;">
+                <div class="modal-body row">
                     <div class="col-md-12">
                         <center>
-                            <input id="print_invoice" type="button" class="btn btn-primary non-printable" onclick="printDiv('printableArea')"
-                                value="Proceed, If thermal printer is ready."/>
+                            <input id="print_invoice" type="button" class="btn btn--primary non-printable" onclick="printDiv('printableArea')"
+                                value="{{\App\CPU\translate('proceed')}}, {{\App\CPU\translate('if_thermal_printer_is_ready')}}"/>
                             <a href="{{url()->previous()}}" class="btn btn-danger non-printable">{{\App\CPU\translate('Back')}}</a>
                         </center>
                         <hr class="non-printable">
                     </div>
-                    <div class="row" id="printableArea" style="margin: auto;">
+                    <div class="row m-auto" id="printableArea">
                         @include('admin-views.pos.order.invoice')
                     </div>
 
@@ -474,7 +172,7 @@
                                     <div class="form-group">
                                         <label class="input-label" >{{\App\CPU\translate('email')}}<span
                                             class="input-label-secondary text-danger">*</span></label>
-                                        <input type="email" name="email" class="form-control" value="{{ old('email') }}"  placeholder="{{\App\CPU\translate('Ex_:_ex@example.com')}}" required>
+                                        <input type="email" name="email" class="form-control" value="{{ old('email') }}"  placeholder="{{\App\CPU\translate('Ex')}}: ex@example.com" required>
                                     </div>
                                 </div>
                                 <div class="col-12 col-lg-6">
@@ -515,47 +213,18 @@
                                     </div>
                                 </div>
                             </div>
-                        
+
                         <hr>
-                        <button type="submit" id="submit_new_customer" class="btn btn-primary">{{\App\CPU\translate('submit')}}</button>
+                        <button type="submit" id="submit_new_customer" class="btn btn--primary">{{\App\CPU\translate('submit')}}</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-</main>
-<!-- ========== END MAIN CONTENT ========== -->
-<!-- JS Implementing Plugins -->
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-<!-- JS Front -->
-<script src="{{asset('public/assets/back-end')}}/js/vendor.min.js"></script>
-<script src="{{asset('public/assets/back-end')}}/js/theme.min.js"></script>
-<script src="{{asset('public/assets/back-end')}}/js/sweet_alert.js"></script>
-<script src="{{asset('public/assets/back-end')}}/js/toastr.js"></script>
-{!! Toastr::message() !!}
+@endsection
 
-@if ($errors->any())
-    <script>
-        @foreach($errors->all() as $error)
-        toastr.error('{{$error}}', Error, {
-            CloseButton: true,
-            ProgressBar: true
-        });
-        @endforeach
-    </script>
-@endif
-<script>
-    function openInfoWeb()
-    {
-        var x = document.getElementById("website_info");
-        if (x.style.display === "none") {
-            x.style.display = "block";
-        } else {
-            x.style.display = "none";
-        }
-    }
-</script>
+@push('script_2')
 <script>
 
         function delay(callback, ms) {
@@ -570,11 +239,6 @@
         }
 
     $(document).on('ready', function () {
-        // INITIALIZATION OF UNFOLD
-        // =======================================================
-        $('.js-hs-unfold-invoker').each(function () {
-            var unfold = new HSUnfold($(this)).init();
-        });
         $.ajax({
             url: '{{route('admin.pos.get-cart-ids')}}',
             type: 'GET',
@@ -593,13 +257,31 @@
                     $('#cart_id').html(output);
                     $('#current_customer').text(data.current_customer);
                     $('#cart').empty().html(data.view);
-                    
+
             },
             complete: function () {
                 $('#loading').addClass('d-none');
             },
         });
     });
+
+    function form_submit(){
+        Swal.fire({
+            title: '{{\App\CPU\translate('Are you sure')}}?',
+            type: 'warning',
+            showCancelButton: true,
+            showConfirmButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'No',
+            confirmButtonText: 'Yes',
+            reverseButtons: true
+        }).then(function (result) {
+            if(result.value){
+                $('#order_place').submit();
+            }
+        });
+    }
 </script>
 <script>
     document.addEventListener("keydown", function(event) {
@@ -647,18 +329,18 @@
     if (event.altKey && event.code === "KeyQ")
     {
         $('#search').focus();
-        $("#search-box").css("display", "none");
+        $("#-pos-search-box").css("display", "none");
         event.preventDefault();
     }
     if (event.altKey && event.code === "KeyE")
     {
-        $("#search-box").css("display", "none");
+        $("#pos-search-box").css("display", "none");
         $('#extra_discount').click();
         event.preventDefault();
     }
     if (event.altKey && event.code === "KeyD")
     {
-        $("#search-box").css("display", "none");
+        $("#pos-search-box").css("display", "none");
         $('#coupon_discount').click();
         event.preventDefault();
     }
@@ -677,18 +359,18 @@
         new_order();
         event.preventDefault();
     }
-    
+
 });
 </script>
 <!-- JS Plugins Init. -->
 <script>
     jQuery(".search-bar-input").on('keyup',function () {
-        //$('#search-box').removeClass('d-none');
-        $(".search-card").removeClass('d-none').show();
+        //$('#pos-search-box').removeClass('d-none');
+        $(".pos-search-card").removeClass('d-none').show();
         let name = $(".search-bar-input").val();
         //console.log(name);
         if (name.length >0) {
-            $('#search-box').removeClass('d-none').show();
+            $('#pos-search-box').removeClass('d-none').show();
             $.get({
                 url: '{{route('admin.pos.search-products')}}',
                 dataType: 'json',
@@ -825,7 +507,7 @@
 
                     $('.modal-backdrop').addClass('d-none');
                     $('#cart').empty().html(data.view);
-                    
+
                     $('#search').focus();
                 },
                 complete: function () {
@@ -846,7 +528,7 @@
     "use strict";
     function coupon_discount()
     {
-    
+
         let  coupon_code = $('#coupon_code').val();
 
         $.ajaxSetup({
@@ -892,7 +574,7 @@
                     }
 
                     $('#cart').empty().html(data.view);
-                    
+
                     $('#search').focus();
                 },
                 complete: function () {
@@ -916,7 +598,7 @@
         document.body.innerHTML = printContents;
         window.print();
         document.body.innerHTML = originalContents;
-        location.reload();
+        // location.reload();
     }
 
     function set_category_filter(id) {
@@ -974,17 +656,11 @@
             data: {
                 product_id: product_id
             },
-            dataType: 'json', // added data type
+            dataType: 'json',
             beforeSend: function () {
                 $('#loading').show();
             },
             success: function (data) {
-                console.log("success...");
-                console.log(data);
-
-                // $("#quick-view").removeClass('fade');
-                // $("#quick-view").addClass('show');
-
                 $('#quick-view').modal('show');
                 $('#quick-view-modal').empty().html(data.view);
             },
@@ -992,25 +668,6 @@
                 $('#loading').hide();
             },
         });
-
-        {{--$.get({--}}
-        {{--    url: '{{route('admin.pos.quick-view')}}',--}}
-        {{--    dataType: 'json',--}}
-        {{--    data: {--}}
-        {{--        product_id: product_id--}}
-        {{--    },--}}
-        {{--    beforeSend: function () {--}}
-        {{--        $('#loading').show();--}}
-        {{--    },--}}
-        {{--    success: function (data) {--}}
-        {{--        console.log("success...")--}}
-        {{--        $('#quick-view').modal('show');--}}
-        {{--        $('#quick-view-modal').empty().html(data.view);--}}
-        {{--    },--}}
-        {{--    complete: function () {--}}
-        {{--        $('#loading').hide();--}}
-        {{--    },--}}
-        {{--});--}}
     }
 
     function checkAddToCartValidity() {
@@ -1022,7 +679,8 @@
         $.each(names, function () { // then count them
             count++;
         });
-        if ($('input:radio:checked').length == count) {
+
+        if (($('input:radio:checked').length - 1) == count) {
             return true;
         }
         return false;
@@ -1123,7 +781,7 @@
                 url: '{{ route('admin.pos.variant_price') }}',
                 data: $('#add-to-cart-form').serializeArray(),
                 success: function (data) {
-                    
+
                     $('#add-to-cart-form #chosen_price_div').removeClass('d-none');
                     $('#add-to-cart-form #chosen_price_div #chosen_price').html(data.price);
                     $('#set-discount-amount').html(data.discount);
@@ -1146,7 +804,7 @@
                     $('#loading').show();
                 },
                 success: function (data) {
-                    
+
                     if (data.data == 1) {
                         Swal.fire({
                             icon: 'info',
@@ -1189,7 +847,7 @@
     function removeFromCart(key) {
         //console.log(key);
         $.post('{{ route('admin.pos.remove-from-cart') }}', {_token: '{{ csrf_token() }}', key: key}, function (data) {
-            
+
             $('#cart').empty().html(data.view);
             if (data.errors) {
                 for (var i = 0; i < data.errors.length; i++) {
@@ -1200,13 +858,13 @@
                 }
             } else {
                 //updateCart();
-                
+
                 toastr.info('{{ \App\CPU\translate("Item has been removed from cart")}}', {
                     CloseButton: true,
                     ProgressBar: true
                 });
             }
-            
+
 
         });
     }
@@ -1246,8 +904,8 @@
     });
 
 
-    function updateQuantity(key,qty,e){
-        
+    function updateQuantity(key,qty,e, variant=null){
+
         if(qty!==""){
             var element = $( e.target );
             var minValue = parseInt(element.attr('min'));
@@ -1255,10 +913,10 @@
             var valueCurrent = parseInt(element.val());
 
             //var key = element.data('key');
-        
-            $.post('{{ route('admin.pos.updateQuantity') }}', {_token: '{{ csrf_token() }}', key: key, quantity:qty}, function (data) {
-                
-                if(data.qty<0)
+
+            $.post('{{ route('admin.pos.updateQuantity') }}', {_token: '{{ csrf_token() }}', key: key, quantity:qty, variant:variant}, function (data) {
+
+                if(data.product_type==='physical' && data.qty<0)
                 {
                     toastr.warning('{{\App\CPU\translate('product_quantity_is_not_enough!')}}', {
                         CloseButton: true,
@@ -1284,10 +942,10 @@
             var element = $( e.target );
             var minValue = parseInt(element.attr('min'));
             var valueCurrent = parseInt(element.val());
-        
-            $.post('{{ route('admin.pos.updateQuantity') }}', {_token: '{{ csrf_token() }}', key: key, quantity:minValue}, function (data) {
-                
-                if(data.qty<0)
+
+            $.post('{{ route('admin.pos.updateQuantity') }}', {_token: '{{ csrf_token() }}', key: key, quantity:minValue, variant:variant}, function (data) {
+
+                if(data.product_type==='physical' && data.qty<0)
                 {
                     toastr.warning('{{\App\CPU\translate('product_quantity_is_not_enough!')}}', {
                         CloseButton: true,
@@ -1310,7 +968,7 @@
                 $('#cart').empty().html(data.view);
             });
         }
-        
+
         // Allow: backspace, delete, tab, escape, enter and .
         if(e.type == 'keydown')
         {
@@ -1332,9 +990,9 @@
 
     // INITIALIZATION OF SELECT2
     // =======================================================
-    $('.js-select2-custom').each(function () {
-        var select2 = $.HSCore.components.HSSelect2.init($(this));
-    });
+    // $('.js-select2-custom').each(function () {
+    //     var select2 = $.HSCore.components.HSSelect2.init($(this));
+    // });
 
     $('.js-data-example-ajax').select2({
         ajax: {
@@ -1374,5 +1032,4 @@
 <script>
     if (/MSIE \d|Trident.*rv:/.test(navigator.userAgent)) document.write('<script src="{{asset('public/assets/admin')}}/vendor/babel-polyfill/polyfill.min.js"><\/script>');
 </script>
-</body>
-</html>
+@endpush

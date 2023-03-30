@@ -3,153 +3,80 @@
 @push('css_or_js')
     <!-- Custom styles for this page -->
     <link href="{{asset('public/assets/back-end')}}/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
-    <style>
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 48px;
-            height: 23px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 15px;
-            width: 15px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        input:checked + .slider {
-            background-color: #377dff;
-        }
-
-        input:focus + .slider {
-            background-color: #377dff;
-        }
-
-        input:checked + .slider:before {
-            -webkit-transform: translateX(26px);
-            -ms-transform: translateX(26px);
-            transform: translateX(26px);
-        }
-
-        /* Rounded sliders */
-        .slider.round {
-            border-radius: 34px;
-        }
-
-        .slider.round:before {
-            border-radius: 50%;
-        }
-
-        .for-addFaq {
-            float: right;
-        }
-
-        @media (max-width: 500px) {
-            .for-addFaq {
-                float: none !important;
-            }
-        }
-
-    </style>
 @endpush
 
 @section('content')
     <div class="content container-fluid">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{\App\CPU\translate('Dashboard')}}</a>
-                </li>
-                <li class="breadcrumb-item"
-                    aria-current="page">{{\App\CPU\translate('Dashboard')}}{{\App\CPU\translate('help_topic')}}</li>
-            </ol>
-        </nav>
+        <!-- Page Title -->
+        <div class="mb-3">
+            <h2 class="h1 mb-0 text-capitalize d-flex align-items-center gap-2">
+                <img src="{{asset('/public/assets/back-end/img/Pages.png')}}" width="20" alt="">
+                {{\App\CPU\translate('pages')}}
+            </h2>
+        </div>
+        <!-- End Page Title -->
 
-        <div class="row" style="margin-top: 20px">
+        <!-- Inlile Menu -->
+    @include('admin-views.business-settings.pages-inline-menu')
+    <!-- End Inlile Menu -->
+
+        <div class="row">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h5>{{\App\CPU\translate('help_topic')}} {{\App\CPU\translate('Table')}} </h5>
-                        <button class="btn btn-primary btn-icon-split for-addFaq" data-toggle="modal"
+                        <h5 class="mb-0">{{\App\CPU\translate('help_topic')}} {{\App\CPU\translate('Table')}} </h5>
+                        <button class="btn btn--primary btn-icon-split for-addFaq" data-toggle="modal"
                                 data-target="#addModal">
-                            <i class="tio-add-circle"></i>
+                            <i class="tio-add"></i>
                             <span class="text">{{\App\CPU\translate('Add')}} {{\App\CPU\translate('faq')}}  </span>
                         </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body px-0">
                         <div class="table-responsive">
-                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0"
-                                   style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
-                                <thead>
+                            <table
+                                class="table table-hover table-borderless table-thead-bordered table-align-middle card-table w-100"
+                                id="dataTable" cellspacing="0"
+                                style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
+                                <thead class="thead-light thead-50 text-capitalize">
                                 <tr>
-                                    <th scope="col">{{\App\CPU\translate('SL')}}#</th>
-                                    <th scope="col">{{\App\CPU\translate('Question')}}</th>
-                                    <th scope="col">{{\App\CPU\translate('Answer')}}</th>
-                                    <th scope="col">{{\App\CPU\translate('Ranking')}}</th>
-                                    <th scope="col">{{\App\CPU\translate('Status')}} </th>
-                                    <th scope="col">{{\App\CPU\translate('Action')}}</th>
+                                    <th>{{\App\CPU\translate('SL')}}</th>
+                                    <th>{{\App\CPU\translate('Question')}}</th>
+                                    <th class="min-w-200">{{\App\CPU\translate('Answer')}}</th>
+                                    <th>{{\App\CPU\translate('Ranking')}}</th>
+                                    <th class="text-center">{{\App\CPU\translate('Status')}} </th>
+                                    <th class="text-center">{{\App\CPU\translate('Action')}}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 @foreach($helps as $k=>$help)
-                                    <tr>
-                                        <td scope="row">{{$k+1}}</td>
+                                    <tr id="data-{{$help->id}}">
+                                        <td>{{$k+1}}</td>
                                         <td>{{$help['question']}}</td>
                                         <td>{{$help['answer']}}</td>
                                         <td>{{$help['ranking']}}</td>
 
                                         <td>
-                                            <label class="switch">
-                                                <input type="checkbox" class="status status_id"
+                                            <label class="switcher mx-auto">
+                                                <input type="checkbox" class="switcher_input status_id"
                                                        data-id="{{ $help->id }}" {{$help->status == 1?'checked':''}}>
-                                                <span class="slider round"></span>
+                                                <span class="switcher_control"></span>
                                             </label>
                                         </td>
                                         <td>
-                                            
-                                            <div class="d-flex">
-                                                <a class="btn btn-primary btn-sm edit m-1" style="cursor: pointer;"
-                                                    data-toggle="modal" data-target="#editModal"
-                                                    title="{{ \App\CPU\translate('Edit')}}"
-                                                    data-id="{{ $help->id }}">
+                                            <div class="d-flex justify-content-center gap-10">
+                                                <a class="btn btn-outline--primary btn-sm edit"
+                                                   data-toggle="modal" data-target="#editModal"
+                                                   title="{{ \App\CPU\translate('Edit')}}"
+                                                   data-id="{{ $help->id }}">
                                                     <i class="tio-edit"></i>
                                                 </a>
-                                                <a  class="btn btn-danger btn-sm delete m-1" 
-                                                    style="cursor: pointer;"
-                                                    title="{{ \App\CPU\translate('Delete')}}"
-                                                    id="{{$help['id']}}"> 
-                                                    <i class="tio-add-to-trash"></i>
+                                                <a class="btn btn-outline-danger btn-sm delete"
+                                                   title="{{ \App\CPU\translate('Delete')}}"
+                                                   id="{{$help['id']}}">
+                                                    <i class="tio-delete"></i>
                                                 </a>
                                             </div>
-                                                    
-                                                
                                         </td>
-
-
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -172,11 +99,13 @@
                     </div>
                     <form action="{{ route('admin.helpTopic.add-new') }}" method="post" id="addForm">
                         @csrf
-                        <div class="modal-body" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
+                        <div class="modal-body"
+                             style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
 
                             <div class="form-group">
                                 <label>{{\App\CPU\translate('Question')}}</label>
-                                <input type="text" class="form-control" name="question" placeholder="{{\App\CPU\translate('Type Question')}}">
+                                <input type="text" class="form-control" name="question"
+                                       placeholder="{{\App\CPU\translate('Type Question')}}">
                             </div>
 
 
@@ -189,25 +118,28 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <div class="control-label">{{\App\CPU\translate('Status')}}</div>
-                                        <label class="custom-switch" style="margin-left: -2.25rem;margin-top: 10px;">
+                                        <label class="mt-2">
                                             <input type="checkbox" name="status" id="e_status" value="1"
                                                    class="custom-switch-input">
                                             <span class="custom-switch-indicator"></span>
-                                            <span class="custom-switch-description">{{\App\CPU\translate('Active')}}</span>
+                                            <span
+                                                class="custom-switch-description">{{\App\CPU\translate('Active')}}</span>
                                         </label>
                                     </div>
                                 </div>
 
                                 <div class="col-md-6">
                                     <label for="ranking">{{\App\CPU\translate('Ranking')}}</label>
-                                    <input type="number" name="ranking" class="form-control" autofoucs>
+                                    <input type="number" name="ranking" class="form-control">
                                 </div>
                             </div>
 
                         </div>
                         <div class="modal-footer bg-whitesmoke br">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{\App\CPU\translate('Close')}}</button>
-                            <button class="btn btn-primary">{{\App\CPU\translate('Save')}}</button>
+                            <button type="button" class="btn btn-secondary"
+                                    data-dismiss="modal">{{\App\CPU\translate('Close')}}</button>
+                            <button class="btn btn--primary">{{\App\CPU\translate('Save')}}</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -225,14 +157,16 @@
                             aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="" method="post" id="editForm" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
+                <form action="" method="post" id="editForm"
+                      style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
                     @csrf
                     {{-- @method('put') --}}
                     <div class="modal-body">
 
                         <div class="form-group">
                             <label>{{\App\CPU\translate('Question')}}</label>
-                            <input type="text" class="form-control" name="question" placeholder="{{\App\CPU\translate('Type Question')}}"
+                            <input type="text" class="form-control" name="question"
+                                   placeholder="{{\App\CPU\translate('Type Question')}}"
                                    id="e_question" class="e_name">
                         </div>
 
@@ -240,27 +174,22 @@
                         <div class="form-group">
                             <label>{{\App\CPU\translate('Answer')}}</label>
                             <textarea class="form-control" name="answer" cols="5"
-                                      rows="5" placeholder="{{\App\CPU\translate('Type Answer')}}" id="e_answer"></textarea>
+                                      rows="5" placeholder="{{\App\CPU\translate('Type Answer')}}"
+                                      id="e_answer"></textarea>
                         </div>
                         <div class="row">
                             <div class="col-md-4">
-
-                            </div>
-
-                            <div class="col-md-4">
                                 <label for="ranking">{{\App\CPU\translate('Ranking')}}</label>
-                                <input type="number" name="ranking" class="form-control" id="e_ranking" required
-                                       autofoucs>
-                            </div>
-                            <div class="col-md-4">
-
+                                <input type="number" name="ranking" class="form-control" id="e_ranking" required>
                             </div>
                         </div>
 
                     </div>
                     <div class="modal-footer bg-whitesmoke br">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{\App\CPU\translate('Close')}}</button>
-                        <button class="btn btn-primary">{{\App\CPU\translate('update')}}</button>
+                        <button type="button" class="btn btn-secondary"
+                                data-dismiss="modal">{{\App\CPU\translate('Close')}}</button>
+                        <button class="btn btn--primary">{{\App\CPU\translate('update')}}</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -289,7 +218,6 @@
                 dataType: 'json',
                 success: function (res) {
                     toastr.success(res.success);
-                    window.location.reload();
                 }
 
             });
@@ -324,7 +252,7 @@
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: '{{\App\CPU\translate('Yes, delete it')}}!',
+                confirmButtonText: '{{\App\CPU\translate('Yes')}}, {{\App\CPU\translate('delete it')}}!',
                 type: 'warning',
                 reverseButtons: true
             }).then((result) => {
@@ -340,13 +268,11 @@
                         data: {id: id},
                         success: function () {
                             toastr.success('{{\App\CPU\translate('FAQ deleted successfully')}}');
-                            location.reload();
+                            $('#data-' + id).hide();
                         }
                     });
                 }
             })
         });
-
-
     </script>
 @endpush

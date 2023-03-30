@@ -11,7 +11,9 @@
                 <div class="mar-ver pad-btm text-center">
                     <h1 class="h3">Purchase Code</h1>
                     <p>
-                        <?php echo str_rot13('<n uers="uggcf://AhyyWhatyr.pbz">Ahyyrq Ol AhyyWhatyr.pbz</n>');?> 
+                        Provide your codecanyon purchase code.<br>
+                        <a href="https://help.market.envato.com/hc/en-us/articles/202822600-Where-Is-My-Purchase-Code"
+                           class="text-info">Where to get purchase code?</a>
                     </p>
                 </div>
                 <div class="text-muted font-13">

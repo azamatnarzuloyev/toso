@@ -27,26 +27,25 @@
             </ol>
         </nav>
 
-        <div class="row" style="margin-top: 20px">
+        <div class="row __mt-20">
             <div class="col-md-12">
                 <div class="card">
                     @if($pro->first() != null && $pro->first()->added_by == 'in_house')
                         <div class="card-header">
                             <h5>{{\App\CPU\translate('product_table')}}</h5>
-                            <a href="{{route('admin.product.add-new')}}" class="btn btn-primary  float-right">
+                            <a href="{{route('admin.product.add-new')}}" class="btn btn--primary  float-right">
                                 <i class="tio-add-circle"></i>
                                 <span class="text">{{\App\CPU\translate('Add new product')}}</span>
                             </a>
                         </div>
                     @endif
-                    <div class="card-body" style="padding: 0">
+                    <div class="card-body p-0">
                         <div class="table-responsive">
                             <table id="datatable"
-                                   class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table"
-                                   style="width: 100%">
+                                   class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table w-100">
                                 <thead class="thead-light">
                                 <tr>
-                                    <th>{{\App\CPU\translate('SL#')}}</th>
+                                    <th>{{\App\CPU\translate('SL')}}</th>
                                     <th>{{\App\CPU\translate('Product Name')}}</th>
                                     <th>{{\App\CPU\translate('purchase_price')}}</th>
                                     <th>{{\App\CPU\translate('selling_price')}}</th>
@@ -55,7 +54,7 @@
                                         <th>{{\App\CPU\translate('featured')}}</th>
                                         <th>{{\App\CPU\translate('Active')}} {{\App\CPU\translate('status')}}</th>
                                     @endif
-                                    <th style="width: 5px" class="text-center">{{\App\CPU\translate('Action')}}</th>
+                                    <th class="text-center __w-5px">{{\App\CPU\translate('Action')}}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -99,7 +98,7 @@
                                             </td>
                                         @endif
                                         <td>
-                                            <a class="btn btn-primary btn-sm"
+                                            <a class="btn btn--primary btn-sm"
                                                href="{{route('admin.product.edit',[$p['id']])}}">
                                                 <i class="tio-edit"></i>{{\App\CPU\translate('Edit')}}
                                             </a>

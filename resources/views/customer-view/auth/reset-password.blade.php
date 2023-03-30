@@ -24,7 +24,7 @@
                     <form class="card-body needs-validation" novalidate method="POST"
                           action="{{request('customer.auth.password-recovery')}}">
                         @csrf
-                        <div class="form-group" style="display: none">
+                        <div class="form-group d-none">
                             <input type="text" name="reset_token" value="{{$token}}" required>
                         </div>
 
@@ -55,7 +55,7 @@
                                 </div>
                             </div>
 
-                        <button class="btn btn-primary" type="submit">{{\App\CPU\translate('Reset password')}}</button>
+                        <button class="btn btn--primary" type="submit">{{\App\CPU\translate('Reset password')}}</button>
                     </form>
                 </div>
             </div>

@@ -1,12 +1,11 @@
 @if(isset($product))
     @php($overallRating = \App\CPU\ProductManager::get_overall_rating($product->reviews))
-    <div class="flash_deal_product rtl" style="cursor: pointer; height:150px;{{Session::get('direction') === "rtl" ? 'margin-right:6px;' : 'margin-left:6px;'}}"
-         onclick="location.href='{{route('product',$product->slug)}}'">
+    <div class="flash_deal_product rtl" onclick="location.href='{{route('product',$product->slug)}}'">
         @if($product->discount > 0)
         <div class="d-flex" style="top:0;position:absolute;">
             <span class="for-discoutn-value p-1 pl-2 pr-2" style="{{Session::get('direction') === "rtl" ? 'border-radius:0px 5px' : 'border-radius:5px 0px'}};background:#FF5555 !important;">
                 @if ($product->discount_type == 'percent')
-                    {{round($product->discount,$decimal_point_settings)}}%
+                    {{round($product->discount,(!empty($decimal_point_settings) ? $decimal_point_settings: 0))}}%
                 @elseif($product->discount_type =='flat')
                     {{\App\CPU\Helpers::currency_converter($product->discount)}}
                 @endif {{\App\CPU\translate('off')}}
@@ -17,7 +16,7 @@
             <div class="d-flex align-items-center justify-content-center"
                  style="padding-{{Session::get('direction') === "rtl" ?'right:12px':'left:12px'}};padding-top:12px;">
                 <div class="flash-deals-background-image">
-                    <img style="height: 125px!important;width:125px!important;border-radius:5px;"
+                    <img class="__img-125px"
                      src="{{\App\CPU\ProductManager::product_image_path('thumbnail')}}/{{$product['thumbnail']}}"
                      onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'"/>
                 </div>
@@ -51,9 +50,9 @@
                     </div>
                     <div class="flash-product-price">
                         {{\App\CPU\Helpers::currency_converter($product->unit_price-\App\CPU\Helpers::get_product_discount($product,$product->unit_price))}}
-                        
+
                     </div>
-                    
+
                 </div>
             </div>
         </div>

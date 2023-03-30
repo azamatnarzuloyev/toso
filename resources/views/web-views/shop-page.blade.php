@@ -30,187 +30,32 @@
 
     <link href="{{asset('public/assets/front-end')}}/css/home.css" rel="stylesheet">
     <style>
-        .headerTitle {
-            font-size: 34px;
-            font-weight: bolder;
-            margin-top: 3rem;
-        }
 
         .page-item.active .page-link {
-            background-color: {{$web_config['primary_color']}}                       !important;
+            background-color: {{$web_config['primary_color']}}                        !important;
         }
 
-        .page-item.active > .page-link {
-            box-shadow: 0 0 black !important;
-        }
-
-        /***********************************/
-        .sidepanel {
-            width: 0;
-            position: fixed;
-            z-index: 6;
-            height: 500px;
-            top: 0;
-            left: 0;
-            background-color: #ffffff;
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 40px;
-        }
-
-        .sidepanel a {
-            padding: 8px 8px 8px 32px;
-            text-decoration: none;
-            font-size: 25px;
-            color: #818181;
-            display: block;
-            transition: 0.3s;
-        }
-
-        .sidepanel a:hover {
-            color: #f1f1f1;
-        }
-
-        .sidepanel .closebtn {
-            position: absolute;
-            top: 0;
-            right: 0px;
-            font-size: 36px;
-        }
-
-        .openbtn {
-            font-size: 18px;
-            cursor: pointer;
-            background-color: #ffffff;
-            color: #373f50;
-            width: 40%;
-            border: none;
-        }
-
-        .openbtn:hover {
-            background-color: #444;
-        }
-
-        .for-display {
-            display: block !important;
-        }
-
-        @media (max-width: 360px) {
-            .openbtn {
-                width: 59%;
-            }
-
-            .for-shoting-mobile {
-                margin-right: 0% !important;
-            }
-
-            .for-mobile {
-
-                margin-left: 10% !important;
-            }
-
-        }
-
-        @media screen and (min-width: 375px) {
-
-            .for-shoting-mobile {
-                margin-right: 7% !important;
-            }
-
-            .custom-select {
-                width: 86px;
-            }
-
-
-        }
-
-        @media (max-width: 500px) {
-            .for-mobile {
-
-                margin-left: 27%;
-            }
-
-            .openbtn:hover {
-                background-color: #fff;
-            }
-
-            .for-display {
-                display: flex !important;
-            }
-
-            .for-shoting-mobile {
-                margin-right: 11%;
-            }
-
-            .for-tab-display {
-                display: none !important;
-            }
-
-            .openbtn-tab {
-                margin-top: 0 !important;
-            }
-            .seller-details {
-                justify-content: center !important;
-                padding-bottom: 8px;
-            }
-
-        }
-
-        @media screen and (min-width: 500px) {
-            .openbtn {
-                display: none !important;
-            }
-            
-
-        }
-
-        @media screen and (min-width: 800px) {
-
-
-            .for-tab-display {
-                display: none !important;
-            }
-
-        }
-
-        @media (max-width: 768px) {
-            .headerTitle {
-                font-size: 23px;
-
-            }
-
-            .openbtn-tab {
-                margin-top: 3rem;
-                display: inline-block !important;
-            }
-
-            .for-tab-display {
-                display: inline;
-            }
-
-        }
-
-
+        /*  */
     </style>
 @endpush
 
 @section('content')
 
-@php($decimal_point_settings = \App\CPU\Helpers::get_business_settings('decimal_point_settings'))
+    @php($decimal_point_settings = \App\CPU\Helpers::get_business_settings('decimal_point_settings'))
     <!-- Page Content-->
-    <div class="container pb-5 mb-2 mb-md-4">
+    <div class="container pb-5 mb-2 mb-md-4 __inline-67">
         <div class="row rtl">
             <!-- banner  -->
             <div class="col-lg-12 mt-2">
-                <div style="background: white">
+                <div class="bg-white">
                     @if($shop['id'] != 0)
-                        <img style="width:100%; height: auto; max-height: 13.75rem; border-radius: 10px;"
+                        <img class="__shop-page-banner"
                              src="{{asset('storage/app/public/shop/banner')}}/{{$shop->banner}}"
                              onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'"
                              alt="">
                     @else
                         @php($banner=\App\CPU\Helpers::get_business_settings('shop_banner'))
-                        <img style="width:100%; height: auto; max-height: 13.75rem; border-radius: 10px;"
+                        <img class="__shop-page-banner"
                              src="{{asset("storage/app/public/shop")}}/{{$banner??""}}"
                              onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'"
                              alt="">
@@ -218,31 +63,59 @@
                 </div>
             </div>
             {{-- sidebar opener --}}
-            <div class="col-md-3 mt-2 rtl" style=" width: 100%; text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
-                <a class="openbtn-tab" style="" onclick="openNav()">
-                    <div style="font-size: 20px; font-weight: 600; text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}}" class="for-tab-display"> ☰ {{\App\CPU\translate('categories')}}</div>
+            <div class="col-md-12 mt-2 rtl"
+                 style=" text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
+                <a class="openbtn-tab __text-20px font-semibold" onclick="openNav()">
+                    <div style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}}"
+                         class="for-tab-display"> ☰ {{\App\CPU\translate('categories')}}</div>
                 </a>
             </div>
             {{-- seller info+contact --}}
             <div class="col-lg-12 rtl" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
-                <div style="border-radius:10px;background: #ffffff;{{Session::get('direction') === "rtl" ? 'padding-left:5px;' : 'padding-left:5px;'}}">
-                    <div class="row d-flex justify-content-between seller-details" style="">
+                <div class="__rounded-10 bg-white"
+                     style="{{Session::get('direction') === "rtl" ? 'padding-left:5px;' : 'padding-left:5px;'}}">
+                    <div class="row d-flex justify-content-between seller-details">
                         {{-- logo --}}
-                        <div class="d-flex" style="padding:8px;">
+                        <div class="d-flex align-items-start p-2">
                             <div class="">
+
                                 @if($shop['id'] != 0)
-                                    <img style="max-height: 115px;width:120px; border-radius: 5px;"
-                                         src="{{asset('storage/app/public/shop')}}/{{$shop->image}}"
-                                         onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'"
-                                         alt="">
+                                    <div class="position-relative">
+                                        @if($seller_temporary_close || $inhouse_temporary_close)
+                                            <span class="temporary-closed-details">
+                                                <span>{{\App\CPU\translate('closed_now')}}</span>
+                                            </span>
+                                        @elseif(($seller_id==0 && $inhouse_vacation_status && $current_date >= $inhouse_vacation_start_date && $current_date <= $inhouse_vacation_end_date) ||
+                                         $seller_id!=0 && $seller_vacation_status && $current_date >= $seller_vacation_start_date && $current_date <= $seller_vacation_end_date)
+                                            <span class="temporary-closed-details">
+                                                <span>{{\App\CPU\translate('closed_now')}}</span>
+                                            </span>
+                                        @endif
+                                        <img class="__inline-68"
+                                             src="{{asset('storage/app/public/shop')}}/{{$shop->image}}"
+                                             onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'"
+                                             alt="">
+                                    </div>
                                 @else
-                                    <img style="height: 120px;width:120px; border-radius: 5px;"
-                                         src="{{asset('storage/app/public/company')}}/{{$web_config['fav_icon']->value}}"
-                                         onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'"
-                                         alt="">
+                                    <div class="position-relative">
+                                        @if($seller_temporary_close || $inhouse_temporary_close)
+                                            <span class="temporary-closed-details">
+                                                <span>{{\App\CPU\translate('closed_now')}}</span>
+                                            </span>
+                                        @elseif(($seller_id==0 && $inhouse_vacation_status && $current_date >= $inhouse_vacation_start_date && $current_date <= $inhouse_vacation_end_date) ||
+                                         $seller_id!=0 && $seller_vacation_status && $current_date >= $seller_vacation_start_date && $current_date <= $seller_vacation_end_date)
+                                            <span class="temporary-closed-details">
+                                                <span>{{\App\CPU\translate('closed_now')}}</span>
+                                            </span>
+                                        @endif
+                                        <img class="__inline-68"
+                                             src="{{asset('storage/app/public/company')}}/{{$web_config['fav_icon']->value}}"
+                                             onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'"
+                                             alt="">
+                                    </div>
                                 @endif
                             </div>
-                            <div class="row col-8 mx-1 align-items-center" style="display:inline-block;">
+                            <div class="col-md-8">
                                 <span class="ml-4 font-weight-bold ">
                                     @if($shop['id'] != 0)
                                         {{ $shop->name}}
@@ -250,23 +123,22 @@
                                         {{ $web_config['name']->value }}
                                     @endif
                                 </span>
-                                <div class="row ml-4 flex-start">
-                                    <div class="mr-3">
-                                        
+                                <div class="ml-4">
+                                    <div>
                                         @for($count=0; $count<5; $count++)
                                             @if($avg_rating >= $count+1)
                                                 <i class="sr-star czi-star-filled active"></i>
                                             @else
-                                                <i class="sr-star czi-star active" style="color:#fea569 !important"></i>
+                                                <i class="sr-star czi-star active __color-fea569"></i>
                                             @endif
                                         @endfor
                                         (<span class="ml-1">{{round($avg_rating,2)}}</span>)
                                     </div>
-                                    <div class="d-flex" style="font-size: 12px;">
+                                    <div class="d-flex __text-12px">
                                         <span>{{ $total_review}} {{\App\CPU\translate('reviews')}} </span>
-                                        
-                                        <span style="border-left: 1px solid #C4C4C4;margin:5px;"></span>
-                                         
+
+                                        <span class="__inline-69"></span>
+
                                         <span>{{ $total_order}} {{\App\CPU\translate('orders')}}</span>
                                     </div>
                                 </div>
@@ -277,69 +149,75 @@
                         <div class="d-flex align-items-center">
                             <div class="{{Session::get('direction') === "rtl" ? 'ml-4' : 'mr-4'}}">
                                 @if($seller_id!=0)
-                                @if (auth('customer')->check())
-                                    <div class="d-flex">
-                                        <button class="btn btn-block" data-toggle="modal"
-                                                data-target="#exampleModal" style="border-radius: 25px;border: 1px solid #1B7FED;color: #1B7FED ;">
-                                            <i class="fa fa-envelope" aria-hidden="true"></i>
-                                            {{\App\CPU\translate('Chat with seller ')}}
-                                        </button>
-                                    </div>
-                                @else
-                                    <div class="d-flex">
-                                        <a href="{{route('customer.auth.login')}}" class="btn btn-block" style="border-radius: 25px;border: 1px solid #1B7FED;color: #1B7FED !important;">
-                                            <i class="fa fa-envelope" aria-hidden="true"></i>
-                                            {{\App\CPU\translate('Chat with seller ')}}
-                                        </a>
-                                    </div>
-                                @endif
-                            @endif
-                            </div>
-                        </div>
-
-                        
-                    </div>
-                </div>
-
-                {{-- Motal --}}
-                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
-                     aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="card-header">
-                                {{\App\CPU\translate('write_something')}}
-                            </div>
-                            <div class="modal-body">
-                                <form action="{{route('messages_store')}}" method="post" id="chat-form">
-                                    @csrf
-                                    @if($shop['id'] != 0)
-                                        <input value="{{$shop->id}}" name="shop_id" hidden>
-                                        <input value="{{$shop->seller_id}}}" name="seller_id" hidden>
-                                    @endif
-
-                                    <textarea name="message" class="form-control" required></textarea>
-                                    <br>
-                                    @if($shop['id'] != 0)
-                                        <button class="btn btn-primary" style="color: white;">{{\App\CPU\translate('send')}}</button>
+                                    @if (auth('customer')->check())
+                                        <div class="d-flex">
+                                            <button class="btn btn-block __inline-70" data-toggle="modal"
+                                                    data-target="#exampleModal" {{ ($shop->temporary_close || (date('Y-m-d') >= date('Y-m-d', strtotime($shop->vacation_start_date)) && date('Y-m-d') <= date('Y-m-d', strtotime($shop->vacation_end_date)))) ? 'disabled' : '' }}>
+                                                <i class="fa fa-envelope" aria-hidden="true"></i>
+                                                {{\App\CPU\translate('Chat with seller')}}
+                                            </button>
+                                        </div>
                                     @else
-                                        <button class="btn btn-primary" style="color: white;" disabled>{{\App\CPU\translate('send')}}</button>
+                                        <div class="d-flex">
+                                            <a href="{{route('customer.auth.login')}}"
+                                               class="btn btn-block __inline-70">
+                                                <i class="fa fa-envelope" aria-hidden="true"></i>
+                                                {{\App\CPU\translate('Chat with seller')}}
+                                            </a>
+                                        </div>
                                     @endif
-                                </form>
+                                @endif
                             </div>
-                            <div class="card-footer">
-                                <a href="{{route('chat-with-seller')}}" class="btn btn-primary mx-1">
-                                    {{\App\CPU\translate('go_to')}} {{\App\CPU\translate('chatbox')}}
-                                </a>
-                                <button type="button" class="btn btn-secondary pull-right" data-dismiss="modal">{{\App\CPU\translate('close')}}
-                                </button>
+                        </div>
+
+
+                    </div>
+                </div>
+                @if(isset($shop->temporary_close) && ($shop->temporary_close || (date('Y-m-d') >= date('Y-m-d', strtotime($shop->vacation_start_date)) && date('Y-m-d') <= date('Y-m-d', strtotime($shop->vacation_end_date)))))
+                    <span></span>
+                @else
+                    {{-- Modal --}}
+                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                         aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="card-header">
+                                    {{\App\CPU\translate('write_something')}}
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{{route('messages_store')}}" method="post" id="chat-form">
+                                        @csrf
+                                        @if($shop['id'] != 0)
+                                            <input value="{{$shop->id}}" name="shop_id" hidden>
+                                            <input value="{{$shop->seller_id}}}" name="seller_id" hidden>
+                                        @endif
+
+                                        <textarea name="message" class="form-control" required></textarea>
+                                        <br>
+                                        @if($shop['id'] != 0)
+                                            <button
+                                                class="btn btn--primary text-white">{{\App\CPU\translate('send')}}</button>
+                                        @else
+                                            <button class="btn btn--primary text-white"
+                                                    disabled>{{\App\CPU\translate('send')}}</button>
+                                        @endif
+                                    </form>
+                                </div>
+                                <div class="card-footer justify-content-between d-flex flex-wrap">
+                                    <a href="{{route('chat', ['type' => 'seller'])}}" class="btn btn--primary">
+                                        {{\App\CPU\translate('go_to')}} {{\App\CPU\translate('chatbox')}}
+                                    </a>
+                                    <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">{{\App\CPU\translate('close')}}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                @endif
             </div>
 
 
-            
         </div>
 
 
@@ -353,51 +231,62 @@
                             <!-- Categories-->
                             <div class="widget widget-categories mb-4 ">
                                 <div>
-                                    <div style="display: inline">
-                                        <h3 class="widget-title"
-                                            style="font-weight: 700;font-size: 18px;display: inline;">{{\App\CPU\translate('categories')}}</h3>
+                                    <div class="d-inline">
+                                        <h3 class="widget-title font-bold __text-18px d-inline">{{\App\CPU\translate('categories')}}</h3>
                                     </div>
                                 </div>
-                            
+
                                 <div class="accordion mt-2" id="shop-categories">
                                     @foreach($categories as $category)
-                                        <div class="card" style="border-bottom: 2px solid #EEF6FF;background:none !important; ">
-                                            
-                                                
-                                            
-                                            <div class="card-header p-1 flex-between" >
+                                        <div class="card __inline-71">
+
+
+                                            <div class="card-header p-1 flex-between">
                                                 <div class="d-flex ">
-                                                    <img class="{{Session::get('direction') === "rtl" ? 'ml-2' : 'mr-2'}}" style="width: 20px; border-radius:5px;height:20px;"
-                                                    onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'"
-                                                    src="{{asset('storage/app/public/category')}}/{{$category['icon']}}">
-                                                    <label class="for-hover-lable" style="cursor: pointer"
-                                                        onclick="location.href='{{route('shopView',['id'=> $seller_id,'category_id'=>$category['id']])}}'" {{--onclick="productSearch({{$seller_id}}, {{$category['id']}})"--}}>
+                                                    <img
+                                                        class="__inline-72 {{Session::get('direction') === "rtl" ? 'ml-2' : 'mr-2'}}"
+                                                        onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'"
+                                                        src="{{asset('storage/app/public/category')}}/{{$category['icon']}}">
+                                                    <label class="for-hover-lable cursor-pointer"
+                                                           onclick="location.href='{{route('shopView',['id'=> $seller_id,'category_id'=>$category['id']])}}'" {{--onclick="productSearch({{$seller_id}}, {{$category['id']}})"--}}>
                                                         {{$category['name']}}
                                                     </label>
                                                 </div>
-                                                <strong class="pull-right for-brand-hover" style="cursor: pointer"
-                                                        onclick="$('#collapse-{{$category['id']}}').toggle(400)">
+                                                <strong class="pull-right for-brand-hover cursor-pointer"
+                                                        onclick="$('#collapse-{{$category['id']}}').toggle(400);if($(this).hasClass('active')){
+                                                $(this).removeClass('active');
+                                                $(this).text('+')
+                                            }else {$(this).addClass('active');
+                                                $(this).text('-')}">
                                                     {{$category->childes->count()>0?'+':''}}
                                                 </strong>
                                             </div>
-                                            <div class="card-body {{Session::get('direction') === "rtl" ? 'mr-2' : 'ml-2'}}" id="collapse-{{$category['id']}}"
-                                                 style="display: none">
+                                            <div
+                                                class="card-body {{Session::get('direction') === "rtl" ? 'mr-2' : 'ml-2'}}"
+                                                id="collapse-{{$category['id']}}"
+                                                style="display: none">
                                                 @foreach($category->childes as $child)
                                                     <div class=" for-hover-lable card-header p-1 flex-between">
-                                                        <label style="cursor: pointer"
+                                                        <label class="cursor-pointer"
                                                                onclick="location.href='{{route('shopView',['id'=> $seller_id,'category_id'=>$child['id']])}}'">
                                                             {{$child['name']}}
                                                         </label>
-                                                        <strong class="pull-right" style="cursor: pointer"
-                                                                onclick="$('#collapse-{{$child['id']}}').toggle(400)">
+                                                        <strong class="pull-right cursor-pointer"
+                                                                onclick="$('#collapse-{{$child['id']}}').toggle(400);if($(this).hasClass('active')){
+                                                $(this).removeClass('active');
+                                                $(this).text('+')
+                                            }else {$(this).addClass('active');
+                                                $(this).text('-')}">
                                                             {{$child->childes->count()>0?'+':''}}
                                                         </strong>
                                                     </div>
-                                                    <div class="card-body {{Session::get('direction') === "rtl" ? 'mr-2' : 'ml-2'}}" id="collapse-{{$child['id']}}"
-                                                         style="display: none">
+                                                    <div
+                                                        class="card-body {{Session::get('direction') === "rtl" ? 'mr-2' : 'ml-2'}}"
+                                                        id="collapse-{{$child['id']}}"
+                                                        style="display: none">
                                                         @foreach($child->childes as $ch)
                                                             <div class="card-header p-1 flex-between">
-                                                                <label class="for-hover-lable" style="cursor: pointer"
+                                                                <label class="for-hover-lable cursor-pointer"
                                                                        onclick="location.href='{{route('shopView',['id'=> $seller_id,'category_id'=>$ch['id']])}}'">
                                                                     {{$ch['name']}}
                                                                 </label>
@@ -415,49 +304,52 @@
                 </aside>
             </div>
             {{-- sidebar (Category mobile) - after toggle --}}
-            <div id="mySidepanel" class="sidepanel" style="text-align: {{Session::get('direction') === "rtl" ? 'right:0; left:auto' : 'right:auto; left:0'}};">
+            <div id="mySidepanel" class="sidepanel"
+                 style="text-align: {{Session::get('direction') === "rtl" ? 'right:0; left:auto' : 'right:auto; left:0'}};">
                 <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
                 <div class="cz-sidebar-body">
                     <div class="widget widget-categories mb-4 pb-4 border-bottom">
                         <div>
-                            <div style="display: inline">
-                                <h3 class="widget-title"
-                                    style="font-weight: 700;display: inline">{{\App\CPU\translate('categories')}}</h3>
+                            <div class="d-inline">
+                                <h3 class="widget-title font-700 d-inline">{{\App\CPU\translate('categories')}}</h3>
                             </div>
                         </div>
-                        <div class="divider-role"
-                             style="border: 1px solid whitesmoke; margin-bottom: 14px;  margin-top: 5px;"></div>
-                        <div class="accordion mt-n1" id="shop-categories" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
+                        <div class="divider-role __inline-73"></div>
+                        <div class="accordion mt-n1" id="shop-categories"
+                             style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
                             @foreach($categories as $category)
                                 <div class="card">
                                     <div class="card-header p-1 flex-between">
-                                        <label class="for-hover-lable" style="cursor: pointer"
+                                        <label class="for-hover-lable cursor-pointer"
                                                onclick="location.href='{{route('shopView',['id'=> $seller_id,'category_id'=>$category['id']])}}'" {{--onclick="productSearch({{$seller_id}}, {{$category['id']}})"--}}>
                                             {{$category['name']}}
                                         </label>
-                                        <strong class="pull-right for-brand-hover" style="cursor: pointer"
+                                        <strong class="pull-right for-brand-hover cursor-pointer"
                                                 onclick="$('#collapse-m-{{$category['id']}}').toggle(400)">
                                             {{$category->childes->count()>0?'+':''}}
                                         </strong>
                                     </div>
-                                    <div class="card-body {{Session::get('direction') === "rtl" ? 'mr-2' : 'ml-2'}}" id="collapse-m-{{$category['id']}}"
+                                    <div class="card-body {{Session::get('direction') === "rtl" ? 'mr-2' : 'ml-2'}}"
+                                         id="collapse-m-{{$category['id']}}"
                                          style="display: none">
                                         @foreach($category->childes as $child)
                                             <div class=" for-hover-lable card-header p-1 flex-between">
-                                                <label style="cursor: pointer"
+                                                <label class="cursor-pointer"
                                                        onclick="location.href='{{route('shopView',['id'=> $seller_id,'category_id'=>$child['id']])}}'">
                                                     {{$child['name']}}
                                                 </label>
-                                                <strong class="pull-right" style="cursor: pointer"
+                                                <strong class="pull-right cursor-pointer"
                                                         onclick="$('#collapse-m-{{$child['id']}}').toggle(400)">
                                                     {{$child->childes->count()>0?'+':''}}
                                                 </strong>
                                             </div>
-                                            <div class="card-body {{Session::get('direction') === "rtl" ? 'mr-2' : 'ml-2'}}" id="collapse-m-{{$child['id']}}"
-                                                 style="display: none">
+                                            <div
+                                                class="card-body {{Session::get('direction') === "rtl" ? 'mr-2' : 'ml-2'}}"
+                                                id="collapse-m-{{$child['id']}}"
+                                                style="display: none">
                                                 @foreach($child->childes as $ch)
                                                     <div class="card-header p-1 flex-between">
-                                                        <label class="for-hover-lable" style="cursor: pointer"
+                                                        <label class="for-hover-lable cursor-pointer"
                                                                onclick="location.href='{{route('shopView',['id'=> $seller_id,'category_id'=>$ch['id']])}}'">
                                                             {{$ch['name']}}
                                                         </label>
@@ -475,15 +367,17 @@
             {{-- main body (Products) --}}
             <div class="col-lg-9 product-div">
                 <div class="row d-flex justify-content-end">
-                    <div class="col-lg-4 col-md-6 col-sm-12 col-12 pt-2" style="direction: ltr;">
+                    <div class="col-lg-4 col-md-6 col-sm-12 col-12 pt-2 __dir-ltr">
                         <form class="{{--form-inline--}} md-form form-sm mt-0" method="get"
                               action="{{route('shopView',['id'=>$seller_id])}}">
                             <div class="input-group input-group-sm mb-3">
-                                <input type="text" class="form-control" name="product_name" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};"
-                                       placeholder="{{\App\CPU\translate('Search products from this store')}}" aria-label="Recipient's username"
+                                <input type="text" class="form-control" name="product_name"
+                                       style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};"
+                                       placeholder="{{\App\CPU\translate('Search products from this store')}}"
+                                       aria-label="Recipient's username"
                                        aria-describedby="basic-addon2">
-                                <div class="input-group-append" >
-                                    <button type="submit" class="input-group-text" id="basic-addon2" style="background: #F3F5F9">
+                                <div class="input-group-append">
+                                    <button type="submit" class="input-group-text __bg-F3F5F9" id="basic-addon2">
                                         <i class="fa fa-search" aria-hidden="true"></i>
                                     </button>
                                 </div>

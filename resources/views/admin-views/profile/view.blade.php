@@ -1,9 +1,5 @@
 @extends('layouts.back-end.app')
 
-@push('css_or_js')
-    <!-- Custom styles for this page -->
-
-@endpush
 
 @section('content')
     <nav aria-label="breadcrumb">

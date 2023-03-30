@@ -483,13 +483,13 @@
                 line-height: 1.25rem;
             }
 
-            .btn-primary {
+            .btn--primary {
                 color: #fff;
                 background-color: blue               !important;
                 border-color: blue               !important;
             }
 
-            .btn-primary:hover {
+            .btn--primary:hover {
                 color: #fff;
                 background-color: blue               !important;
                 border-color: blue               !important;

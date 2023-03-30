@@ -31,7 +31,7 @@
     @php($order = App\Model\Order::find($order_details->order_id))
         <section class="col-lg-9 mt-2 col-md-9">
             <div class="card box-shadow-sm">
-                <div style="overflow: auto">
+                <div class="overflow-auto">
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
@@ -98,7 +98,7 @@
                                         </div>
     
                                     </div>
-                                    <button type="submit" class="btn btn-primary">{{\App\CPU\translate('submit')}}</button>
+                                    <button type="submit" class="btn btn--primary">{{\App\CPU\translate('submit')}}</button>
                                     
                                 </form>
                             </div>

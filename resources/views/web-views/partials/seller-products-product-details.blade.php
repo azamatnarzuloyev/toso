@@ -6,7 +6,7 @@
         <div class="d-flex" style="position:absolute;z-index:2;">
             <span class="for-discoutn-value p-1 pl-2 pr-2" style="{{Session::get('direction') === "rtl" ? 'border-radius:0px 5px' : 'border-radius:5px 0px'}};">
                 @if ($product->discount_type == 'percent')
-                    {{round($product->discount,$decimal_point_settings)}}%
+                    {{round($product->discount,(!empty($decimal_point_settings) ? $decimal_point_settings: 0))}}%
                 @elseif($product->discount_type =='flat')
                     {{\App\CPU\Helpers::currency_converter($product->discount)}}
                 @endif {{\App\CPU\translate('off')}}
@@ -17,7 +17,7 @@
             <div class=" d-flex align-items-center justify-content-center"
                  style="padding-{{Session::get('direction') === "rtl" ?'right:14px':'left:14px'}};padding-top:14px;">
                 <div class="flash-deals-background-image" style="background: {{$web_config['primary_color']}}10">
-                    <img style="height: 125px!important;width:125px!important;border-radius:5px;"
+                    <img class="__img-125px"
                      src="{{\App\CPU\ProductManager::product_image_path('thumbnail')}}/{{$product['thumbnail']}}"
                      onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'"/>
                 </div>
@@ -51,9 +51,9 @@
                     </div>
                     <div class="flash-product-price">
                         {{\App\CPU\Helpers::currency_converter($product->unit_price-\App\CPU\Helpers::get_product_discount($product,$product->unit_price))}}
-                        
+
                     </div>
-                    
+
                 </div>
             </div>
         </div>

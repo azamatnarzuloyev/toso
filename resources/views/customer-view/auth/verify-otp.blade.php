@@ -2,35 +2,9 @@
 
 @section('title', \App\CPU\translate('OTP_verification'))
 
-@push('css_or_js')
-    <style>
-        #partitioned {
-            padding-left: 2px;
-            letter-spacing: 42px;
-            border: 0;
-            background-image: linear-gradient(to left, black 70%, rgba(255, 255, 255, 0) 0%);
-            background-position: bottom;
-            background-size: 50px 1px;
-            background-repeat: repeat-x;
-            background-position-x: 35px;
-            width: 220px;
-            min-width: 220px;
-        }
-
-        #divInner{
-            left: 0;
-            position: sticky;
-        }
-
-        #divOuter{
-            width: 190px;
-            overflow: hidden;
-        }
-    </style>
-@endpush
 
 @section('content')
-    <div class="container py-4 py-lg-5 my-4">
+    <div class="container py-4 py-lg-5 my-4 __inline-8">
         <div class="row justify-content-center">
             <div class="col-lg-4 col-md-6">
                 <h2 class="h3 mb-4">{{\App\CPU\translate('provide_your_otp_and_proceed')}}?</h2>
@@ -46,7 +20,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button class="btn btn-primary" type="submit">{{\App\CPU\translate('proceed')}}</button>
+                        <button class="btn btn--primary" type="submit">{{\App\CPU\translate('proceed')}}</button>
                     </form>
                 </div>
             </div>

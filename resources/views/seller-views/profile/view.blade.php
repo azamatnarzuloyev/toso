@@ -7,43 +7,67 @@
 
 @section('content')
     <div class="content container-fluid">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{route('seller.dashboard.index')}}">{{\App\CPU\translate('Dashboard')}}</a></li>
-                <li class="breadcrumb-item" aria-current="page">{{\App\CPU\translate('seller')}}</li>
-                <li class="breadcrumb-item">{{\App\CPU\translate('my_bank_info')}}</li>
-            </ol>
-        </nav>
+        <!-- Page Title -->
+        <div class="mb-3">
+            <h2 class="h1 mb-0 text-capitalize d-flex align-items-center gap-2">
+                <img width="20" src="{{asset('/public/assets/back-end/img/my-bank-info.png')}}" alt="">
+                {{\App\CPU\translate('my_bank_info')}}
+            </h2>
+        </div>
+        <!-- End Page Title -->
 
         <div class="row mt-3">
             <div class="col-md-12">
                 <div class="card" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
-                    <div class="card-header">
-                        <h3 class="h3 mb-0  ">{{\App\CPU\translate('my_bank_info')}}  </h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="col-md-8 mt-4">
-                            <div class="flex-start">
-                                <h4>{{\App\CPU\translate('bank_name')}} : </h4>
-                                <h4 class="mx-1">{{$data->bank_name ? $data->bank_name : 'No Data found'}}</h4>
-                            </div>
-                            <div class="flex-start">
-                                <h6>{{\App\CPU\translate('Branch')}} : </h6>
-                                <h6 class="mx-1">{{$data->branch ? $data->branch : 'No Data found'}}</h6>
-                            </div>
-                            <div class="flex-start">
-                                <h6>{{\App\CPU\translate('holder_name')}} : </h6>
-                                <h6 class="mx-1">{{$data->holder_name ? $data->holder_name : 'No Data found'}}</h6>
-                            </div>
-                            <div class="flex-start">
-                                <h6>{{\App\CPU\translate('account_no')}} : </h6>
-                                <h6 class="mx-1">{{$data->account_no ? $data->account_no : 'No Data found'}}</h6>
-                            </div>
+                    <!-- Card Header -->
+                    <div class="border-bottom d-flex gap-3 flex-wrap justify-content-between align-items-center px-4 py-3">
+                        <div class="d-flex gap-2 align-items-center">
+                            <img width="20" src="{{asset('/public/assets/back-end/img/bank.png')}}" alt="" />
+                            <h3 class="mb-0">{{\App\CPU\translate('Bank Information')}}</h3>
+                        </div>
 
-                            <a class="btn btn-primary"
-                               href="{{route('seller.profile.bankInfo',[$data->id])}}">{{\App\CPU\translate('Edit')}}</a>
+                        <div class="d-flex gap-2 align-items-center">
+                            <a href="{{route('seller.profile.bankInfo',[$data->id])}}" class="btn btn--primary">
+                                {{\App\CPU\translate('Edit')}}
+                            </a>
                         </div>
                     </div>
+                    <!-- End Card Header -->
+
+                    <!-- Card Body -->
+                    <div class="card-body p-30">
+                        <div class="row justify-content-center">
+                            <div class="col-sm-6 col-md-8 col-lg-6 col-xl-5">
+                                <!-- Bank Info Card -->
+                                <div class="card bank-info-card bg-bottom bg-contain bg-img" style="background-image: url({{asset('/public/assets/back-end/img/bank-info-card-bg.png')}});">
+                                    <div class="border-bottom p-3">
+                                        <h4 class="mb-0 fw-semibold">{{\App\CPU\translate('Holder_Name')}} : <strong>{{$data->holder_name ?? 'No Data found'}}</strong></h4>
+                                    </div>
+
+                                    <div class="card-body position-relative">
+                                        <img class="bank-card-img" width="78" src="{{asset('/public/assets/back-end/img/bank-card.png')}}" alt="">
+
+                                        <ul class="list-unstyled d-flex flex-column gap-4">
+                                            <li>
+                                                <h3 class="mb-2">{{\App\CPU\translate('Bank_Name')}} :</h3>
+                                                <div>{{$data->bank_name ?? 'No Data found'}}</div>
+                                            </li>
+                                            <li>
+                                                <h3 class="mb-2">{{\App\CPU\translate('Branch_Name')}} :</h3>
+                                                <div>{{$data->branch ?? 'No Data found'}}</div>
+                                            </li>
+                                            <li>
+                                                <h3 class="mb-2">{{\App\CPU\translate('Account_Number')}} : </h3>
+                                                <div>{{$data->account_no ?? 'No Data found'}}</div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <!-- End Bank Info Card -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Card Body -->
                 </div>
             </div>
         </div>

@@ -65,9 +65,9 @@ class BackEndHelper
         $decimal_point_settings = Helpers::get_business_settings('decimal_point_settings');
         $position = Helpers::get_business_settings('currency_symbol_position');
         if (!is_null($position) && $position == 'left') {
-            $string = currency_symbol() . '' . number_format($amount, $decimal_point_settings);
+            $string = currency_symbol() . '' . number_format($amount, (!empty($decimal_point_settings) ? $decimal_point_settings: 0));
         } else {
-            $string = number_format($amount, $decimal_point_settings) . '' . currency_symbol();
+            $string = number_format($amount, !empty($decimal_point_settings) ? $decimal_point_settings: 0) . '' . currency_symbol();
         }
         return $string;
     }
@@ -112,7 +112,6 @@ class BackEndHelper
         $to = Carbon::now()->endOfYear()->format('Y-m-d');
 
         $data = Order::where([
-            'seller_is' => 'admin',
             'order_type'=>'default_type'
         ])->select(
             DB::raw('COUNT(id) as count'),
@@ -127,5 +126,43 @@ class BackEndHelper
         }
 
         return $max;
+    }
+
+    public static function order_status($status){
+        switch ($status) {
+            case "pending":
+                return "Pending";
+            case "confirmed":
+                return "Confirmed";
+            case "processing":
+                return "Packaging";
+            case "out_for_delivery":
+                return "Out for Delivery";
+            case "delivered":
+                return "Delivered";
+            case "returned":
+                return "Returned";
+            case "failed":
+                return "Failed to Deliver";
+            case "canceled":
+                return "Canceled";
+        }
+    }
+
+    public static function format_currency($value){
+        $suffixes = ["1t+" => 1000000000000, "B+" => 1000000000, "M+" => 1000000, "K+" => 1000];
+        foreach ($suffixes as $suffix => $factor) {
+            if ($value >= $factor) {
+                $div = $value / $factor;
+                $formatted_value = number_format($div,1 ) . $suffix;
+                break;
+            }
+        }
+
+        if (!isset($formatted_value)) {
+            $formatted_value = number_format($value, 2);
+        }
+
+        return $formatted_value;
     }
 }

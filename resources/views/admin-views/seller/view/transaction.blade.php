@@ -4,119 +4,24 @@
 @push('css_or_js')
     <meta name="csrf-token" content="{{ csrf_token() }}">
 @endpush
-@push('css_or_js')
-    <style>
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 48px;
-            height: 23px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 15px;
-            width: 15px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        input:checked + .slider {
-            background-color: #377dff;
-        }
-
-        input:focus + .slider {
-            box-shadow: 0 0 1px #377dff;
-        }
-
-        input:checked + .slider:before {
-            -webkit-transform: translateX(26px);
-            -ms-transform: translateX(26px);
-            transform: translateX(26px);
-        }
-
-        /* Rounded sliders */
-        .slider.round {
-            border-radius: 34px;
-        }
-
-        .slider.round:before {
-            border-radius: 50%;
-        }
-
-        #banner-image-modal .modal-content {
-            width: 1116px !important;
-            margin-left: -264px !important;
-        }
-
-        @media (max-width: 768px) {
-            #banner-image-modal .modal-content {
-                width: 698px !important;
-                margin-left: -75px !important;
-            }
-
-
-        }
-
-        @media (max-width: 375px) {
-            #banner-image-modal .modal-content {
-                width: 367px !important;
-                margin-left: 0 !important;
-            }
-
-        }
-
-        @media (max-width: 500px) {
-            #banner-image-modal .modal-content {
-                width: 400px !important;
-                margin-left: 0 !important;
-            }
-
-
-        }
-
-
-    </style>
-@endpush
 
 @section('content')
     <div class="content container-fluid">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a
-                        href="{{route('admin.dashboard.index')}}">{{\App\CPU\translate('Dashboard')}}</a>
-                </li>
-                <li class="breadcrumb-item" aria-current="page">{{\App\CPU\translate('Seller_details')}}</li>
-            </ol>
-        </nav>
+
+        <!-- Page Title -->
+        <div class="mb-3">
+            <h2 class="h1 mb-0 text-capitalize d-flex gap-2 align-items-center">
+                <img src="{{asset('/public/assets/back-end/img/coupon_setup.png')}}" alt="">
+                {{\App\CPU\translate('Seller_details')}}
+            </h2>
+        </div>
+        <!-- End Page Title -->
 
         <!-- Page Heading -->
         <div class="flex-between d-sm-flex row align-items-center justify-content-between mb-2 mx-1">
             <div>
                 <a href="{{route('admin.sellers.seller-list')}}"
-                   class="btn btn-primary mt-3 mb-3">{{\App\CPU\translate('Back_to_seller_list')}}</a>
+                   class="btn btn--primary my-3">{{\App\CPU\translate('Back_to_seller_list')}}</a>
             </div>
             <div>
                 @if ($seller->status=="pending")
@@ -130,19 +35,22 @@
                                 @csrf
                                 <input type="hidden" name="id" value="{{$seller->id}}">
                                 <input type="hidden" name="status" value="approved">
-                                <button type="submit" class="btn btn-primary">{{\App\CPU\translate('Approve')}}</button>
+                                <button type="submit"
+                                        class="btn btn--primary btn-sm">{{\App\CPU\translate('Approve')}}</button>
                             </form>
                             <form class="d-inline-block" action="{{route('admin.sellers.updateStatus')}}" method="POST">
                                 @csrf
                                 <input type="hidden" name="id" value="{{$seller->id}}">
                                 <input type="hidden" name="status" value="rejected">
-                                <button type="submit" class="btn btn-danger">{{\App\CPU\translate('reject')}}</button>
+                                <button type="submit"
+                                        class="btn btn-danger btn-sm">{{\App\CPU\translate('reject')}}</button>
                             </form>
                         </div>
                     </div>
                 @endif
             </div>
         </div>
+
         <!-- Page Header -->
         <div class="page-header">
             <div class="flex-between row mx-1">
@@ -154,7 +62,7 @@
             <!-- Nav Scroller -->
             <div class="js-nav-scroller hs-nav-scroller-horizontal">
                 <!-- Nav -->
-                <ul class="nav nav-tabs page-header-tabs">
+                <ul class="nav nav-tabs flex-wrap page-header-tabs">
                     <li class="nav-item">
                         <a class="nav-link "
                            href="{{ route('admin.sellers.view',$seller->id) }}">{{\App\CPU\translate('Shop')}}</a>
@@ -179,7 +87,6 @@
                         <a class="nav-link"
                            href="{{ route('admin.sellers.view',['id'=>$seller->id, 'tab'=>'review']) }}">{{\App\CPU\translate('Review')}}</a>
                     </li>
-
                 </ul>
                 <!-- End Nav -->
             </div>
@@ -188,21 +95,20 @@
         <!-- End Page Header -->
 
         <div class="content container-fluid p-0">
-            <div class="row" style="margin-top: 20px">
+            <div class="row">
                 <div class="col-md-12">
                     <div class="card">
-                        <div class="card-header">
-                            <div class="row d-flex justify-content-between align-items-center flex-grow-1">
-                                <div class="col-md-3 col-12">
-                                    <h3 class="text-capitalize">{{ \App\CPU\translate('transaction_table')}}
-                                        <span class="badge badge-soft-dark mx-2">{{$transactions->total()}}</span>
-    
-                                    </h3>
+                        <div class="px-3 py-4">
+                            <div class="row align-items-center">
+                                <div class="col-lg-4 mb-3 mb-lg-0">
+                                    <h5 class="mb-0 text-capitalize d-flex gap-1 align-items-center">{{ \App\CPU\translate('transaction_table')}}
+                                        <span class="badge badge-soft-dark fz-12">{{$transactions->total()}}</span>
+                                    </h5>
                                 </div>
-                                <div class="col-md-4 col-12">
+                                <div class="col-md-6 col-lg-4 mb-3 mb-md-0">
                                     <form action="{{ url()->current() }}" method="GET">
                                         <!-- Search -->
-                                        <div class="input-group input-group-merge input-group-flush">
+                                        <div class="input-group input-group-merge input-group-custom">
                                             <div class="input-group-prepend">
                                                 <div class="input-group-text">
                                                     <i class="tio-search"></i>
@@ -211,139 +117,127 @@
                                             <input id="datatableSearch_" type="search" name="search"
                                                    class="form-control"
                                                    placeholder="{{\App\CPU\translate('Search by orders id or transaction id')}}"
-                                                   aria-label="Search orders" value="{{ $search }}"
-                                                   required>
+                                                   aria-label="Search orders" value="{{ $search }}">
                                             <button type="submit"
-                                                    class="btn btn-primary">{{ \App\CPU\translate('search')}}</button>
+                                                    class="btn btn--primary">{{ \App\CPU\translate('search')}}</button>
                                         </div>
                                         <!-- End Search -->
                                     </form>
                                 </div>
-                                <div class="col-md-4 col-12 mt-2 mt-md-0">
+                                <div class="col-md-6 col-lg-4">
                                     <form action="{{ url()->current() }}" method="GET">
-                                        <div class="row ">
-    
-                                            <div class="col-md-8">
-    
-                                                <select class="form-control" name="status">
-    
-                                                    <option class="text-center" value="0" selected disabled>
-                                                        ---{{\App\CPU\translate('select_status')}}---
-                                                    </option>
-                                                    <option class="text-left text-capitalize"
-                                                            value="all" {{ $status == 'all'? 'selected' : '' }} >{{\App\CPU\translate('all')}} </option>
-                                                    <option class="text-left text-capitalize"
-                                                            value="disburse" {{ $status == 'disburse'? 'selected' : '' }} >{{\App\CPU\translate('disburse')}} </option>
-                                                    <option class="text-left text-capitalize"
-                                                            value="hold" {{ $status == 'hold'? 'selected' : '' }}>{{\App\CPU\translate('hold')}}</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-2 mt-2 mt-md-0 ">
-                                                <button type="submit"
-                                                        class="btn btn-success float-right">{{\App\CPU\translate('filter')}}</button>
-                                            </div>
-    
+                                        <div class="d-flex justify-content-end align-items-center gap-10">
+                                            <select class="form-control" name="status">
+                                                <option value="0" selected disabled>
+                                                    ---{{\App\CPU\translate('select_status')}}---
+                                                </option>
+                                                <option class="text-capitalize"
+                                                        value="all" {{ $status == 'all'? 'selected' : '' }} >{{\App\CPU\translate('all')}} </option>
+                                                <option class="text-capitalize"
+                                                        value="disburse" {{ $status == 'disburse'? 'selected' : '' }} >{{\App\CPU\translate('disburse')}} </option>
+                                                <option class="text-capitalize"
+                                                        value="hold" {{ $status == 'hold'? 'selected' : '' }}>{{\App\CPU\translate('hold')}}</option>
+                                            </select>
+                                            <button type="submit" class="btn btn-success">
+                                                {{\App\CPU\translate('filter')}}
+                                            </button>
                                         </div>
                                     </form>
                                 </div>
                             </div>
-
                         </div>
-                        <div class="card-body" style="padding: 0">
-                            <div class="table-responsive">
-                                <table id="datatable"
-                                       style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};"
-                                       class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table"
-                                       style="width: 100%">
-                                    <thead class="thead-light">
-                                    <tr>
-                                        <th>{{\App\CPU\translate('SL#')}}</th>
-                                        {{-- <th>{{\App\CPU\translate('seller')}}</th> --}}
-                                        <th>{{\App\CPU\translate('seller_name')}}</th>
-                                        <th>{{\App\CPU\translate('customer_name')}}</th>
-                                        <th>{{\App\CPU\translate('order_id')}}</th>
-                                        <th>{{\App\CPU\translate('transaction_id')}}</th>
-                                        <th>{{\App\CPU\translate('order_amount')}}</th>
-                                        <th>{{ \App\CPU\translate('seller_amount') }}</th>
-                                        <th>{{\App\CPU\translate('admin_commission')}}</th>
-                                        <th>{{\App\CPU\translate('received_by')}}</th>
-                                        <th>{{\App\CPU\translate('delivered_by')}}</th>
-                                        <th>{{\App\CPU\translate('delivery_charge')}}</th>
-                                        <th>{{\App\CPU\translate('payment_method')}}</th>
-                                        <th>{{\App\CPU\translate('tax')}}</th>
-                                        <th>{{\App\CPU\translate('status')}}</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    @foreach($transactions as $key=>$transaction)
-                                        <tr>
-                                            <td>{{$transactions->firstItem()+$key}}</td>
-                                            {{-- <td>{{$transaction['seller_id']}}</td> --}}
-                                            <td>
-                                                @if($transaction['seller_is'] == 'admin')
+                    </div>
 
-                                                    {{ App\Model\BusinessSetting::where(['type' => 'company_name'])->first()->value }}
-                                                @else
-                                                    {{ App\Model\Seller::find($transaction['seller_id'])->f_name }} {{ App\Model\Seller::find($transaction['seller_id'])->l_name }}
-                                                @endif
-
-                                            </td>
-                                            <td>
-                                                {{ App\User::find($transaction['customer_id'])->f_name??'' }} {{ App\User::find($transaction['customer_id'])->l_name??'' }}
-
-                                            </td>
-                                            <td>{{$transaction['order_id']}}</td>
-                                            <td>{{$transaction['transaction_id']}}</td>
-                                            <td>{{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($transaction['order_amount']))}}</td>
-                                            <td>{{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($transaction['seller_amount']))}}</td>
-                                            <td>{{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($transaction['admin_commission']))}}</td>
-                                            <td>{{$transaction['received_by']}}</td>
-                                            <td>{{$transaction['delivered_by']}}</td>
-                                            <td>{{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($transaction['delivery_charge']))}}</td>
-                                            <td>{{str_replace('_',' ',$transaction['payment_method'])}}</td>
-                                            <td>{{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($transaction['tax']))}}</td>
-                                            <td>
-                                                @if($transaction['status'] == 'disburse')
-                                                    <span class="badge badge-soft-success  ">
-
-                                                    {{$transaction['status']}}
-                                            </span>
-                                                @else
-                                                    <span class="badge badge-soft-warning ">
+                    <div class="table-responsive">
+                        <table id="datatable"
+                               style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};"
+                               class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table w-100">
+                            <thead class="thead-light thead-50 text-capitalize">
+                            <tr>
+                                <th>{{\App\CPU\translate('SL')}}</th>
+                                <th>{{\App\CPU\translate('seller_name')}}</th>
+                                <th>{{\App\CPU\translate('customer_name')}}</th>
+                                <th>{{\App\CPU\translate('order_id')}}</th>
+                                <th>{{\App\CPU\translate('transaction_id')}}</th>
+                                <th>{{\App\CPU\translate('order_amount')}}</th>
+                                <th>{{ \App\CPU\translate('seller_amount') }}</th>
+                                <th>{{\App\CPU\translate('admin_commission')}}</th>
+                                <th>{{\App\CPU\translate('received_by')}}</th>
+                                <th>{{\App\CPU\translate('delivered_by')}}</th>
+                                <th>{{\App\CPU\translate('delivery_charge')}}</th>
+                                <th>{{\App\CPU\translate('payment_method')}}</th>
+                                <th>{{\App\CPU\translate('tax')}}</th>
+                                <th class="text-center">{{\App\CPU\translate('status')}}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($transactions as $key=>$transaction)
+                                <tr>
+                                    <td>{{$transactions->firstItem()+$key}}</td>
+                                    <td>
+                                        @if($transaction['seller_is'] == 'admin')
+                                            {{ App\Model\BusinessSetting::where(['type' => 'company_name'])->first()->value }}
+                                        @else
+                                            {{ App\Model\Seller::find($transaction['seller_id'])->f_name }} {{ App\Model\Seller::find($transaction['seller_id'])->l_name }}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        {{ App\User::find($transaction['customer_id'])->f_name??'' }} {{ App\User::find($transaction['customer_id'])->l_name??'' }}
+                                    </td>
+                                    <td>{{$transaction['order_id']}}</td>
+                                    <td>{{$transaction['transaction_id']}}</td>
+                                    <td>{{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($transaction['order_amount']))}}</td>
+                                    <td>{{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($transaction['seller_amount']))}}</td>
+                                    <td>{{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($transaction['admin_commission']))}}</td>
+                                    <td>{{$transaction['received_by']}}</td>
+                                    <td>{{$transaction['delivered_by']}}</td>
+                                    <td>{{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($transaction['delivery_charge']))}}</td>
+                                    <td>{{str_replace('_',' ',$transaction['payment_method'])}}</td>
+                                    <td>{{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($transaction['tax']))}}</td>
+                                    <td class="text-center">
+                                        @if($transaction['status'] == 'disburse')
+                                            <span class="badge badge-soft-success">
                                                 {{$transaction['status']}}
                                             </span>
-                                                @endif
+                                        @else
+                                            <span class="badge badge-soft-warning ">
+                                                {{$transaction['status']}}
+                                            </span>
+                                        @endif
 
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                    </tbody>
-                                </table>
-                                @if(count($transactions)==0)
-                                    <div class="text-center p-4">
-                                        <img class="mb-3"
-                                             src="{{asset('public/assets/back-end')}}/svg/illustrations/sorry.svg"
-                                             alt="Image Description" style="width: 7rem;">
-                                        <p class="mb-0">{{\App\CPU\translate('No_data_to_show')}}</p>
-                                    </div>
-                                @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                        @if(count($transactions)==0)
+                            <div class="text-center p-4">
+                                <img class="mb-3 w-160"
+                                     src="{{asset('public/assets/back-end')}}/svg/illustrations/sorry.svg"
+                                     alt="Image Description">
+                                <p class="mb-0">{{\App\CPU\translate('No_data_to_show')}}</p>
                             </div>
-                        </div>
-                        <div class="card-footer">
+                        @endif
+                    </div>
+
+                    <div class="table-responsive mt-4">
+                        <div class="px-4 d-flex justify-content-lg-end">
+                            <!-- Pagination -->
                             {{$transactions->links()}}
                         </div>
-
                     </div>
                 </div>
-
             </div>
+
         </div>
+    </div>
     </div>
 @endsection
 
 @push('script')
 
 @endpush
+
 @push('script_2')
     <script>
         function status_filter(type) {

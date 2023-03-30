@@ -4,169 +4,57 @@
 
 @push('css_or_js')
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <style>
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 48px;
-            height: 23px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 15px;
-            width: 15px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        input:checked + .slider {
-            background-color: #377dff;
-        }
-
-        input:focus + .slider {
-            box-shadow: 0 0 1px #377dff;
-        }
-
-        input:checked + .slider:before {
-            -webkit-transform: translateX(26px);
-            -ms-transform: translateX(26px);
-            transform: translateX(26px);
-        }
-
-        /* Rounded sliders */
-        .slider.round {
-            border-radius: 34px;
-        }
-
-        .slider.round:before {
-            border-radius: 50%;
-        }
-
-        #banner-image-modal .modal-content {
-            width: 1116px !important;
-            margin-left: -264px !important;
-        }
-
-        @media (max-width: 768px) {
-            #banner-image-modal .modal-content {
-                width: 698px !important;
-                margin-left: -75px !important;
-            }
-
-
-        }
-
-        @media (max-width: 375px) {
-            #banner-image-modal .modal-content {
-                width: 367px !important;
-                margin-left: 0 !important;
-            }
-
-        }
-
-        @media (max-width: 500px) {
-            #banner-image-modal .modal-content {
-                width: 400px !important;
-                margin-left: 0 !important;
-            }
-
-
-        }
-
-
-    </style>
 @endpush
 
 @section('content')
     <div class="content container-fluid">
-        <!-- Page Header -->
-        <div class="page-header">
-            <div class="row align-items-center mb-3">
-                <div class="col-sm">
-                    <h1 class="page-header-title">{{\App\CPU\translate('Customer')}}
-                        <span class="badge badge-soft-dark ml-2">{{\App\User::count()}}</span>
-                    </h1>
-                </div>
-            </div>
-            <!-- End Row -->
 
-            <!-- Nav Scroller -->
-            <div class="js-nav-scroller hs-nav-scroller-horizontal">
-            <span class="hs-nav-scroller-arrow-prev" style="display: none;">
-              <a class="hs-nav-scroller-arrow-link" href="javascript:;">
-                <i class="tio-chevron-left"></i>
-              </a>
-            </span>
-
-                <span class="hs-nav-scroller-arrow-next" style="display: none;">
-              <a class="hs-nav-scroller-arrow-link" href="javascript:;">
-                <i class="tio-chevron-right"></i>
-              </a>
-            </span>
-
-                <!-- Nav -->
-                <ul class="nav nav-tabs page-header-tabs">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">{{\App\CPU\translate('Customer')}} {{\App\CPU\translate('List')}} </a>
-                    </li>
-                </ul>
-                <!-- End Nav -->
-            </div>
-            <!-- End Nav Scroller -->
+        <!-- Page Title -->
+        <div class="mb-4">
+            <h2 class="h1 mb-0 text-capitalize d-flex align-items-center gap-2">
+                <img width="20" src="{{asset('/public/assets/back-end/img/customer.png')}}" alt="">
+                {{\App\CPU\translate('Customer_list')}}
+                <span class="badge badge-soft-dark radius-50">{{\App\User::count()}}</span>
+            </h2>
         </div>
-        <!-- End Page Header -->
+        <!-- End Page Title -->
 
         <!-- Card -->
         <div class="card">
             <!-- Header -->
-            <div class="card-header">
-                <div class="flex-between row justify-content-between align-items-center flex-grow-1 mx-1">
-                            <div>
-                                <div class="flex-start">
-                                    <div><h5>{{ \App\CPU\translate('Customer')}} {{ \App\CPU\translate('Table')}}</h5></div>
-                                    <div class="mx-1"><h5 style="color: red;">({{ $customers->total() }})</h5></div>
-                                </div>
-                            </div>
-                            <div style="width: 40vw">
-                                <!-- Search -->
-                                <form action="{{ url()->current() }}" method="GET">
-                                    <div class="input-group input-group-merge input-group-flush">
-                                        <div class="input-group-prepend">
-                                            <div class="input-group-text">
-                                                <i class="tio-search"></i>
-                                            </div>
-                                        </div>
-                                        <input id="datatableSearch_" type="search" name="search" class="form-control"
-                                            placeholder="{{\App\CPU\translate('Search by Name or Email or Phone')}}" aria-label="Search orders" value="{{ $search }}" required>
-                                        <button type="submit" class="btn btn-primary">{{\App\CPU\translate('search')}}</button>
+            <div class="px-3 py-4">
+                <div class="row gy-2 align-items-center">
+                    <div class="col-sm-8 col-md-6 col-lg-4">
+                        <!-- Search -->
+                        <form action="{{ url()->current() }}" method="GET">
+                            <div class="input-group input-group-merge input-group-custom">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <i class="tio-search"></i>
                                     </div>
-                                </form>
-                                <!-- End Search -->
+                                </div>
+                                <input id="datatableSearch_" type="search" name="search" class="form-control"
+                                       placeholder="{{\App\CPU\translate('Search by Name or Email or Phone')}}"
+                                       aria-label="Search orders" value="{{ $search }}">
+                                <button type="submit" class="btn btn--primary">{{\App\CPU\translate('search')}}</button>
                             </div>
+                        </form>
+                        <!-- End Search -->
+                    </div>
+                    <div class="col-sm-4 col-md-6 col-lg-8 mb-2 mb-sm-0">
+                        <div class="d-flex justify-content-sm-end">
+                            <button type="button" class="btn btn-outline--primary" data-toggle="dropdown">
+                                <i class="tio-download-to"></i>
+                                {{\App\CPU\translate('export')}}
+                                <i class="tio-chevron-down"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li><a class="dropdown-item" href="{{route('admin.customer.export')}}">{{\App\CPU\translate('excel')}}</a></li>
+                                <div class="dropdown-divider"></div>
+                            </ul>
                         </div>
+                    </div>
+                </div>
                 <!-- End Row -->
             </div>
             <!-- End Header -->
@@ -174,87 +62,73 @@
             <!-- Table -->
             <div class="table-responsive datatable-custom">
                 <table
-                       style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};"
-                       class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table"
-                       style="width: 100%"
-                       data-hs-datatables-options='{
-                     "columnDefs": [{
-                        "targets": [0],
-                        "orderable": false
-                      }],
-                     "order": [],
-                     "info": {
-                       "totalQty": "#datatableWithPaginationInfoTotalQty"
-                     },
-                     "search": "#datatableSearch",
-                     "entries": "#datatableEntries",
-                     "pageLength": 25,
-                     "isResponsive": false,
-                     "isShowPaging": false,
-                     "pagination": "datatablePagination"
-                   }'>
-                    <thead class="thead-light">
+                    style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};"
+                    class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table w-100">
+                    <thead class="thead-light thead-50 text-capitalize">
                     <tr>
-                        <th class="">
-                           #
-                        </th>
-                        <th class="table-column-pl-0">{{\App\CPU\translate('Name')}}</th>
-                        <th>{{\App\CPU\translate('Email')}}</th>
-                        <th>{{\App\CPU\translate('Phone')}}</th>
+                        <th>{{\App\CPU\translate('SL')}}</th>
+                        <th>{{\App\CPU\translate('customer_name')}}</th>
+                        <th>{{\App\CPU\translate('contact_info')}}</th>
                         <th>{{\App\CPU\translate('Total')}} {{\App\CPU\translate('Order')}} </th>
                         <th>{{\App\CPU\translate('block')}} / {{\App\CPU\translate('unblock')}}</th>
-                        <th>{{\App\CPU\translate('Action')}}</th>
+                        <th class="text-center">{{\App\CPU\translate('Action')}}</th>
                     </tr>
                     </thead>
 
                     <tbody>
                     @foreach($customers as $key=>$customer)
-                        <tr class="">
-                            <td class="">
+                        <tr>
+                            <td>
                                 {{$customers->firstItem()+$key}}
                             </td>
-                            <td class="table-column-pl-0">
-                                <a href="{{route('admin.customer.view',[$customer['id']])}}">
+                            <td>
+                                <a href="{{route('admin.customer.view',[$customer['id']])}}"
+                                   class="title-color hover-c1 d-flex align-items-center gap-10">
+                                    <img src="{{asset('storage/app/public/profile')}}/{{$customer->image}}"
+                                         onerror="this.src='{{asset('public/assets/back-end/img/160x160/img1.jpg')}}'"
+                                         class="rounded-circle" alt="" width="40">
                                     {{\Illuminate\Support\Str::limit($customer['f_name']." ".$customer['l_name'],20)}}
                                 </a>
                             </td>
                             <td>
-                                {{$customer['email']}}
+                                <div class="mb-1">
+                                    <strong><a class="title-color hover-c1" href="mailto:{{$customer->email}}">{{$customer->email}}</a></strong>
+
+                                </div>
+                                <a class="title-color hover-c1" href="tel:{{$customer->phone}}">{{$customer->phone}}</a>
+
                             </td>
                             <td>
-                               {{$customer['phone']}}
-                            </td>
-                            <td>
-                                <label class="badge badge-soft-info">
+                                <label class="btn text-info bg-soft-info font-weight-bold px-3 py-1 mb-0 fz-12">
                                     {{$customer->orders->count()}}
                                 </label>
                             </td>
 
                             <td>
-                                <label class="switch">
-                                    <input type="checkbox" class="status"
+                                <label class="switcher">
+                                    <input type="checkbox" class="switcher_input"
                                            id="{{$customer['id']}}" {{$customer->is_active == 1?'checked':''}}>
-                                    <span class="slider round"></span>
+                                    <span class="switcher_control"></span>
                                 </label>
                             </td>
 
                             <td>
-                                
-                                <a  title="{{\App\CPU\translate('View')}}"
-                                    class="btn btn-info btn-sm" 
-                                    href="{{route('admin.customer.view',[$customer['id']])}}">
-                                    <i class="tio-visible"></i> 
-                                </a>
-                                <a  title="{{\App\CPU\translate('delete')}}"
-                                    class="btn btn-danger btn-sm delete" href="javascript:"
-                                    onclick="form_alert('customer-{{$customer['id']}}','Want to delete this customer ?')">
-                                    <i class="tio-delete"></i> 
-                                </a>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a title="{{\App\CPU\translate('View')}}"
+                                       class="btn btn-outline-info btn-sm square-btn"
+                                       href="{{route('admin.customer.view',[$customer['id']])}}">
+                                        <i class="tio-invisible"></i>
+                                    </a>
+                                    <a title="{{\App\CPU\translate('delete')}}"
+                                       class="btn btn-outline-danger btn-sm delete square-btn" href="javascript:"
+                                       onclick="form_alert('customer-{{$customer['id']}}','Want to delete this customer ?')">
+                                        <i class="tio-delete"></i>
+                                    </a>
+                                </div>
                                 <form action="{{route('admin.customer.delete',[$customer['id']])}}"
                                         method="post" id="customer-{{$customer['id']}}">
                                     @csrf @method('delete')
                                 </form>
-                                    
                             </td>
                         </tr>
                     @endforeach
@@ -263,17 +137,21 @@
             </div>
             <!-- End Table -->
 
-            <!-- Footer -->
-            <div class="card-footer">
-               {!! $customers->links() !!}
+            <div class="table-responsive mt-4">
+                <div class="px-4 d-flex justify-content-lg-end">
+                    <!-- Pagination -->
+                    {!! $customers->links() !!}
+                </div>
             </div>
+
             @if(count($customers)==0)
                 <div class="text-center p-4">
-                    <img class="mb-3" src="{{asset('public/assets/back-end')}}/svg/illustrations/sorry.svg" alt="Image Description" style="width: 7rem;">
+                    <img class="mb-3 w-160" src="{{asset('public/assets/back-end')}}/svg/illustrations/sorry.svg"
+                         alt="Image Description">
                     <p class="mb-0">{{\App\CPU\translate('No data to show')}}</p>
                 </div>
-            @endif
-            <!-- End Footer -->
+        @endif
+        <!-- End Footer -->
         </div>
         <!-- End Card -->
     </div>
@@ -281,88 +159,44 @@
 
 @push('script_2')
     <script>
-        $(document).on('ready', function () {
-            // INITIALIZATION OF DATATABLES
-            // =======================================================
-            var datatable = $.HSCore.components.HSDatatables.init($('#datatable'), {
-                dom: 'Bfrtip',
-                buttons: [
-                    {
-                        extend: 'copy',
-                        className: 'd-none'
-                    },
-                    {
-                        extend: 'excel',
-                        className: 'd-none'
-                    },
-                    {
-                        extend: 'csv',
-                        className: 'd-none'
-                    },
-                    {
-                        extend: 'pdf',
-                        className: 'd-none'
-                    },
-                    {
-                        extend: 'print',
-                        className: 'd-none'
-                    },
-                ],
-                select: {
-                    style: 'multi',
-                    selector: 'td:first-child input[type="checkbox"]',
-                    classMap: {
-                        checkAll: '#datatableCheckAll',
-                        counter: '#datatableCounter',
-                        counterInfo: '#datatableCounterInfo'
-                    }
-                },
-                
-            });
+        $(document).on('change', '.switcher_input', function () {
+            let id = $(this).attr("id");
 
-            $('#datatableSearch').on('mouseup', function (e) {
-                var $input = $(this),
-                    oldValue = $input.val();
-
-                if (oldValue == "") return;
-
-                setTimeout(function () {
-                    var newValue = $input.val();
-
-                    if (newValue == "") {
-                        // Gotcha
-                        datatable.search('').draw();
-                    }
-                }, 1);
-            });
-        });
-    </script>
-
-    <script>
-        $(document).on('change', '.status', function () {
-            var id = $(this).attr("id");
-            if ($(this).prop("checked") == true) {
-                var status = 1;
-            } else if ($(this).prop("checked") == false) {
-                var status = 0;
+            let status = 0;
+            if (jQuery(this).prop("checked") === true) {
+                status = 1;
             }
 
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+            Swal.fire({
+                title: '{{\App\CPU\translate('Are you sure')}}?',
+                text: '{{\App\CPU\translate('want_to_change_status')}}',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                cancelButtonText: 'No',
+                confirmButtonText: 'Yes',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.value) {
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                        }
+                    });
+                    $.ajax({
+                        url: "{{route('admin.customer.status-update')}}",
+                        method: 'POST',
+                        data: {
+                            id: id,
+                            status: status
+                        },
+                        success: function () {
+                            toastr.success('{{\App\CPU\translate('Status updated successfully')}}');
+                        }
+                    });
                 }
-            });
-            $.ajax({
-                url: "{{route('admin.customer.status-update')}}",
-                method: 'POST',
-                data: {
-                    id: id,
-                    status: status
-                },
-                success: function () {
-                    toastr.success('{{\App\CPU\translate('Status updated successfully')}}');
-                }
-            });
+            })
         });
     </script>
 @endpush

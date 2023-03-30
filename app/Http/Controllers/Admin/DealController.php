@@ -24,7 +24,8 @@ class DealController extends Controller
         $search = $request['search'];
         if ($request->has('search')) {
             $key = explode(' ', $request['search']);
-            $flash_deal = FlashDeal::where('deal_type', 'flash_deal')
+            $flash_deal = FlashDeal::withCount('products')
+                ->where('deal_type', 'flash_deal')
                 ->where(function ($q) use ($key) {
                     foreach ($key as $value) {
                         $q->Where('title', 'like', "%{$value}%");
@@ -32,7 +33,7 @@ class DealController extends Controller
                 });
             $query_param = ['search' => $request['search']];
         } else {
-            $flash_deal = FlashDeal::where('deal_type', 'flash_deal');
+            $flash_deal = FlashDeal::withCount('products')->where('deal_type', 'flash_deal');
         }
         $flash_deal = $flash_deal->latest()->paginate(Helpers::pagination_limit())->appends($query_param);
 
@@ -184,6 +185,7 @@ class DealController extends Controller
     public function add_product($deal_id)
     {
         $flash_deal_products = FlashDealProduct::where('flash_deal_id', $deal_id)->pluck('product_id');
+
         $products = Product::whereIn('id', $flash_deal_products)->paginate(Helpers::pagination_limit());
 
         $deal = FlashDeal::with(['products.product'])->where('id', $deal_id)->first();
@@ -193,22 +195,35 @@ class DealController extends Controller
 
     public function add_product_submit(Request $request, $deal_id)
     {
-        DB::table('flash_deal_products')->insertOrIgnore([
-            'product_id' => $request['product_id'],
-            'flash_deal_id' => $deal_id,
-            'discount' => $request['discount'],
-            'discount_type' => $request['discount_type'],
-            'created_at' => now(),
-            'updated_at' => now(),
+        $this->validate($request, [
+            'product_id' => 'required'
         ]);
+        $flash_deal_products = FlashDealProduct::where('flash_deal_id', $deal_id)->where('product_id',$request['product_id'])->first();
 
-        return back();
+        if(!isset($flash_deal_products))
+        {
+            DB::table('flash_deal_products')->insertOrIgnore([
+                'product_id' => $request['product_id'],
+                'flash_deal_id' => $deal_id,
+                'discount' => $request['discount'],
+                'discount_type' => $request['discount_type'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            Toastr::success('Product added successfully!');
+            return back();
+        }else{
+            Toastr::info('Product already added!');
+            return back();
+        }
+
     }
 
     public function delete_product(Request $request)
     {
         FlashDealProduct::where('product_id', $request->id)->delete();
-        
+
         return response()->json();
     }
 
@@ -310,7 +325,7 @@ class DealController extends Controller
     public function day_delete(Request $request)
     {
         DealOfTheDay::destroy($request->id);
-    
+
         return response()->json();
     }
 }

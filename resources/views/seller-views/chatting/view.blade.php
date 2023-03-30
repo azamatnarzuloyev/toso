@@ -26,17 +26,17 @@
                     <div class="card-body mt-3 ml-4">
                         <div class="row ">
                             <div class="col-md-3 col-lg-3 hidden-xs hidden-sm">
-                                <img style="height: 8rem; width: 9rem;" class="img-circle"
+                                <img class="img-circle __inline-21"
                                      src="{{asset('public/assets/front-end')}}/img/contacts/blank.jpg"
                                      alt="User Pic">
                             </div>
 
                             <div class=" col-md-9 col-lg-9 hidden-xs hidden-sm">
-                                <strong style="margin-right: 20px">{{$contact->subject}}</strong>
+                                <strong class="mr-3">{{$contact->subject}}</strong>
                                 @if($contact->seen==1)
-                                    <label style="color: green; border: 1px solid;padding: 2px;border-radius: 10px">{{\App\CPU\translate('Seen')}}</label>
+                                    <label class="__rounded-10 text-success border p-1">{{\App\CPU\translate('Seen')}}</label>
                                 @else
-                                    <label style="color: red; border: 1px solid;padding: 2px;border-radius: 10px">{{\App\CPU\translate('Not Seen Yet')}}</label>
+                                    <label class="__rounded-10 text-danger border p-1">{{\App\CPU\translate('Not Seen Yet')}}</label>
                                 @endif
                                 <br>
                                 <table class="table table-user-information">
@@ -55,7 +55,7 @@
                                     </tr>
                                     <tr>
                                         <td>{{\App\CPU\translate('Message')}}</td>
-                                        <td><p style="font-width:16px;"> {{$contact->message}}</p></td>
+                                        <td><p class="__text-16px"> {{$contact->message}}</p></td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -86,7 +86,3 @@
         </div>
     </div>
 @endsection
-
-@push('script')
-
-@endpush

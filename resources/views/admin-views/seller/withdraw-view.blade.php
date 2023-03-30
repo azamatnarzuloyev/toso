@@ -9,53 +9,55 @@
 
 @section('content')
     <div class="content container-fluid">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{\App\CPU\translate('Dashboard')}}</a>
-                </li>
-                <li class="breadcrumb-item"
-                    aria-current="page">{{\App\CPU\translate('Withdraw')}}</li>
-            </ol>
-        </nav>
+
+        <!-- Page Title -->
+        <div class="mb-3">
+            <h2 class="h1 mb-0 text-capitalize d-flex align-items-center gap-2">
+                <img width="20" src="{{asset('/public/assets/back-end/img/withdraw-icon.png')}}" alt="">
+                {{\App\CPU\translate('withdraw')}}
+            </h2>
+        </div>
+        <!-- End Page Title -->
 
         <!-- Page Heading -->
         <div class="row">
             <div class="col-md-12 mb-3">
                 <div class="card">
-                    <div class="card-header p-3">
-                        <h3 class="text-center text-capitalize">
-                            {{\App\CPU\translate('seller')}} {{\App\CPU\translate('Withdraw')}} {{\App\CPU\translate('information')}}
-                        </h3>
-
-                        <i class="tio-wallet-outlined" style="font-size: 30px"></i>
-                    </div>
                     <div class="card-body" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
+                        <div class="text-capitalize d-flex align-items-center justify-content-between gap-2 border-bottom pb-2 mb-4">
+                            <h3 class="text-capitalize">
+                                {{\App\CPU\translate('seller')}} {{\App\CPU\translate('Withdraw')}} {{\App\CPU\translate('information')}}
+                            </h3>
+
+                            <i class="tio-wallet-outlined fz-30"></i>
+                        </div>
+
                         <div class="row">
-                            <div class="col-4">
-                                <div class="flex-start">
+                            <div class="col-md-4 mb-2 mb-md-0">
+                                <div class="flex-start flex-wrap">
                                     <div><h5 class="text-capitalize">{{\App\CPU\translate('amount')}} : </h5></div>
-                                    <div class="mx-1"><h5>{{\App\CPU\BackEndHelper::set_symbol(\App\CPU\Convert::default($seller->amount))}}</h5></div>
+                                    <div class="mx-1"><h5>{{\App\CPU\BackEndHelper::set_symbol(\App\CPU\Convert::default($withdraw_request->amount))}}</h5></div>
                                 </div>
-                                <div class="flex-start">
+                                <div class="flex-start flex-wrap">
                                     <div><h5>{{\App\CPU\translate('request_time')}} : </h5></div>
-                                    <div class="mx-1">{{$seller->created_at}}</div>
+                                    <div class="mx-1">{{$withdraw_request->created_at}}</div>
                                 </div>
                             </div>
-                            <div class="col-4">
+                            <div class="col-md-4 mb-2 mb-md-0">
                                 <div class="flex-start">
-                                    <div>{{\App\CPU\translate('Note')}} :</div>
-                                    <div class="mx-1">{{$seller->transaction_note}}</div>
+                                    <div class="title-color">{{\App\CPU\translate('Note')}} :</div>
+                                    <div class="mx-1">{{$withdraw_request->transaction_note}}</div>
                                 </div>
                             </div>
-                            <div class="col-4">
-                                @if ($seller->approved== 0)
+                            <div class="col-md-4">
+                                @if ($withdraw_request->approved== 0)
                                     <button type="button" class="btn btn-success float-{{Session::get('direction') === "rtl" ? 'left' : 'right'}}" data-toggle="modal"
                                             data-target="#exampleModal">{{\App\CPU\translate('proceed')}}
                                         <i class="tio-arrow-forward"></i>
                                     </button>
                                 @else
                                     <div class="text-center float-{{Session::get('direction') === "rtl" ? 'left' : 'right'}}">
-                                        @if($seller->approved==1)
+                                        @if($withdraw_request->approved==1)
                                             <label class="badge badge-success p-2 rounded-bottom">
                                                 {{\App\CPU\translate('Approved')}}
                                             </label>
@@ -72,77 +74,103 @@
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="card" style="min-height: 260px;">
-                    <div class="card-header">
-                        <h3 class="h3 mb-0">{{\App\CPU\translate('my_bank_info')}} </h3>
-                        <i class="tio tio-dollar-outlined"></i>
-                    </div>
-                    <div class="card-body" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
-                        <div class="col-md-8 mt-2">
-                            <div class="flex-start">
-                                <div><h4>{{\App\CPU\translate('bank_name')}} : </h4></div>
-                                <div class="mx-1"><h4>{{$seller->seller->bank_name ? $seller->seller->bank_name : 'No Data found'}}</h4></div>
+            @if($withdrawal_method)
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
+                            <div class="text-capitalize d-flex align-items-center justify-content-between gap-2 border-bottom pb-3 mb-4">
+                                <h3 class="h3 mb-0">{{ $withdrawal_method->method_name }} {{\App\CPU\translate('info')}} </h3>
+                                <i class="tio tio-dollar-outlined"></i>
                             </div>
-                            <div class="flex-start">
-                                <div><h6>{{\App\CPU\translate('Branch')}} : </h6></div>
-                                <div class="mx-1"><h6>{{$seller->seller->branch ? $seller->seller->branch : 'No Data found'}}</h6></div>
-                            </div>
-                            <div class="flex-start">
-                                <div><h6>{{\App\CPU\translate('holder_name')}} : </h6></div>
-                                <div class="mx-1"><h6>{{$seller->seller->holder_name ? $seller->seller->holder_name : 'No Data found'}}</h6></div>
-                            </div>
-                            <div class="flex-start">
-                                <div><h6>{{\App\CPU\translate('account_no')}} : </h6></div>
-                                <div class="mx-1"><h6>{{$seller->seller->account_no ? $seller->seller->account_no : 'No Data found'}}</h6></div>
+
+                            <div class="mt-2">
+                                @foreach($withdrawal_method as $key => $method)
+                                    <div class="flex-start">
+                                        <div><h5>{{ ucwords(str_replace('_',' ',$key)) }} : </h5></div>
+                                        <div class="mx-1"><h5>{{ $method }}</h5></div>
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            @if($seller->seller->shop)
-                <div class="col-md-4">
-                    <div class="card" style="min-height: 260px;">
-                        <div class="card-header">
-                            <h3 class="h3 mb-0">{{\App\CPU\translate('Shop')}} {{\App\CPU\translate('info')}}</h3>
-                            <i class="tio tio-shop-outlined"></i>
-                        </div>
+            @else
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
                         <div class="card-body" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
-                            <div class="flex-start">
-                                <div><h5>{{\App\CPU\translate('seller_b')}} : </h5></div>
-                                <div class="mx-1"><h5>{{$seller->seller->shop->name}}</h5></div>
+
+                            <div class="text-capitalize d-flex align-items-center justify-content-between gap-2 border-bottom pb-3 mb-4">
+                                <h3 class="h3 mb-0">{{\App\CPU\translate('my_bank_info')}} </h3>
+                                <i class="tio tio-dollar-outlined"></i>
                             </div>
-                            <div class="flex-start">
-                                <div><h5>{{\App\CPU\translate('Phone')}} : </h5></div>
-                                <div class="mx-1"><h5>{{$seller->seller->shop->contact}}</h5></div>
+
+                            <div class="mt-2">
+                                <div class="flex-start">
+                                    <div><h4>{{\App\CPU\translate('bank_name')}} : </h4></div>
+                                    <div class="mx-1"><h4>{{$withdraw_request->seller->bank_name ? $withdraw_request->seller->bank_name : 'No Data found'}}</h4></div>
+                                </div>
+                                <div class="flex-start">
+                                    <div><h6>{{\App\CPU\translate('Branch')}} : </h6></div>
+                                    <div class="mx-1"><h6>{{$withdraw_request->seller->branch ? $withdraw_request->seller->branch : 'No Data found'}}</h6></div>
+                                </div>
+                                <div class="flex-start">
+                                    <div><h6>{{\App\CPU\translate('holder_name')}} : </h6></div>
+                                    <div class="mx-1"><h6>{{$withdraw_request->seller->holder_name ? $withdraw_request->seller->holder_name : 'No Data found'}}</h6></div>
+                                </div>
+                                <div class="flex-start">
+                                    <div><h6>{{\App\CPU\translate('account_no')}} : </h6></div>
+                                    <div class="mx-1"><h6>{{$withdraw_request->seller->account_no ? $withdraw_request->seller->account_no : 'No Data found'}}</h6></div>
+                                </div>
                             </div>
-                            <div class="flex-start">
-                                <div><h5>{{\App\CPU\translate('address')}} : </h5></div>
-                                <div class="mx-1"><h5>{{$seller->seller->shop->address}}</h5></div>
-                            </div>
-                           
                         </div>
                     </div>
                 </div>
             @endif
-            <div class="col-md-4">
-                <div class="card" style="min-height: 260px;">
-                    <div class="card-header">
-                        <h3 class="h3 mb-0 "> {{\App\CPU\translate('Seller')}} {{\App\CPU\translate('info')}}</h3>
-                        <i class="tio tio-user-big-outlined"></i>
+            @if($withdraw_request->seller->shop)
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
+
+                            <div class="text-capitalize d-flex align-items-center justify-content-between gap-2 border-bottom pb-3 mb-4">
+                                <h3 class="h3 mb-0">{{\App\CPU\translate('shop_info')}} </h3>
+                                <i class="tio tio-shop-outlined"></i>
+                            </div>
+
+                            <div class="flex-start">
+                                <div><h5>{{\App\CPU\translate('seller_b')}} : </h5></div>
+                                <div class="mx-1"><h5>{{$withdraw_request->seller->shop->name}}</h5></div>
+                            </div>
+                            <div class="flex-start">
+                                <div><h5>{{\App\CPU\translate('Phone')}} : </h5></div>
+                                <div class="mx-1"><h5>{{$withdraw_request->seller->shop->contact}}</h5></div>
+                            </div>
+                            <div class="flex-start">
+                                <div><h5>{{\App\CPU\translate('address')}} : </h5></div>
+                                <div class="mx-1"><h5>{{$withdraw_request->seller->shop->address}}</h5></div>
+                            </div>
+
+                        </div>
                     </div>
+                </div>
+            @endif
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
                     <div class="card-body" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
+                        <div class="text-capitalize d-flex align-items-center justify-content-between gap-2 border-bottom pb-3 mb-4">
+                            <h3 class="h3 mb-0">{{\App\CPU\translate('seller_info')}} </h3>
+                            <i class="tio tio-user-big-outlined"></i>
+                        </div>
                         <div class="flex-start">
                             <div><h5>{{\App\CPU\translate('name')}} : </h5></div>
-                            <div class="mx-1"><h5>{{$seller->seller->f_name}} {{$seller->seller->l_name}}</h5></div>
+                            <div class="mx-1"><h5>{{$withdraw_request->seller->f_name}} {{$withdraw_request->seller->l_name}}</h5></div>
                         </div>
                         <div class="flex-start">
                             <div><h5>{{\App\CPU\translate('Email')}} : </h5></div>
-                            <div class="mx-1"><h5>{{$seller->seller->email}}</h5></div>
+                            <div class="mx-1"><h5>{{$withdraw_request->seller->email}}</h5></div>
                         </div>
                         <div class="flex-start">
                             <div><h5>{{\App\CPU\translate('Phone')}} : </h5></div>
-                            <div class="mx-1"><h5>{{$seller->seller->phone}}</h5></div>
+                            <div class="mx-1"><h5>{{$withdraw_request->seller->phone}}</h5></div>
                         </div>
                     </div>
                 </div>
@@ -158,7 +186,7 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <form action="{{route('admin.sellers.withdraw_status',[$seller['id']])}}" method="POST">
+                        <form action="{{route('admin.sellers.withdraw_status',[$withdraw_request['id']])}}" method="POST">
                             @csrf
                             <div class="modal-body">
                                 <div class="form-group">
@@ -175,7 +203,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">{{\App\CPU\translate('Close')}}</button>
-                                <button type="submit" class="btn btn-primary">{{\App\CPU\translate('Submit')}}</button>
+                                <button type="submit" class="btn btn--primary">{{\App\CPU\translate('Submit')}}</button>
                             </div>
                         </form>
                     </div>

@@ -10,20 +10,19 @@
 
 @section('content')
 <div class="content container-fluid">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{ \App\CPU\translate('Dashboard')}}</a></li>
-            <li class="breadcrumb-item" aria-current="page">{{ \App\CPU\translate('Brand')}} {{ \App\CPU\translate('Update')}}</li>
-        </ol>
-    </nav>
+    <!-- Page Title -->
+    <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+        <h2 class="h1 mb-0 align-items-center d-flex gap-2">
+            <img width="20" src="{{asset('/public/assets/back-end/img/brand.png')}}" alt="">
+            {{\App\CPU\translate('Brand')}} {{\App\CPU\translate('Update')}}
+        </h2>
+    </div>
+    <!-- End Page Title -->
 
     <!-- Content Row -->
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header">
-                    <h1 class="h3 mb-0 text-black-50">{{ \App\CPU\translate('Brand')}} {{ \App\CPU\translate('Update')}}</h1>
-                </div>
                 <div class="card-body" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
                     <form action="{{route('admin.brand.update',[$b['id']])}}" method="post" enctype="multipart/form-data">
                         @csrf
@@ -32,12 +31,12 @@
                             @php($default_lang = 'en')
 
                             @php($default_lang = json_decode($language)[0])
-                            <ul class="nav nav-tabs mb-4">
+                            <ul class="nav nav-tabs w-fit-content mb-4">
                                 @foreach(json_decode($language) as $lang)
-                                    <li class="nav-item">
+                                    <li class="nav-item text-capitalize">
                                         <a class="nav-link lang_link {{$lang == $default_lang? 'active':''}}"
                                            href="#"
-                                           id="{{$lang}}-link">{{\App\CPU\Helpers::get_language_name($lang).'('.strtoupper($lang).')'}}</a>
+                                           id="{{$lang}}-link">{{ucfirst(\App\CPU\Helpers::get_language_name($lang)).'('.strtoupper($lang).')'}}</a>
                                     </li>
                                 @endforeach
                             </ul>
@@ -56,7 +55,7 @@
                                         ?>
                                     <div class="form-group {{$lang != $default_lang ? 'd-none':''}} lang_form"
                                             id="{{$lang}}-form">
-                                        <label for="name">{{ \App\CPU\translate('name')}} ({{strtoupper($lang)}})</label>
+                                        <label class="title-color" for="name">{{ \App\CPU\translate('Brand_Name')}} ({{strtoupper($lang)}})</label>
                                         <input type="text" name="name[]" value="{{$lang==$default_lang?$b['name']:($translate[$lang]['name']??'')}}"
                                                 class="form-control" id="name"
                                                 placeholder="{{ \App\CPU\translate('Ex')}} : {{ \App\CPU\translate('LUX')}}" {{$lang == $default_lang? 'required':''}}>
@@ -64,9 +63,9 @@
                                     <input type="hidden" name="lang[]" value="{{$lang}}">
                                 @endforeach
                                 <div class="form-group">
-                                    <label for="brand">{{ \App\CPU\translate('brand_logo')}}</label><span class="badge badge-soft-danger">( {{ \App\CPU\translate('ratio')}} 1:1 )</span>
-                                    <br>
-                                    <div class="custom-file" style="text-align: left">
+                                    <label class="title-color" for="brand">{{ \App\CPU\translate('Brand_Logo')}}</label>
+                                    <span class="ml-2 text-info">{{ \App\CPU\translate('ratio')}} 1:1</span>
+                                    <div class="custom-file text-left">
                                         <input type="file" name="image" id="customFileUpload" class="custom-file-input"
                                             accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
                                         <label class="custom-file-label" for="customFileUpload">{{\App\CPU\translate('choose')}} {{\App\CPU\translate('file')}}</label>
@@ -75,15 +74,16 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="text-center">
-                                    <img style="border-radius: 10px; max-height:170px;" id="viewer"
+                                    <img class="upload-img-view" id="viewer"
+                                        onerror="this.src='{{asset('public/assets/back-end/img/160x160/img2.jpg')}}'"
                                         src="{{asset('storage/app/public/brand')}}/{{$b['image']}}" alt="banner image"/>
                                 </div>
                             </div>
                         </div>
 
-
-                        <div class="">
-                            <button type="submit" class="btn btn-primary float-right">{{ \App\CPU\translate('update')}}</button>
+                        <div class="d-flex justify-content-end gap-3">
+                            <button type="reset" id="reset" class="btn btn-secondary px-4">{{ \App\CPU\translate('reset')}}</button>
+                            <button type="submit" class="btn btn--primary px-4">{{ \App\CPU\translate('update')}}</button>
                         </div>
                     </form>
                 </div>

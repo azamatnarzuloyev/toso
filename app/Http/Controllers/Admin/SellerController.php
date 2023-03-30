@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\CPU\Convert;
-use App\CPU\Helpers;
-use App\CPU\ImageManager;
 use App\CPU\BackEndHelper;
+use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
 use App\Model\Order;
-use App\Model\OrderDetail;
 use App\Model\Product;
 use App\Model\Seller;
 use App\Model\WithdrawRequest;
@@ -19,6 +16,7 @@ use Illuminate\Support\Str;
 use App\Model\Review;
 use App\Model\OrderTransaction;
 use App\Model\DeliveryMan;
+use Rap2hpoutre\FastExcel\FastExcel;
 
 class SellerController extends Controller
 {
@@ -26,32 +24,39 @@ class SellerController extends Controller
     {
         $query_param = [];
         $search = $request['search'];
-        if ($request->has('search')) {
-            $key = explode(' ', $request['search']);
-            $sellers = Seller::with(['orders', 'product'])
-                ->where(function ($q) use ($key) {
-                    foreach ($key as $value) {
-                        $q->orWhere('f_name', 'like', "%{$value}%")
-                            ->orWhere('l_name', 'like', "%{$value}%")
-                            ->orWhere('phone', 'like', "%{$value}%")
-                            ->orWhere('email', 'like', "%{$value}%");
-                    }
-                });
-            $query_param = ['search' => $request['search']];
-        } else {
-            $sellers = Seller::with(['orders', 'product']);
-        }
-        $sellers = $sellers->latest()->paginate(Helpers::pagination_limit())->appends($query_param);
-        return view('admin-views.seller.index', compact('sellers', 'search'));
+        $current_date = date('Y-m-d');
+
+        $sellers = Seller::with(['orders', 'product'])
+            ->when($search, function($query) use($search){
+                $key = explode(' ', $search);
+                foreach ($key as $value) {
+                    $query->orWhere('f_name', 'like', "%{$value}%")
+                        ->orWhere('l_name', 'like', "%{$value}%")
+                        ->orWhere('phone', 'like', "%{$value}%")
+                        ->orWhere('email', 'like', "%{$value}%");
+                }
+            })
+            ->latest()
+            ->paginate(Helpers::pagination_limit())
+            ->appends($query_param);
+
+        return view('admin-views.seller.index', compact('sellers', 'search', 'current_date'));
     }
 
     public function view(Request $request, $id, $tab = null)
     {
-        $seller = Seller::findOrFail($id);
+        $seller = Seller::find($id);
+        if(!isset($seller))
+        {
+            Toastr::error('Seller not found,It may be deleted!');
+            return back();
+        }
+        $current_date = date('Y-m-d');
+
         if ($tab == 'order') {
             $id = $seller->id;
             $orders = Order::where(['seller_is'=>'seller'])->where(['seller_id'=>$id])->where('order_type','default_type')->latest()->paginate(Helpers::pagination_limit());
-            
+
             return view('admin-views.seller.view.order', compact('seller', 'orders'));
         } else if ($tab == 'product') {
             $products = Product::where('added_by', 'seller')->where('user_id', $seller->id)->latest()->paginate(Helpers::pagination_limit());
@@ -88,13 +93,13 @@ class SellerController extends Controller
                 }
             }
             if ($request->has('seller_pos')) {
-                
+
                     $seller = Seller::find($id);
                     $seller->pos_status = $request->seller_pos;
                     $seller->save();
 
                     Toastr::success('Seller pos permission updated.');
-                
+
             }
 
             //return back();
@@ -159,7 +164,7 @@ class SellerController extends Controller
 
             return view('admin-views.seller.view.review', compact('seller', 'reviews', 'search'));
         }
-        return view('admin-views.seller.view', compact('seller'));
+        return view('admin-views.seller.view', compact('seller','current_date'));
     }
 
     public function updateStatus(Request $request)
@@ -180,9 +185,10 @@ class SellerController extends Controller
 
     public function order_list($seller_id)
     {
-        $orders = Order::where('seller_id', $seller_id)->where('seller_is', 'seller');
+        $orders = Order::where(['seller_id'=> $seller_id, 'seller_is'=> 'seller'])
+                ->latest()
+                ->paginate(Helpers::pagination_limit());
 
-        $orders = $orders->where('order_type','default_type')->latest()->paginate(Helpers::pagination_limit());
         $seller = Seller::findOrFail($seller_id);
         return view('admin-views.seller.order-list', compact('orders', 'seller'));
     }
@@ -235,10 +241,74 @@ class SellerController extends Controller
         return view('admin-views.seller.withdraw', compact('withdraw_req'));
     }
 
+    public function withdraw_list_export_excel(Request $request){
+        $all = session()->has('withdraw_status_filter') && session('withdraw_status_filter') == 'all' ? 1 : 0;
+        $active = session()->has('withdraw_status_filter') && session('withdraw_status_filter') == 'approved' ? 1 : 0;
+        $denied = session()->has('withdraw_status_filter') && session('withdraw_status_filter') == 'denied' ? 1 : 0;
+        $pending = session()->has('withdraw_status_filter') && session('withdraw_status_filter') == 'pending' ? 1 : 0;
+
+        $withdraw_requests = WithdrawRequest::with(['seller', 'withdraw_method'])
+            ->whereNull('delivery_man_id')
+            ->when($all, function ($query) {
+                return $query;
+            })
+            ->when($active, function ($query) {
+                return $query->where('approved', 1);
+            })
+            ->when($denied, function ($query) {
+                return $query->where('approved', 2);
+            })
+            ->when($pending, function ($query) {
+                return $query->where('approved', 0);
+            })
+            ->orderBy('id', 'desc')->get();
+
+        $withdraw_requests->map(function ($query) {
+            //company info
+            $query->shop_name = isset($query->seller) ? $query->seller->shop->name : '';
+            $query->shop_phone = isset($query->seller) ? $query->seller->shop->contact : '';
+            $query->shop_address = isset($query->seller) ? $query->seller->shop->address : '';
+            $query->shop_email = isset($query->seller) ? $query->seller->email : '';
+
+            $query->withdrawal_amount = BackEndHelper::set_symbol(BackEndHelper::usd_to_currency($query->amount));
+            $query->status = $query->approved == 0 ? 'Pending' : ($query->approved == 1 ? 'Approved':'Denied');
+            $query->note = $query->transaction_note;
+
+            //method info
+            $query->withdraw_method_name = isset($query->withdraw_method) ? $query->withdraw_method->method_name : '';
+            if(!empty($query->withdrawal_method_fields)){
+                foreach (json_decode($query->withdrawal_method_fields) as $key=>$field) {
+                    $query[$key] = $field;
+                }
+            }
+        });
+
+        foreach ($withdraw_requests as $key=>$item) {
+            unset($item['id']);
+            unset($item['seller_id']);
+            unset($item['admin_id']);
+            unset($item['delivery_man_id']);
+            unset($item['request_updated_by']);
+            unset($item['created_at']);
+            unset($item['updated_at']);
+            unset($item['amount']);
+            unset($item['approved']);
+            unset($item['withdrawal_method_fields']);
+            unset($item['withdrawal_method_id']);
+            unset($item['withdraw_id']);
+            unset($item['transaction_note']);
+            unset($item['provider']);
+            unset($item['withdraw_method']);
+        }
+        return (new FastExcel($withdraw_requests))->download(time() . '-file.xlsx');
+    }
+
     public function withdraw_view($withdraw_id, $seller_id)
     {
-        $seller = WithdrawRequest::with(['seller'])->where(['id' => $withdraw_id])->first();
-        return view('admin-views.seller.withdraw-view', compact('seller'));
+        $withdraw_request = WithdrawRequest::with(['seller'])->where(['id' => $withdraw_id])->first();
+        $withdrawal_method = json_decode($withdraw_request->withdrawal_method_fields);
+
+        return view('admin-views.seller.withdraw-view', compact('withdraw_request', 'withdrawal_method'));
     }
 
     public function withdrawStatus(Request $request, $id)

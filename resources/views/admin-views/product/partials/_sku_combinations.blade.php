@@ -1,5 +1,5 @@
 @if(count($combinations[0]) > 0)
-	<table class="table table-bordered">
+	<table class="table table-bordered physical_product_show">
 		<thead>
 			<tr>
 				<td class="text-center">

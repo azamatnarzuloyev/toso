@@ -51,14 +51,14 @@
                                     <div class="col-md-12">
                                         <label for="cost">{{\App\CPU\translate('cost')}}</label>
                                         <input type="number" min="0" max="1000000" name="cost" class="form-control"
-                                               placeholder="{{\App\CPU\translate('Ex')}} : {{\App\CPU\translate('10')}} ">
+                                               placeholder="{{\App\CPU\translate('Ex')}} : 10">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="card-footer">
                                 <button type="submit"
-                                        class="btn btn-primary ">{{\App\CPU\translate('Submit')}}</button>
+                                        class="btn btn--primary ">{{\App\CPU\translate('Submit')}}</button>
                             </div>
                         </form>
                     </div>
@@ -66,7 +66,7 @@
             </div>
         </div>
 
-        <div class="row" style="margin-top: 20px">
+        <div class="row __mt-20">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
@@ -83,7 +83,7 @@
                                     <th scope="col">{{\App\CPU\translate('duration')}}</th>
                                     <th scope="col">{{\App\CPU\translate('cost')}}</th>
                                     <th scope="col">{{\App\CPU\translate('status')}}</th>
-                                    <th scope="col" style="width: 50px">{{\App\CPU\translate('action')}}</th>
+                                    <th scope="col" class="__w-50px">{{\App\CPU\translate('action')}}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -117,8 +117,7 @@
                                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                                     <a class="dropdown-item"
                                                        href="{{route('admin.business-settings.shipping-method.edit',[$method['id']])}}">{{\App\CPU\translate('Edit')}}</a>
-                                                    <a class="dropdown-item delete" style="cursor: pointer;"
-                                                       id="{{ $method['id'] }}">{{\App\CPU\translate('Delete')}}</a>
+                                                    <a class="dropdown-item delete cursor-pointer" id="{{ $method['id'] }}">{{\App\CPU\translate('Delete')}}</a>
                                                 </div>
                                             </div>
                                         </td>
@@ -170,7 +169,7 @@
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: '{{\App\CPU\translate('Yes, delete it')}}!'
+                confirmButtonText: '{{\App\CPU\translate('Yes')}}, {{\App\CPU\translate('delete it')}}!'
             }).then((result) => {
                 if (result.value) {
                     $.ajaxSetup({

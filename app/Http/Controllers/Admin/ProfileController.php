@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\CPU\Helpers;
 use App\CPU\ImageManager;
 use App\Http\Controllers\Controller;
 use App\Model\Admin;
@@ -20,7 +21,8 @@ class ProfileController extends Controller
     public function edit($id)
     {
         $data = Admin::where('id', $id)->first();
-        return view('admin-views.profile.edit', compact('data'));
+        $shop_banner = Helpers::get_business_settings('shop_banner');
+        return view('admin-views.profile.edit', compact('data', 'shop_banner'));
     }
 
     public function update(Request $request, $id)

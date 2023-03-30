@@ -2,36 +2,34 @@
 @section('title', \App\CPU\translate('About Us'))
 @section('content')
 <div class="content container-fluid">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{\App\CPU\translate('Dashboard')}}</a></li>
-            <li class="breadcrumb-item" aria-current="page">{{\App\CPU\translate('about_us')}}</li>
-        </ol>
-    </nav>
+    <!-- Page Title -->
+    <div class="mb-3">
+        <h2 class="h1 mb-0 text-capitalize d-flex align-items-center gap-2">
+            <img src="{{asset('/public/assets/back-end/img/Pages.png')}}" width="20" alt="">
+            {{\App\CPU\translate('pages')}}
+        </h2>
+    </div>
+    <!-- End Page Title -->
 
-    <div class="row" style="margin-top: 20px">
+    <!-- Inlile Menu -->
+    @include('admin-views.business-settings.pages-inline-menu')
+    <!-- End Inlile Menu -->
+
+    <div class="row">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <div class="row justify-content-between pl-4 pr-4">
-                        <div>
-                            <h5><b>{{\App\CPU\translate('about_us')}}</b></h5>
-                        </div>
-                    </div>
+                    <h5 class="mb-0">{{\App\CPU\translate('about_us')}}</h5>
                 </div>
 
                 <form action="{{route('admin.business-settings.about-update')}}" method="post">
                     @csrf
                     <div class="card-body">
-                        <div class="form-group row">
-                            <div class="col-md-12">
-                                <textarea name="about_us" id="editor" cols="30" rows="20" class="form-control">{{$about_us->value}}</textarea>
-                            </div>
+                        <div class="form-group">
+                            <textarea name="about_us" id="editor" cols="30" rows="20" class="form-control">{{$about_us->value}}</textarea>
                         </div>
-                        <div class="form-group row">
-                            <div class="col-md-12">
-                                <input class="btn btn-primary btn-block" type="submit" name="btn" value="submit">
-                            </div>
+                        <div class="form-group mb-2">
+                            <input class="btn btn--primary btn-block" type="submit" name="btn" value="submit">
                         </div>
                     </div>
                 </form>

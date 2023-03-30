@@ -99,7 +99,11 @@ class SocialAuthController extends Controller
         $company_name = BusinessSetting::where('type', 'company_name')->first();
 
         if ($user->is_active && auth('customer')->attempt(['email' => $email, 'password' => $password], true)) {
-            session()->put('wish_list', Wishlist::where('customer_id', $user->id)->pluck('product_id')->toArray());
+            $wish_list = Wishlist::whereHas('wishlistProduct',function($q){
+                return $q;
+            })->where('customer_id', $user->id)->pluck('product_id')->toArray();
+
+            session()->put('wish_list', $wish_list);
             $message = 'Welcome to ' . $company_name->value . '!';
             CartManager::cart_to_db();
         } else {

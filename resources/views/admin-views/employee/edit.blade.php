@@ -7,19 +7,21 @@
 
 @section('content')
 <div class="content container-fluid">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{\App\CPU\translate('Dashboard')}}</a></li>
-            <li class="breadcrumb-item" aria-current="page">{{\App\CPU\translate('Employee')}} {{\App\CPU\translate('Update')}} </li>
-        </ol>
-    </nav>
+    <!-- Page Title -->
+    <div class="mb-3">
+        <h2 class="h1 mb-0 text-capitalize d-flex align-items-center gap-2">
+            <img src="{{asset('/public/assets/back-end/img/add-new-employee.png')}}" alt="">
+            {{\App\CPU\translate('Employee_Update')}}
+        </h2>
+    </div>
+    <!-- End Page Title -->
 
     <!-- Content Row -->
     <div class="row">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    {{\App\CPU\translate('Employee')}} {{\App\CPU\translate('Update')}} {{\App\CPU\translate('form')}}
+                    <h5 class="mb-0">{{\App\CPU\translate('Employee')}} {{\App\CPU\translate('Update')}} {{\App\CPU\translate('form')}}</h5>
                 </div>
                 <div class="card-body">
                     <form action="{{route('admin.employee.update',[$e['id']])}}" method="post" enctype="multipart/form-data"
@@ -27,31 +29,24 @@
                         @csrf
                         <div class="form-group">
                             <div class="row">
-                                <div class="col-md-6">
-                                    <label for="name">{{\App\CPU\translate('Name')}}</label>
+                                <div class="col-md-6 form-group">
+                                    <label for="name" class="title-color">{{\App\CPU\translate('Name')}}</label>
                                     <input type="text" name="name" value="{{$e['name']}}" class="form-control" id="name"
-                                           placeholder="{{\App\CPU\translate('Ex')}} : {{\App\CPU\translate('Md. Al Imrun')}}">
+                                           placeholder="{{\App\CPU\translate('Ex')}} : Jhon Doe">
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="name">{{\App\CPU\translate('Phone')}}</label>
+                                <div class="col-md-6 form-group">
+                                    <label for="phone" class="title-color">{{\App\CPU\translate('Phone')}}</label>
                                     <input type="number" value="{{$e['phone']}}" required name="phone" class="form-control" id="phone"
                                            placeholder="{{\App\CPU\translate('Ex')}} : +88017********">
                                 </div>
-                            </div>
-
-                        </div>
-
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label for="name">{{\App\CPU\translate('Email')}}</label>
+                                <div class="col-md-6 form-group">
+                                    <label for="email" class="title-color">{{\App\CPU\translate('Email')}}</label>
                                     <input type="email" value="{{$e['email']}}" name="email" class="form-control" id="email"
                                            placeholder="{{\App\CPU\translate('Ex')}} : ex@gmail.com" required>
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="name">{{\App\CPU\translate('Role')}}</label>
-                                    <select class="form-control" name="role_id"
-                                            style="width: 100%" >
+                                <div class="col-md-6 form-group">
+                                    <label class="title-color">{{\App\CPU\translate('Role')}}</label>
+                                    <select class="form-control" name="role_id">
                                             <option value="0" selected disabled>---{{\App\CPU\translate('select')}}---</option>
                                             @foreach($rls as $r)
                                                 <option
@@ -59,20 +54,15 @@
                                             @endforeach
                                     </select>
                                 </div>
-
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label for="name">{{\App\CPU\translate('Password')}}</label><small> ( {{\App\CPU\translate('input if you want to change')}} )</small>
+                                <div class="col-md-6 form-group">
+                                    <label for="password" class="title-color">{{\App\CPU\translate('Password')}}</label><small> ( {{\App\CPU\translate('input if you want to change')}} )</small>
                                     <input type="text" name="password" class="form-control" id="password"
                                            placeholder="{{\App\CPU\translate('Password')}}">
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-6 form-group">
                                     <div class="form-group">
-                                        <label for="name">{{\App\CPU\translate('employee_image')}}</label><span class="badge badge-soft-danger">( {{\App\CPU\translate('ratio')}} 1:1 )</span>
+                                        <label for="customFileUpload" class="title-color">{{\App\CPU\translate('employee_image')}}</label>
+                                        <span class="text-danger">( {{\App\CPU\translate('ratio')}} 1:1 )</span>
                                         <div class="custom-file text-left">
                                             <input type="file" name="image" id="customFileUpload" class="custom-file-input"
                                                 accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
@@ -80,17 +70,16 @@
                                         </div>
                                     </div>
                                     <div class="text-center">
-                                        <img style="width: auto;border: 1px solid; border-radius: 10px; max-height:200px;" id="viewer"
+                                        <img class="upload-img-view" id="viewer"
                                         onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'"
                                         src="{{asset('storage/app/public/admin')}}/{{$e['image']}}" alt="Employee thumbnail"/>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        
-                        <button type="submit" class="btn btn-primary float-right">{{\App\CPU\translate('Update')}}</button>
-                        
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn--primary px-4">{{\App\CPU\translate('Update')}}</button>
+                        </div>
                     </form>
                 </div>
             </div>

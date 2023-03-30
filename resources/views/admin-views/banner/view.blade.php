@@ -1,146 +1,141 @@
 @extends('layouts.back-end.app')
+
 @section('title', \App\CPU\translate('Banner'))
+
 @push('css_or_js')
     <meta name="csrf-token" content="{{ csrf_token() }}">
 @endpush
 
 @section('content')
     <div class="content container-fluid">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a
-                        href="{{route('admin.dashboard')}}">{{\App\CPU\translate('Dashboard')}}</a>
-                </li>
-                <li class="breadcrumb-item" aria-current="page">{{\App\CPU\translate('Banner')}}</li>
-            </ol>
-        </nav>
-        <!-- Page Heading -->
-        <div class="row">
-            <div class="col-md-12" id="banner-btn">
-                <button id="main-banner-add" class="btn btn-primary"><i
-                        class="tio-add-circle"></i> {{ \App\CPU\translate('add_banner')}}</button>
-            </div>
+        <!-- Page Title -->
+        <div class="mb-3">
+            <h2 class="h1 mb-1 text-capitalize d-flex align-items-center gap-2">
+                <img width="20" src="{{asset('/public/assets/back-end/img/banner.png')}}" alt="">
+                {{\App\CPU\translate('banner')}}
+            </h2>
         </div>
+        <!-- End Page Title -->
+
         <!-- Content Row -->
-        <div class="row pt-4" id="main-banner"
-             style="display: none;text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
+        <div class="row pb-4 d--none" id="main-banner"
+             style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        {{ \App\CPU\translate('banner_form')}}
+                        <h5 class="mb-0 text-capitalize">{{ \App\CPU\translate('banner_form')}}</h5>
                     </div>
                     <div class="card-body">
                         <form action="{{route('admin.banner.store')}}" method="post" enctype="multipart/form-data"
                               class="banner_form">
                             @csrf
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <input type="hidden" id="id" name="id">
-                                            <label for="name">{{ \App\CPU\translate('banner_url')}}</label>
-                                            <input type="text" name="url" class="form-control" id="url" required>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="name">{{\App\CPU\translate('banner_type')}}</label>
-                                            <select style="width: 100%"
-                                                    class="js-example-responsive form-control"
-                                                    name="banner_type" required>
-                                                <option value="Main Banner">{{ \App\CPU\translate('Main Banner')}}</option>
-                                                <option value="Footer Banner">{{ \App\CPU\translate('Footer Banner')}}</option>
-                                                <option value="Popup Banner">{{ \App\CPU\translate('Popup Banner')}}</option>
-                                                <option value="Main Section Banner">{{ \App\CPU\translate('Main Section Banner')}}</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="resource_id">{{\App\CPU\translate('resource_type')}}</label>
-                                            <select style="width: 100%" onchange="display_data(this.value)"
-                                                    class="js-example-responsive form-control"
-                                                    name="resource_type" required>
-                                                <option value="product">{{ \App\CPU\translate('Product')}}</option>
-                                                <option value="category">{{ \App\CPU\translate('Category')}}</option>
-                                                <option value="shop">{{ \App\CPU\translate('Shop')}}</option>
-                                                <option value="brand">{{ \App\CPU\translate('Brand')}}</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="form-group" id="resource-product">
-                                            <label for="product_id">{{\App\CPU\translate('product')}}</label>
-                                            <select style="width: 100%"
-                                                    class="js-example-responsive form-control"
-                                                    name="product_id">
-                                                @foreach(\App\Model\Product::active()->get() as $product)
-                                                    
-                                                        <option value="{{$product['id']}}">{{$product['name']}}</option>
-                                                    
-                                                @endforeach
-                                            </select>
-                                        </div>
-
-                                        <div class="form-group" id="resource-category" style="display: none">
-                                            <label for="name">{{\App\CPU\translate('category')}}</label>
-                                            <select style="width: 100%"
-                                                    class="js-example-responsive form-control"
-                                                    name="category_id">
-                                                @foreach(\App\CPU\CategoryManager::parents() as $category)
-                                                    <option value="{{$category['id']}}">{{$category['name']}}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-
-                                        <div class="form-group" id="resource-shop" style="display: none">
-                                            <label for="shop_id">{{\App\CPU\translate('shop')}}</label>
-                                            <select style="width: 100%"
-                                                    class="js-example-responsive form-control"
-                                                    name="shop_id">
-                                                @foreach(\App\Model\Shop::active()->get() as $shop)
-                                                    <option value="{{$shop['id']}}">{{$shop['name']}}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-
-                                        <div class="form-group" id="resource-brand" style="display: none">
-                                            <label for="brand_id">{{\App\CPU\translate('brand')}}</label>
-                                            <select style="width: 100%"
-                                                    class="js-example-responsive form-control"
-                                                    name="brand_id">
-                                                @foreach(\App\Model\Brand::all() as $brand)
-                                                    <option value="{{$brand['id']}}">{{$brand['name']}}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-
-                                        <label for="name">{{ \App\CPU\translate('Image')}}</label><span
-                                            class="badge badge-soft-danger">( {{\App\CPU\translate('ratio')}} 4:1 )</span>
-                                        <br>
-                                        <div class="custom-file" style="text-align: left">
-                                            <input type="file" name="image" id="mbimageFileUploader"
-                                                   class="custom-file-input"
-                                                   accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
-                                            <label class="custom-file-label"
-                                                   for="mbimageFileUploader">{{\App\CPU\translate('choose')}} {{\App\CPU\translate('file')}}</label>
-                                        </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <input type="hidden" id="id" name="id">
+                                        <label for="name"
+                                               class="title-color text-capitalize">{{ \App\CPU\translate('banner_URL')}}</label>
+                                        <input type="text" name="url" class="form-control" id="url" required>
                                     </div>
-                                    <div class="col-md-6">
-                                        <center>
-                                            <img
-                                                style="width: auto;border: 1px solid; border-radius: 10px; max-width:400px;"
-                                                id="mbImageviewer"
-                                                src="{{asset('public\assets\back-end\img\400x400\img1.jpg')}}"
-                                                alt="banner image"/>
-                                        </center>
+
+                                    <div class="form-group">
+                                        <label for="name"
+                                               class="title-color text-capitalize">{{\App\CPU\translate('banner_type')}}</label>
+                                        <select class="js-example-responsive form-control w-100"
+                                                name="banner_type" required>
+                                            <option value="Main Banner">{{ \App\CPU\translate('Main Banner')}}</option>
+                                            <option
+                                                value="Footer Banner">{{ \App\CPU\translate('Footer Banner')}}</option>
+                                            <option
+                                                value="Popup Banner">{{ \App\CPU\translate('Popup Banner')}}</option>
+                                            <option
+                                                value="Main Section Banner">{{ \App\CPU\translate('Main Section Banner')}}</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="resource_id"
+                                               class="title-color text-capitalize">{{\App\CPU\translate('resource_type')}}</label>
+                                        <select onchange="display_data(this.value)"
+                                                class="js-example-responsive form-control w-100"
+                                                name="resource_type" required>
+                                            <option value="product">{{ \App\CPU\translate('Product')}}</option>
+                                            <option value="category">{{ \App\CPU\translate('Category')}}</option>
+                                            <option value="shop">{{ \App\CPU\translate('Shop')}}</option>
+                                            <option value="brand">{{ \App\CPU\translate('Brand')}}</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group mb-0" id="resource-product">
+                                        <label for="product_id"
+                                               class="title-color text-capitalize">{{\App\CPU\translate('product')}}</label>
+                                        <select class="js-example-responsive form-control w-100"
+                                                name="product_id">
+                                            @foreach(\App\Model\Product::active()->get() as $product)
+                                                <option value="{{$product['id']}}">{{$product['name']}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group mb-0 d--none" id="resource-category">
+                                        <label for="name"
+                                               class="title-color text-capitalize">{{\App\CPU\translate('category')}}</label>
+                                        <select class="js-example-responsive form-control w-100"
+                                                name="category_id">
+                                            @foreach(\App\CPU\CategoryManager::parents() as $category)
+                                                <option value="{{$category['id']}}">{{$category['name']}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group mb-0 d--none" id="resource-shop">
+                                        <label for="shop_id" class="title-color">{{\App\CPU\translate('shop')}}</label>
+                                        <select class="w-100 js-example-responsive form-control" name="shop_id">
+                                            @foreach(\App\Model\Shop::active()->get() as $shop)
+                                                <option value="{{$shop['id']}}">{{$shop['name']}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group mb-0 d--none" id="resource-brand">
+                                        <label for="brand_id"
+                                               class="title-color text-capitalize">{{\App\CPU\translate('brand')}}</label>
+                                        <select class="js-example-responsive form-control w-100"
+                                                name="brand_id">
+                                            @foreach(\App\Model\Brand::all() as $brand)
+                                                <option value="{{$brand['id']}}">{{$brand['name']}}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="card-footer">
-                                <a class="btn btn-secondary text-white cancel">{{ \App\CPU\translate('Cancel')}}</a>
-                                <button id="add" type="submit"
-                                        class="btn btn-primary">{{ \App\CPU\translate('save')}}</button>
-                                <a id="update" class="btn btn-primary"
-                                   style="display: none; color: #fff;">{{ \App\CPU\translate('update')}}</a>
+                                <div class="col-md-6 d-flex flex-column justify-content-end">
+                                    <div>
+                                        <center class="mb-30 mx-auto">
+                                            <img
+                                                class="ratio-4:1"
+                                                id="mbImageviewer"
+                                                src="{{asset('public/assets/front-end/img/placeholder.png')}}"
+                                                alt="banner image"/>
+                                        </center>
+                                        <label for="name"
+                                            class="title-color text-capitalize">{{ \App\CPU\translate('Image')}}</label>
+                                        <span class="text-info">( {{\App\CPU\translate('ratio')}} 4:1 )</span>
+                                        <div class="custom-file text-left">
+                                            <input type="file" name="image" id="mbimageFileUploader"
+                                                class="custom-file-input"
+                                                accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
+                                            <label class="custom-file-label title-color"
+                                                for="mbimageFileUploader">{{\App\CPU\translate('choose')}} {{\App\CPU\translate('file')}}</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 d-flex justify-content-end flex-wrap gap-10">
+                                    <button class="btn btn-secondary cancel px-4" type="reset">{{ \App\CPU\translate('reset')}}</button>
+                                    <button id="add" type="submit"
+                                            class="btn btn--primary px-4">{{ \App\CPU\translate('save')}}</button>
+                                    <button id="update"
+                                       class="btn btn--primary d--none text-white">{{ \App\CPU\translate('update')}}</button>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -148,91 +143,113 @@
             </div>
         </div>
 
-        <div class="row" style="margin-top: 20px" id="banner-table">
+        <div class="row" id="banner-table">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">
-                        <div class="flex-between row justify-content-between align-items-center flex-grow-1 mx-1">
-                            <div class="flex-between">
-                                <div><h5>{{ \App\CPU\translate('banner_table')}}</h5></div>
-                                <div class="mx-1"><h5 style="color: red;">({{ $banners->total() }})</h5></div>
+                    <div class="px-3 py-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-4 col-lg-6 mb-2 mb-md-0">
+                                <h5 class="mb-0 text-capitalize d-flex gap-2">
+                                    {{ \App\CPU\translate('banner_table')}}
+                                    <span
+                                        class="badge badge-soft-dark radius-50 fz-12">{{ $banners->total() }}</span>
+                                </h5>
                             </div>
-                            <div style="width: 30vw">
-                                <!-- Search -->
-                                <form action="{{ url()->current() }}" method="GET">
-                                    <div class="input-group input-group-merge input-group-flush">
-                                        <div class="input-group-prepend">
-                                            <div class="input-group-text">
-                                                <i class="tio-search"></i>
+                            <div class="col-md-8 col-lg-6">
+                                <div
+                                    class="d-flex align-items-center justify-content-md-end flex-wrap flex-sm-nowrap gap-2">
+                                    <!-- Search -->
+                                    <form action="{{ url()->current() }}" method="GET">
+                                        <div class="input-group input-group-merge input-group-custom">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">
+                                                    <i class="tio-search"></i>
+                                                </div>
                                             </div>
+                                            <input id="datatableSearch_" type="search" name="search"
+                                                   class="form-control"
+                                                   placeholder="{{ \App\CPU\translate('Search_by_Banner_Type')}}"
+                                                   aria-label="Search orders" value="{{ $search }}">
+                                            <button type="submit" class="btn btn--primary">
+                                                {{ \App\CPU\translate('Search')}}
+                                            </button>
                                         </div>
-                                        <input id="datatableSearch_" type="search" name="search" class="form-control"
-                                               placeholder="{{ \App\CPU\translate('Search_by_Banner_Type')}}"
-                                               aria-label="Search orders" value="{{ $search }}" required>
-                                        <button type="submit"
-                                                class="btn btn-primary">{{ \App\CPU\translate('Search')}}</button>
+                                    </form>
+                                    <!-- End Search -->
+
+                                    <div id="banner-btn">
+                                        <button id="main-banner-add" class="btn btn--primary text-nowrap">
+                                            <i class="tio-add"></i>
+                                            {{ \App\CPU\translate('add_banner')}}
+                                        </button>
                                     </div>
-                                </form>
-                                <!-- End Search -->
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="card-body" style="padding: 0">
-                        <div class="table-responsive">
-                            <table id="columnSearchDatatable"
-                                   style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};"
-                                   class="table table-borderless table-thead-bordered table-nowrap table-align-middle card-table">
-                                <thead class="thead-light">
-                                <tr>
-                                    <th>{{\App\CPU\translate('sl')}}</th>
-                                    <th>{{\App\CPU\translate('image')}}</th>
-                                    <th>{{\App\CPU\translate('banner_type')}}</th>
-                                    <th>{{\App\CPU\translate('published')}}</th>
-                                    <th style="width: 50px">{{\App\CPU\translate('action')}}</th>
-                                </tr>
-                                </thead>
-                                @foreach($banners as $key=>$banner)
-                                    <tbody>
 
-                                    <tr>
-                                        <th scope="row">{{$banners->firstItem()+$key}}</th>
-                                        <td>
-                                            <img width="80"
-                                                 onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'"
-                                                 src="{{asset('storage/app/public/banner')}}/{{$banner['photo']}}">
-                                        </td>
-                                        <td>{{$banner->banner_type}}</td>
-                                        <td><label class="switch"><input type="checkbox" class="status"
-                                                                         id="{{$banner->id}}" <?php if ($banner->published == 1) echo "checked" ?>><span
-                                                    class="slider round"></span></label></td>
-
-                                        <td>
-                                            <a class="btn btn-primary btn-sm edit"
-                                                title="{{ \App\CPU\translate('Edit')}}"
-                                                href="{{route('admin.banner.edit',[$banner['id']])}}" style="cursor: pointer;"> 
+                    <div class="table-responsive">
+                        <table id="columnSearchDatatable"
+                               style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};"
+                               class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table w-100">
+                            <thead class="thead-light thead-50 text-capitalize">
+                            <tr>
+                                <th class="pl-xl-5">{{\App\CPU\translate('SL')}}</th>
+                                <th>{{\App\CPU\translate('image')}}</th>
+                                <th>{{\App\CPU\translate('banner_type')}}</th>
+                                <th>{{\App\CPU\translate('published')}}</th>
+                                <th class="text-center">{{\App\CPU\translate('action')}}</th>
+                            </tr>
+                            </thead>
+                            @foreach($banners as $key=>$banner)
+                                <tbody>
+                                <tr id="data-{{$banner->id}}">
+                                    <td class="pl-xl-5">{{$banners->firstItem()+$key}}</td>
+                                    <td>
+                                        <img class="ratio-4:1" width="80"
+                                             onerror="this.src='{{asset('public/assets/front-end/img/placeholder.png')}}'"
+                                             src="{{asset('storage/app/public/banner')}}/{{$banner['photo']}}">
+                                    </td>
+                                    <td>{{\App\CPU\translate(str_replace('_',' ',$banner->banner_type))}}</td>
+                                    <td>
+                                        <label class="switcher">
+                                            <input type="checkbox" class="switcher_input status"
+                                                   id="{{$banner->id}}" <?php if ($banner->published == 1) echo "checked" ?>>
+                                            <span class="switcher_control"></span>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-10 justify-content-center">
+                                            <a class="btn btn-outline--primary btn-sm cursor-pointer edit"
+                                               title="{{ \App\CPU\translate('Edit')}}"
+                                               href="{{route('admin.banner.edit',[$banner['id']])}}">
                                                 <i class="tio-edit"></i>
                                             </a>
-                                            <a class="btn btn-danger btn-sm delete"
-                                                title="{{ \App\CPU\translate('Delete')}}"
-                                                style="cursor: pointer;"
-                                                id="{{$banner['id']}}">
-                                                <i class="tio-add-to-trash"></i>
+                                            <a class="btn btn-outline-danger btn-sm cursor-pointer delete"
+                                               title="{{ \App\CPU\translate('Delete')}}"
+                                               id="{{$banner['id']}}">
+                                                <i class="tio-delete"></i>
                                             </a>
-                                        </td>
-                                    </tr>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            @endforeach
+                        </table>
+                    </div>
 
-                                    </tbody>
-                                @endforeach
-                            </table>
+                    <div class="table-responsive mt-4">
+                        <div class="px-4 d-flex justify-content-lg-end">
+                            <!-- Pagination -->
+                            {{$banners->links()}}
                         </div>
                     </div>
-                    <div class="card-footer">
-                        {{$banners->links()}}
-                    </div>
+
                     @if(count($banners)==0)
                         <div class="text-center p-4">
-                            <img class="mb-3" src="{{asset('public/assets/back-end')}}/svg/illustrations/sorry.svg"
-                                 alt="Image Description" style="width: 7rem;">
+                            <img class="mb-3 w-160"
+                                 src="{{asset('public/assets/back-end')}}/svg/illustrations/sorry.svg"
+                                 alt="Image Description">
                             <p class="mb-0">{{ \App\CPU\translate('No_data_to_show')}}</p>
                         </div>
                     @endif
@@ -333,9 +350,9 @@
 
         $(document).on('change', '.status', function () {
             var id = $(this).attr("id");
-            if ($(this).prop("checked") == true) {
+            if ($(this).prop("checked") === true) {
                 var status = 1;
-            } else if ($(this).prop("checked") == false) {
+            } else if ($(this).prop("checked") === false) {
                 var status = 0;
             }
 
@@ -383,9 +400,10 @@
                         url: "{{route('admin.banner.delete')}}",
                         method: 'POST',
                         data: {id: id},
-                        success: function () {
+                        success: function (response) {
+                            console.log(response)
                             toastr.success('{{\App\CPU\translate('Banner_deleted_successfully')}}');
-                            location.reload();
+                            $('#data-' + id).hide();
                         }
                     });
                 }

@@ -40,7 +40,7 @@ class ShippingMethodController extends Controller
             $seller_shipping = ShippingType::where('seller_id',$seller_id)->first();
             $shippingType = isset($seller_shipping)==true? $seller_shipping->shipping_type: 'order_wise';
             $shipping_methods = ShippingMethod::where(['creator_id' => $seller_id, 'creator_type' => 'seller'])->latest()->paginate(Helpers::pagination_limit());
-            
+
             return view('seller-views.shipping-method.add-new', compact('shipping_methods','all_category_shipping_cost','shippingType'));
         }else{
             return back();

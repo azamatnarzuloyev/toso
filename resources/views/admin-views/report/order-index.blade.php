@@ -8,882 +8,479 @@
 
 @section('content')
     <div class="content container-fluid">
-        <!-- Page Header -->
-        <div class="page-header">
-            <div class="media mb-3">
-                <!-- Avatar -->
-                <div class="avatar avatar-xl avatar-4by3 {{Session::get('direction') === "rtl" ? 'ml-2' : 'mr-2'}}">
-                    <img class="avatar-img" src="{{asset('public/assets/back-end')}}/svg/illustrations/order.png"
-                         alt="Image Description">
-                </div>
-                <!-- End Avatar -->
-
-                <div class="media-body">
-                    <div class="row">
-                        <div class="col-lg mb-3 mb-lg-0 {{Session::get('direction') === "rtl" ? 'mr-2' : 'ml-2'}}"
-                             style="display: block; text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
-                            <div>
-                                <h1 class="page-header-title">{{\App\CPU\translate('Order')}} {{\App\CPU\translate('Report')}}  {{\App\CPU\translate('Overview')}}</h1>
-                            </div>
-
-                            <div class="row align-items-center">
-                                <div class="flex-between col-auto">
-                                    <h5 class="text-muted {{Session::get('direction') === "rtl" ? 'ml-1' : 'mr-1'}}">{{\App\CPU\translate('Admin')}}
-                                        :</h5>
-                                    <h5 class="text-muted">{{auth('admin')->user()->name}}</h5>
-                                </div>
-
-                                <div class="col-auto">
-                                    <div class="row align-items-center g-0">
-                                        <h5 class="text-muted col-auto {{Session::get('direction') === "rtl" ? 'pl-2' : 'pr-2'}}">{{\App\CPU\translate('Date')}}</h5>
-
-                                        <!-- Flatpickr -->
-                                        <h5 class="text-muted">( {{session('from_date')}} - {{session('to_date')}}
-                                            )</h5>
-                                        <!-- End Flatpickr -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-auto">
-                            <div class="d-flex">
-                                <a class="btn btn-icon btn-primary rounded-circle" href="{{route('admin.dashboard')}}">
-                                    <i class="tio-home-outlined"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- End Media -->
-
-            <!-- Nav -->
-            <!-- Nav -->
-            <div class="js-nav-scroller hs-nav-scroller-horizontal">
-            <span class="hs-nav-scroller-arrow-prev" style="display: none;">
-              <a class="hs-nav-scroller-arrow-link" href="javascript:;">
-                <i class="tio-chevron-{{Session::get('direction') === "rtl" ? 'right' : 'left'}}"></i>
-              </a>
-            </span>
-
-                <span class="hs-nav-scroller-arrow-next" style="display: none;">
-              <a class="hs-nav-scroller-arrow-link" href="javascript:;">
-                <i class="tio-chevron-{{Session::get('direction') === "rtl" ? 'left' : 'right'}}"></i>
-              </a>
-            </span>
-
-                <ul class="nav nav-tabs page-header-tabs" id="projectsTab" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="javascript:">{{\App\CPU\translate('Overview')}}</a>
-                    </li>
-                </ul>
-            </div>
-            <!-- End Nav -->
+        <!-- Page Title -->
+        <div class="mb-3">
+            <h2 class="h1 mb-0 text-capitalize d-flex align-items-center gap-2">
+                <img width="20" src="{{asset('/public/assets/back-end/img/order_report.png')}}" alt="">
+                {{\App\CPU\translate('Order_Report')}}
+            </h2>
         </div>
-        <!-- End Page Header -->
+        <!-- End Page Title -->
 
-        <div class="row border-bottom border-right border-left border-top">
-            <div class="col-lg-12">
-                <form action="{{route('admin.report.set-date')}}" method="post">
-                    @csrf
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="mb-3">
-                                <label for="exampleInputEmail1"
-                                       class="form-label">{{\App\CPU\translate('Show data by date range')}}</label>
+        <div class="card mb-2">
+            <div class="card-body">
+                <form action="" id="form-data" method="GET">
+                    <h4 class="mb-3">{{\App\CPU\translate('Filter_Data')}}</h4>
+                    <div class="row gx-2 gy-3 align-items-center text-left">
+                        <div class="col-sm-6 col-md-3">
+                            <select class="js-select2-custom form-control text-ellipsis" name="seller_id">
+                                <option value="all" {{ $seller_id == 'all' ? 'selected' : '' }}>{{\App\CPU\translate('all')}}</option>
+                                <option value="inhouse" {{ $seller_id == 'inhouse' ? 'selected' : '' }}>{{\App\CPU\translate('In-House')}}</option>
+                                @foreach($sellers as $seller)
+                                    <option value="{{ $seller['id'] }}" {{ $seller_id == $seller['id'] ? 'selected' : '' }}>
+                                        {{$seller['f_name']}} {{$seller['l_name']}}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <select class="form-control __form-control" name="date_type" id="date_type">
+                                <option value="this_year" {{ $date_type == 'this_year'? 'selected' : '' }}>{{\App\CPU\translate('This_Year')}}</option>
+                                <option value="this_month" {{ $date_type == 'this_month'? 'selected' : '' }}>{{\App\CPU\translate('This_Month')}}</option>
+                                <option value="this_week" {{ $date_type == 'this_week'? 'selected' : '' }}>{{\App\CPU\translate('This_Week')}}</option>
+                                <option value="custom_date" {{ $date_type == 'custom_date'? 'selected' : '' }}>{{\App\CPU\translate('Custom_Date')}}</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-6 col-md-3" id="from_div">
+                            <div class="form-floating">
+                                <input type="date" name="from" value="{{$from}}" id="from_date" class="form-control">
+                                <label>{{\App\CPU\translate('start_date')}}</label>
                             </div>
                         </div>
-                        <div class="col-4">
-                            <div class="mb-3">
-                                <input type="date" value="{{date('Y-m-d',strtotime(session('from_date')))}}" name="from" id="from_date"
-                                       class="form-control" required>
+                        <div class="col-sm-6 col-md-3" id="to_div">
+                            <div class="form-floating">
+                                <input type="date" value="{{$to}}" name="to" id="to_date" class="form-control">
+                                <label>{{\App\CPU\translate('end_date')}}</label>
                             </div>
                         </div>
-                        <div class="col-4">
-                            <div class="mb-3">
-                                <input type="date" name="to" value="{{date('Y-m-d',strtotime(session('to_date')))}}" id="to_date"
-                                       class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="mb-3">
-                                <button type="submit"
-                                        class="btn btn-primary btn-block">{{\App\CPU\translate('Show')}}</button>
-                            </div>
+                        <div class="col-sm-6 col-md-3 filter-btn">
+                            <button type="submit" class="btn btn--primary px-4 px-md-5">
+                                {{\App\CPU\translate('filter')}}
+                            </button>
                         </div>
                     </div>
                 </form>
             </div>
+        </div>
 
-            @php
-                $from = session('from_date');
-                $to = session('to_date');
-                $total=\App\Model\Order::where('order_type','default_type')->whereBetween('created_at', [$from, $to])->count();
-                if($total==0){
-                   $total=.01;
+        <div class="store-report-content mb-2">
+            <div class="left-content">
+                <div class="left-content-card">
+                    <img src="{{asset('/public/assets/back-end/img/cart.svg')}}" alt="back-end/img">
+                    <div class="info">
+                        <h4 class="subtitle">{{ $order_count['total_order'] }}</h4>
+                        <h6 class="subtext">{{\App\CPU\translate('Total_Orders')}}</h6>
+                    </div>
+                    <div class="coupon__discount w-100 text-right d-flex justify-content-between">
+                        <div class="text-center">
+                            <strong class="text-danger">{{ $order_count['canceled_order'] }}</strong>
+                            <div class="d-flex">
+                                <span>{{\App\CPU\translate('canceled')}}</span>
+                                <span class="ml-2" data-toggle="tooltip" data-placement="top" title="{{\App\CPU\translate('this_count_is_the_summation_of')}} {{\App\CPU\translate('failed_to_deliver')}}, {{\App\CPU\translate('canceled')}}, {{\App\CPU\translate('and')}} {{\App\CPU\translate('returned_orders')}}">
+                                    <img class="info-img" src="{{asset('/public/assets/back-end/img/info-circle.svg')}}" alt="img">
+                                </span>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <strong class="text-primary">{{ $order_count['ongoing_order'] }}</strong>
+                            <div class="d-flex">
+                                <span>{{\App\CPU\translate('ongoing')}}</span>
+                                <span class="ml-2" data-toggle="tooltip" data-placement="top" title="{{\App\CPU\translate('this_count_is_the_summation_of')}} {{\App\CPU\translate('pending')}}, {{\App\CPU\translate('confirmed')}}, {{\App\CPU\translate('packaging')}}, {{\App\CPU\translate('out_for_delivery_orders')}}">
+                                    <img class="info-img" src="{{asset('/public/assets/back-end/img/info-circle.svg')}}" alt="img">
+                                </span>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <strong class="text-success">{{ $order_count['delivered_order'] }}</strong>
+                            <div class="d-flex">
+                                <span>{{\App\CPU\translate('completed')}}</span>
+                                <span class="ml-2" data-toggle="tooltip" data-placement="top" title="{{\App\CPU\translate('this_count_is_the_summation_of_delivered_orders')}}">
+                                    <img class="info-img" src="{{asset('/public/assets/back-end/img/info-circle.svg')}}" alt="img">
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="left-content-card">
+                    <img src="{{asset('/public/assets/back-end/img/products.svg')}}" alt="back-end/img">
+                    <div class="info">
+                        <h4 class="subtitle">
+                            {{ \App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($due_amount+$settled_amount)) }}
+                        </h4>
+                        <h6 class="subtext">{{\App\CPU\translate('Total_Order_Amount')}}</h6>
+                    </div>
+                    <div class="coupon__discount w-100 text-right d-flex justify-content-between">
+                        <div class="text-center">
+                            <strong class="text-danger">
+                                {{ \App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($due_amount)) }}
+                            </strong>
+                            <div class="d-flex">
+                                <span>{{\App\CPU\translate('Due_Amount')}}</span>
+                                <span class="trx-y-2 ml-2" data-toggle="tooltip" data-placement="top" title="{{\App\CPU\translate('the_ongoing_order_amount_will_be_shown_here')}}">
+                                    <img src="{{asset('/public/assets/back-end/img/info-circle.svg')}}" alt="img">
+                                </span>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <strong class="text-success">
+                                {{ \App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($settled_amount)) }}
+                            </strong>
+                            <div class="d-flex">
+                                <span>{{\App\CPU\translate('Already_Settled')}}</span>
+                                <span class="trx-y-2 ml-2" data-toggle="tooltip" data-placement="top" title="{{\App\CPU\translate('after_the_order_is_delivered_total_order_amount_will_be_shown_here')}}">
+                                    <img src="{{asset('/public/assets/back-end/img/info-circle.svg')}}" alt="img">
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @foreach(array_values($chart_data['order_amount']) as $amount)
+                @php($chart_val[] = \App\CPU\BackEndHelper::usd_to_currency($amount))
+            @endforeach
+            <div class="center-chart-area">
+                <div class="center-chart-header">
+                    <h3 class="title">{{\App\CPU\translate('Order_Statistics')}}</h3>
+                </div>
+                <canvas id="updatingData" class="store-center-chart style-2"
+                        data-hs-chartjs-options='{
+                "type": "bar",
+                "data": {
+                  "labels": [{{ '"'.implode('","', array_keys($chart_data['order_amount'])).'"' }}],
+                  "datasets": [{
+                    "label": "{{\App\CPU\translate('total_settled_amount')}}",
+                    "data": [{{ '"'.implode('","', array_values($chart_val)).'"' }}],
+                    "backgroundColor": "#a2ceee",
+                    "hoverBackgroundColor": "#0177cd",
+                    "borderColor": "#a2ceee"
+                  }]
+                },
+                "options": {
+                  "scales": {
+                    "yAxes": [{
+                      "gridLines": {
+                        "color": "#e7eaf3",
+                        "drawBorder": false,
+                        "zeroLineColor": "#e7eaf3"
+                      },
+                      "ticks": {
+                        "beginAtZero": true,
+                        "fontSize": 12,
+                        "fontColor": "#97a4af",
+                        "fontFamily": "Open Sans, sans-serif",
+                        "padding": 5,
+                        "postfix": " {{ \App\CPU\BackEndHelper::currency_symbol() }}"
+                      }
+                    }],
+                    "xAxes": [{
+                      "gridLines": {
+                        "display": false,
+                        "drawBorder": false
+                      },
+                      "ticks": {
+                        "fontSize": 12,
+                        "fontColor": "#97a4af",
+                        "fontFamily": "Open Sans, sans-serif",
+                        "padding": 5
+                      },
+                      "categoryPercentage": 0.3,
+                      "maxBarThickness": "10"
+                    }]
+                  },
+                  "cornerRadius": 5,
+                  "tooltips": {
+                    "prefix": " ",
+                    "hasIndicator": true,
+                    "mode": "index",
+                    "intersect": false
+                  },
+                  "hover": {
+                    "mode": "nearest",
+                    "intersect": true
+                  }
                 }
-            @endphp
-            <div class="col-sm-6 col-lg-3 mb-3 mb-lg-6">
-            @php
-                $delivered=\App\Model\Order::where('order_type','default_type')->where(['order_status'=>'delivered'])->whereBetween('created_at', [$from, $to])->count()
-            @endphp
-            <!-- Card -->
-                <div class="card card-sm">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col">
-                                <!-- Media -->
-                                <div class="media">
-                                    <i class="tio-shopping-cart nav-icon"></i>
-
-                                    <div class="media-body">
-                                        <h4 class="mb-1">{{\App\CPU\translate('Delivered')}}</h4>
-                                        <span class="font-size-sm text-success">
-                                          <i class="tio-trending-up"></i> {{$delivered}}
-                                        </span>
-                                    </div>
-                                </div>
-                                <!-- End Media -->
-                            </div>
-
-                            <div class="col-auto">
-                                <!-- Circle -->
-                                <div class="js-circle"
-                                     data-hs-circles-options='{
-                                       "value": {{round(($delivered/$total)*100)}},
-                                       "maxValue": 100,
-                                       "duration": 2000,
-                                       "isViewportInit": true,
-                                       "colors": ["#e7eaf3", "green"],
-                                       "radius": 25,
-                                       "width": 3,
-                                       "fgStrokeLinecap": "round",
-                                       "textFontSize": 14,
-                                       "additionalText": "%",
-                                       "textClass": "circle-custom-text",
-                                       "textColor": "green"
-                                     }'></div>
-                                <!-- End Circle -->
-                            </div>
-                        </div>
-                        <!-- End Row -->
-                    </div>
-                </div>
-                <!-- End Card -->
+              }'>
+                </canvas>
             </div>
-
-            <div class="col-sm-6 col-lg-3 mb-3 mb-lg-6">
-            @php
-                $returned=\App\Model\Order::where('order_type','default_type')->where(['order_status'=>'returned'])->whereBetween('created_at', [$from, $to])->count()
-            @endphp
-            <!-- Card -->
-                <div class="card card-sm">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col">
-                                <!-- Media -->
-                                <div class="media">
-                                    <i class="tio-shopping-cart-off nav-icon"></i>
-
-                                    <div class="media-body">
-                                        <h4 class="mb-1">{{\App\CPU\translate('Returned')}}</h4>
-                                        <span class="font-size-sm text-warning">
-                                          <i class="tio-trending-up"></i> {{$returned}}
-                                        </span>
-                                    </div>
-                                </div>
-                                <!-- End Media -->
+            <div class="right-content">
+                <!-- Dognut Pie -->
+                <div class="card h-100 bg-white payment-statistics-shadow">
+                    <div class="card-header border-0 ">
+                        <h5 class="card-title">
+                            <span>{{\App\CPU\translate('Payment_Statistics')}}</span>
+                        </h5>
+                    </div>
+                    <div class="card-body px-0 pt-0">
+                        <div class="position-relative pie-chart">
+                            <div id="dognut-pie"  class="label-hide"></div>
+                            <!-- Total Orders -->
+                            <div class="total--orders">
+                                <h3 class="mb-1">
+                                    {{ \App\CPU\BackEndHelper::currency_symbol() }}{{ \App\CPU\BackEndHelper::format_currency(\App\CPU\BackEndHelper::usd_to_currency($payment_data['total_payment'])) }}
+                                </h3>
+                                <span>{{\App\CPU\translate('completed')}} <br> {{\App\CPU\translate('payments')}}</span>
                             </div>
-
-                            <div class="col-auto">
-                                <!-- Circle -->
-                                <div class="js-circle"
-                                     data-hs-circles-options='{
-                           "value": {{round(($returned/$total)*100)}},
-                           "maxValue": 100,
-                           "duration": 2000,
-                           "isViewportInit": true,
-                           "colors": ["#e7eaf3", "#ec9a3c"],
-                           "radius": 25,
-                           "width": 3,
-                           "fgStrokeLinecap": "round",
-                           "textFontSize": 14,
-                           "additionalText": "%",
-                           "textClass": "circle-custom-text",
-                           "textColor": "#ec9a3c"
-                         }'></div>
-                                <!-- End Circle -->
+                            <!-- Total Orders -->
+                        </div>
+                        <div class="apex-legends">
+                            <div class="before-bg-004188">
+                                <span>{{\App\CPU\translate('Cash_Payments')}} ({{ \App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($payment_data['cash_payment'])) }})}</span>
+                            </div>
+                            <div class="before-bg-0177CD">
+                                <span>{{\App\CPU\translate('Digital_Payments')}} ({{ \App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($payment_data['digital_payment'])) }})</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            </div>
+                            <div class="before-bg-A2CEEE">
+                                <span>{{\App\CPU\translate('wallet')}} ({{ \App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($payment_data['wallet_payment'])) }})</span>
+                            </div>
+                            <div class="before-bg-CDE6F5">
+                                <span>{{\App\CPU\translate('offline_payments')}} ({{ \App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($payment_data['offline_payment'])) }})</span>
                             </div>
                         </div>
-                        <!-- End Row -->
                     </div>
                 </div>
-                <!-- End Card -->
-            </div>
-
-            <div class="col-sm-6 col-lg-3 mb-3 mb-lg-6">
-            @php
-                $failed=\App\Model\Order::where('order_type','default_type')->where(['order_status'=>'failed'])->whereBetween('created_at', [$from, $to])->count()
-            @endphp
-            <!-- Card -->
-                <div class="card card-sm">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col">
-                                <!-- Media -->
-                                <div class="media">
-                                    <i class="tio-message-failed nav-icon"></i>
-
-                                    <div class="media-body">
-                                        <h4 class="mb-1">{{\App\CPU\translate('Failed')}}</h4>
-                                        <span class="font-size-sm text-danger">
-                                          <i class="tio-trending-up"></i> {{$failed}}
-                                        </span>
-                                    </div>
-                                </div>
-                                <!-- End Media -->
-                            </div>
-
-                            <div class="col-auto">
-                                <!-- Circle -->
-                                <div class="js-circle"
-                                     data-hs-circles-options='{
-                           "value": {{round(($failed/$total)*100)}},
-                           "maxValue": 100,
-                           "duration": 2000,
-                           "isViewportInit": true,
-                           "colors": ["#e7eaf3", "darkred"],
-                           "radius": 25,
-                           "width": 3,
-                           "fgStrokeLinecap": "round",
-                           "textFontSize": 14,
-                           "additionalText": "%",
-                           "textClass": "circle-custom-text",
-                           "textColor": "darkred"
-                         }'></div>
-                                <!-- End Circle -->
-                            </div>
-                        </div>
-                        <!-- End Row -->
-                    </div>
-                </div>
-                <!-- End Card -->
-            </div>
-
-            <div class="col-sm-6 col-lg-3 mb-3 mb-lg-6">
-            @php
-                $canceled=\App\Model\Order::where('order_type','default_type')->where(['order_status'=>'processing'])->whereBetween('created_at', [$from, $to])->count()
-            @endphp
-            <!-- Card -->
-                <div class="card card-sm">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col">
-                                <!-- Media -->
-                                <div class="media">
-                                    <i class="tio-flight-cancelled nav-icon"></i>
-
-                                    <div class="media-body">
-                                        <h4 class="mb-1">{{\App\CPU\translate('Processing')}}</h4>
-                                        <span class="font-size-sm text-muted">
-                                          <i class="tio-trending-up"></i> {{$canceled}}
-                                        </span>
-                                    </div>
-                                </div>
-                                <!-- End Media -->
-                            </div>
-
-                            <div class="col-auto">
-                                <!-- Circle -->
-                                <div class="js-circle"
-                                     data-hs-circles-options='{
-                           "value": {{round(($canceled/$total)*100)}},
-                           "maxValue": 100,
-                           "duration": 2000,
-                           "isViewportInit": true,
-                           "colors": ["#e7eaf3", "gray"],
-                           "radius": 25,
-                           "width": 3,
-                           "fgStrokeLinecap": "round",
-                           "textFontSize": 14,
-                           "additionalText": "%",
-                           "textClass": "circle-custom-text",
-                           "textColor": "gray"
-                         }'></div>
-                                <!-- End Circle -->
-                            </div>
-                        </div>
-                        <!-- End Row -->
-                    </div>
-                </div>
-                <!-- End Card -->
+                <!-- Dognut Pie -->
             </div>
         </div>
-        <!-- End Stats -->
-        <hr>
-        <!-- Card -->
-        <div class="card mb-3 mb-lg-5 border-bottom border-right border-left border-top">
-            <!-- Header -->
-            <div class="card-header">
-                @php
-                    $from = \Carbon\Carbon::now()->startOfYear()->format('Y-m-d');
-                    $to = \Carbon\Carbon::now()->endOfYear()->format('Y-m-d');
-                    $total=\App\Model\Order::where('order_type','default_type')->whereBetween('created_at', [$from, $to])->count()
-                @endphp
-                <div class="flex-start">
-                    <h6 class="card-subtitle mt-1">Total orders of {{date('Y')}} : </h6>
-                    <h6 class="h3 {{Session::get('direction') === "rtl" ? 'mr-sm-2' : 'ml-sm-2'}}">{{round($total)}}</h6>
-                </div>
 
-                <!-- Unfold -->
-                <div class="hs-unfold">
-                    <a class="js-hs-unfold-invoker btn btn-white"
-                       href="{{route('admin.orders.list',['status'=>'all'])}}">
-                        <i class="tio-shopping-cart-outlined {{Session::get('direction') === "rtl" ? 'ml-1' : 'mr-1'}}"></i> {{\App\CPU\translate('Orders')}}
-                    </a>
-                </div>
-                <!-- End Unfold -->
-            </div>
-            <!-- End Header -->
-
-        @php
-            $delivered=[];
-            $from = \Carbon\Carbon::now()->startOfYear()->format('Y-m-d');
-            $to = \Carbon\Carbon::now()->endOfYear()->format('Y-m-d');
-
-            $data=\App\Model\Order::where('order_type','default_type')
-            ->where(['order_status'=>'delivered'])->select(
-            \Illuminate\Support\Facades\DB::raw('COUNT(id) as count'),
-            \Illuminate\Support\Facades\DB::raw('YEAR(created_at) year, MONTH(created_at) month')
-            )->whereBetween('created_at', [$from, $to])->groupby('year', 'month')->get()->toArray();
-
-            for ($inc = 1; $inc <= 12; $inc++) {
-            $delivered[$inc] = 0;
-            foreach ($data as $match) {
-                if ($match['month'] == $inc) {
-                    $delivered[$inc] = $match['count'];
-                }
-            }
-        }
-
-        @endphp
-
-        @php
-            $ret=[];
-
-            $from = \Carbon\Carbon::now()->startOfYear()->format('Y-m-d');
-            $to = \Carbon\Carbon::now()->endOfYear()->format('Y-m-d');
-
-            $data=\App\Model\Order::where('order_type','default_type')
-            ->where(['order_status'=>'returned'])->select(
-            \Illuminate\Support\Facades\DB::raw('COUNT(id) as count'),
-            \Illuminate\Support\Facades\DB::raw('YEAR(created_at) year, MONTH(created_at) month')
-            )->whereBetween('created_at', [$from, $to])->groupby('year', 'month')->get()->toArray();
-
-            for ($inc = 1; $inc <= 12; $inc++) {
-            $ret[$inc] = 0;
-            foreach ($data as $match) {
-                if ($match['month'] == $inc) {
-                    $ret[$inc] = $match['count'];
-                }
-            }
-        }
-        @endphp
-
-        @php
-            $fai=[];
-
-            $from = \Carbon\Carbon::now()->startOfYear()->format('Y-m-d');
-            $to = \Carbon\Carbon::now()->endOfYear()->format('Y-m-d');
-
-            $data=\App\Model\Order::where('order_type','default_type')
-            ->where(['order_status'=>'failed'])->select(
-            \Illuminate\Support\Facades\DB::raw('COUNT(id) as count'),
-            \Illuminate\Support\Facades\DB::raw('YEAR(created_at) year, MONTH(created_at) month')
-            )->whereBetween('created_at', [$from, $to])->groupby('year', 'month')->get()->toArray();
-
-            for ($inc = 1; $inc <= 12; $inc++) {
-            $fai[$inc] = 0;
-            foreach ($data as $match) {
-                if ($match['month'] == $inc) {
-                    $fai[$inc] = $match['count'];
-                }
-            }
-        }
-        @endphp
-
-
-        @php
-            $can=[];
-
-            $from = \Carbon\Carbon::now()->startOfYear()->format('Y-m-d');
-            $to = \Carbon\Carbon::now()->endOfYear()->format('Y-m-d');
-
-            $data=\App\Model\Order::where('order_type','default_type')
-            ->where(['order_status'=>'processing'])->select(
-            \Illuminate\Support\Facades\DB::raw('COUNT(id) as count'),
-            \Illuminate\Support\Facades\DB::raw('YEAR(created_at) year, MONTH(created_at) month')
-            )->whereBetween('created_at', [$from, $to])->groupby('year', 'month')->get()->toArray();
-
-            for ($inc = 1; $inc <= 12; $inc++) {
-            $can[$inc] = 0;
-            foreach ($data as $match) {
-                if ($match['month'] == $inc) {
-                    $can[$inc] = $match['count'];
-                }
-            }
-        }
-
-        $max_order=\App\CPU\BackEndHelper::max_orders();
-        @endphp
-
-        <!-- Body -->
-            <div class="card-body">
-                <!-- Bar Chart -->
-                <div class="chartjs-custom" style="height: 18rem;">
-                    <canvas class="js-chart"
-                            data-hs-chartjs-options='{
-                        "type": "line",
-                        "data": {
-                           "labels": ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
-                           "datasets": [{
-                            "data": [{{$delivered[1]}},{{$delivered[2]}},{{$delivered[3]}},{{$delivered[4]}},{{$delivered[5]}},{{$delivered[6]}},{{$delivered[7]}},{{$delivered[8]}},{{$delivered[9]}},{{$delivered[10]}},{{$delivered[11]}},{{$delivered[12]}}],
-                            "backgroundColor": ["rgba(55, 125, 255, 0)", "rgba(255, 255, 255, 0)"],
-                            "borderColor": "green",
-                            "borderWidth": 2,
-                            "pointRadius": 0,
-                            "pointBorderColor": "#fff",
-                            "pointBackgroundColor": "green",
-                            "pointHoverRadius": 0,
-                            "hoverBorderColor": "#fff",
-                            "hoverBackgroundColor": "#377dff"
-                          },
-                          {
-                            "data": [{{$ret[1]}},{{$ret[2]}},{{$ret[3]}},{{$ret[4]}},{{$ret[5]}},{{$ret[6]}},{{$ret[7]}},{{$ret[8]}},{{$ret[9]}},{{$ret[10]}},{{$ret[11]}},{{$ret[12]}}],
-                            "backgroundColor": ["rgba(0, 201, 219, 0)", "rgba(255, 255, 255, 0)"],
-                            "borderColor": "#ec9a3c",
-                            "borderWidth": 2,
-                            "pointRadius": 0,
-                            "pointBorderColor": "#fff",
-                            "pointBackgroundColor": "#ec9a3c",
-                            "pointHoverRadius": 0,
-                            "hoverBorderColor": "#fff",
-                            "hoverBackgroundColor": "#00c9db"
-                          },
-                          {
-                            "data": [{{$fai[1]}},{{$fai[2]}},{{$fai[3]}},{{$fai[4]}},{{$fai[5]}},{{$fai[6]}},{{$fai[7]}},{{$fai[8]}},{{$fai[9]}},{{$fai[10]}},{{$fai[11]}},{{$fai[12]}}],
-                            "backgroundColor": ["rgba(0, 201, 219, 0)", "rgba(255, 255, 255, 0)"],
-                            "borderColor": "darkred",
-                            "borderWidth": 2,
-                            "pointRadius": 0,
-                            "pointBorderColor": "#fff",
-                            "pointBackgroundColor": "darkred",
-                            "pointHoverRadius": 0,
-                            "hoverBorderColor": "#fff",
-                            "hoverBackgroundColor": "#00c9db"
-                          },
-                          {
-                            "data": [{{$can[1]}},{{$can[2]}},{{$can[3]}},{{$can[4]}},{{$can[5]}},{{$can[6]}},{{$can[7]}},{{$can[8]}},{{$can[9]}},{{$can[10]}},{{$can[11]}},{{$can[12]}}],
-                            "backgroundColor": ["rgba(0, 201, 219, 0)", "rgba(255, 255, 255, 0)"],
-                            "borderColor": "gray",
-                            "borderWidth": 2,
-                            "pointRadius": 0,
-                            "pointBorderColor": "#fff",
-                            "pointBackgroundColor": "gray",
-                            "pointHoverRadius": 0,
-                            "hoverBorderColor": "#fff",
-                            "hoverBackgroundColor": "#00c9db"
-                          }]
-                        },
-                        "options": {
-                          "gradientPosition": {"y1": 200},
-                           "scales": {
-                              "yAxes": [{
-                                "gridLines": {
-                                  "color": "#e7eaf3",
-                                  "drawBorder": false,
-                                  "zeroLineColor": "#e7eaf3"
-                                },
-                                "ticks": {
-                                  "min": 0,
-                                  "max": {{$max_order}},
-                                  "stepSize": {{round($max_order/5)}},
-                                  "fontColor": "#97a4af",
-                                  "fontFamily": "Open Sans, sans-serif",
-                                  "padding": 10,
-                                  "postfix": ""
-                                }
-                              }],
-                              "xAxes": [{
-                                "gridLines": {
-                                  "display": false,
-                                  "drawBorder": false
-                                },
-                                "ticks": {
-                                  "fontSize": 12,
-                                  "fontColor": "#97a4af",
-                                  "fontFamily": "Open Sans, sans-serif",
-                                  "padding": 5
-                                }
-                              }]
-                          },
-                          "tooltips": {
-                            "prefix": "",
-                            "postfix": "",
-                            "hasIndicator": true,
-                            "mode": "index",
-                            "intersect": false,
-                            "lineMode": true,
-                            "lineWithLineColor": "rgba(19, 33, 68, 0.075)"
-                          },
-                          "hover": {
-                            "mode": "nearest",
-                            "intersect": true
-                          }
-                        }
-                      }'>
-                    </canvas>
-                </div>
-                <!-- End Bar Chart -->
-            </div>
-            <!-- End Body -->
-        </div>
-        <!-- End Card -->
-
-        <div class="row">
-            <div class="col-lg-12 mb-3 mb-lg-12">
-                <!-- Card -->
-                <div class="card h-100">
-                    <!-- Header -->
-                    <div class="card-header">
-                        <h4 class="card-header-title">{{\App\CPU\translate('Weekly')}} {{\App\CPU\translate('Report')}} </h4>
-
-                        <!-- Nav -->
-                        <ul class="nav nav-segment" id="eventsTab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="this-week-tab" data-toggle="tab" href="#this-week"
-                                   role="tab">
-                                    {{\App\CPU\translate('This')}} {{\App\CPU\translate('week')}}
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="last-week-tab" data-toggle="tab" href="#last-week" role="tab">
-                                    {{\App\CPU\translate('Last')}} {{\App\CPU\translate('week')}}
+        <div class="card">
+            <div class="card-header border-0">
+                <div class="d-flex flex-wrap w-100 gap-3 align-items-center">
+                    <h4 class="mb-0 mr-auto">
+                        {{\App\CPU\translate('Total_Orders')}}
+                        <span class="badge badge-soft-dark radius-50 fz-14">{{ $orders->total() }}</span>
+                    </h4>
+                    <form action="" method="GET" class="mb-0">
+                        <!-- Search -->
+                        <div class="input-group input-group-merge input-group-custom">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <i class="tio-search"></i>
+                                </div>
+                            </div>
+                            <input type="hidden" value="{{ $seller_id }}" name="seller_id">
+                            <input type="hidden" value="{{ $date_type }}" name="date_type">
+                            <input type="hidden" value="{{ $from }}" name="from">
+                            <input type="hidden" value="{{ $to }}" name="to">
+                            <input id="datatableSearch_" value="{{ $search }}" type="search" name="search" class="form-control" placeholder="{{ \App\CPU\translate('search_by_order_id')}}" aria-label="Search orders" required>
+                            <button type="submit" class="btn btn--primary">{{ \App\CPU\translate('search')}}</button>
+                        </div>
+                        <!-- End Search -->
+                    </form>
+                    <div>
+                        <button type="button" class="btn btn-outline--primary text-nowrap btn-block"
+                                data-toggle="dropdown">
+                            <i class="tio-download-to"></i>
+                            {{\App\CPU\translate('export')}}
+                            <i class="tio-chevron-down"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li>
+                                <a class="dropdown-item" href="{{ route('admin.report.order-report-excel', ['date_type'=>request('date_type'), 'seller_id'=>request('seller_id'), 'from'=>request('from'), 'to'=>request('to'), 'search'=>request('search')]) }}">
+                                    {{\App\CPU\translate('excel')}}
                                 </a>
                             </li>
                         </ul>
-                        <!-- End Nav -->
                     </div>
-                    <!-- End Header -->
-
-                    <!-- Body -->
-                    <div class="card-body card-body-height">
-                    @php
-                        $orders= \App\Model\Order::where('order_type','default_type')->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->paginate(20);
-                    @endphp
-                    <!-- Tab Content -->
-                        <div class="tab-content" id="eventsTabContent">
-                            <div class="tab-pane fade show active" id="this-week" role="tabpanel"
-                                 aria-labelledby="this-week-tab">
-                                <!-- Card -->
-                                @foreach($orders as $order)
-                                    <a class="card card-border-{{Session::get('direction') === "rtl" ? 'right' : 'left'}} border-{{Session::get('direction') === "rtl" ? 'right' : 'left'}}-primary shadow-none rounded-0"
-                                       href="{{route('admin.orders.details',['id'=>$order['id']])}}">
-                                        <div class="card-body py-0">
-                                            <div class="row">
-                                                <div class="col-sm mb-2 mb-sm-0">
-                                                    <h2 class="font-weight-normal mb-1">#{{$order['id']}} <small
-                                                            class="font-size-sm text-body text-uppercase">{{\App\CPU\translate('Orders')}} {{\App\CPU\translate('ID')}}</small>
-                                                    </h2>
-                                                    <h5 class="text-hover-primary mb-0">{{\App\CPU\translate('Order')}} {{\App\CPU\translate('Amount')}}
-                                                        : {{\App\CPU\BackEndHelper::usd_to_currency($order['order_amount'])}} {{\App\CPU\BackEndHelper::currency_symbol()}}</h5>
-                                                    <small
-                                                        class="text-body">{{date('d M Y',strtotime($order['created_at']))}}</small>
-                                                </div>
-
-                                                <div class="col-sm-auto align-self-sm-end">
-                                                    <!-- Avatar Group -->
-                                                    <div class="">
-                                                        {{\App\CPU\translate('Orders')}}  {{str_replace('_',' ',$order['order_status']) }}
-                                                        <br>
-                                                    </div>
-                                                    <!-- End Avatar Group -->
-                                                </div>
-                                            </div>
-                                            <!-- End Row -->
-                                        </div>
-                                    </a>
-                                    <!-- End Card -->
-                                    <hr>
-                                @endforeach
-                                <div class="card">
-                                    <div class="card-footer">
-                                        {!! $orders->links() !!}
-                                    </div>
-                                </div>
-                            </div>
-
-                            @php
-                                $orders= \App\Model\Order::where('order_type','default_type')->whereBetween('created_at', [now()->subDays(7)->startOfWeek(), now()->subDays(7)->endOfWeek()])->paginate(20);
-                            @endphp
-
-                            <div class="tab-pane fade" id="last-week" role="tabpanel" aria-labelledby="last-week-tab">
-                                @foreach($orders as $order)
-                                    <a class="card card-border-{{Session::get('direction') === "rtl" ? 'right' : 'left'}} border-{{Session::get('direction') === "rtl" ? 'right' : 'left'}}-primary shadow-none rounded-0"
-                                       href="{{route('admin.orders.details',['id'=>$order['id']])}}">
-                                        <div class="card-body py-0">
-                                            <div class="row">
-                                                <div class="col-sm mb-2 mb-sm-0">
-                                                    <h2 class="font-weight-normal mb-1">#{{$order['id']}} <small
-                                                            class="font-size-sm text-body text-uppercase">{{\App\CPU\translate('ID')}}</small>
-                                                    </h2>
-                                                    <h5 class="text-hover-primary mb-0">{{\App\CPU\translate('Order')}} {{\App\CPU\translate('Amount')}}
-                                                        : {{\App\CPU\BackEndHelper::usd_to_currency($order['order_amount'])}} {{\App\CPU\BackEndHelper::currency_symbol()}}</h5>
-                                                    <small
-                                                        class="text-body">{{date('d M Y',strtotime($order['created_at']))}}</small>
-                                                </div>
-
-                                                <div class="col-sm-auto align-self-sm-end">
-                                                    <!-- Avatar Group -->
-                                                    <div class="text-capitalize">
-                                                        {{\App\CPU\translate('Status')}} <strong>
-                                                            : {{ str_replace('_',' ',$order['order_status']) }}
-                                                            <br></strong>
-                                                    </div>
-                                                    <!-- End Avatar Group -->
-                                                </div>
-                                            </div>
-                                            <!-- End Row -->
-                                        </div>
-                                    </a>
-                                    <!-- End Card -->
-                                    <hr>
-                                @endforeach
-                                <div class="card">
-                                    <div class="card-footer">
-                                        {!! $orders->links() !!}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- End Tab Content -->
-                    </div>
-                    <!-- End Body -->
                 </div>
-                <!-- End Card -->
+            </div>
+            <div class="table-responsive">
+                <table id="datatable"
+                       style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};"
+                       class="table __table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table w-100">
+                    <thead class="thead-light thead-50 text-capitalize">
+                    <tr>
+                        <th>{{\App\CPU\translate('SL')}}</th>
+                        <th>{{\App\CPU\translate('Order ID')}}</th>
+                        <th>{{\App\CPU\translate('Total Amount')}}</th>
+                        <th>{{\App\CPU\translate('Product Discount')}}</th>
+                        <th>{{\App\CPU\translate('Coupon Discount')}}</th>
+                        <th>{{\App\CPU\translate('Shipping Charge')}}</th>
+                        <th>{{\App\CPU\translate('VAT/TAX')}}</th>
+                        <th>{{\App\CPU\translate('Commission')}}</th>
+                        <th class="text-center">{{\App\CPU\translate('Status')}}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($orders as $key=>$order)
+                        <tr>
+                            <td>{{ $orders->firstItem()+$key }}</td>
+                            <td>
+                                <a class="title-color" href="{{route('admin.orders.details',['id'=>$order->id])}}">{{$order->id}}</a>
+                            </td>
+                            <td>{{ \App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($order->order_amount)) }}</td>
+                            <td>{{ \App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($order->details_sum_discount)) }}</td>
+                            <td>{{ \App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($order->discount_amount)) }}</td>
+                            <td>{{ \App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($order->shipping_cost)) }}</td>
+                            <td>{{ \App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($order->details_sum_tax)) }}</td>
+                            <td>{{ \App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($order->admin_commission)) }}</td>
+                            <td>
+                                <div class="d-flex justify-content-center">
+                                    @if($order['order_status']=='pending')
+                                        <span class="badge badge-soft-info fz-12">
+                                            {{\App\CPU\translate($order['order_status'])}}
+                                        </span>
+                                    @elseif($order['order_status']=='processing' || $order['order_status']=='out_for_delivery')
+                                        <span class="badge badge-soft-warning fz-12">
+                                            {{str_replace('_',' ',($order['order_status'] == 'processing') ? \App\CPU\translate('packaging'):\App\CPU\translate($order['order_status']))}}
+                                        </span>
+                                    @elseif($order['order_status']=='confirmed')
+                                        <span class="badge badge-soft-success fz-12">
+                                            {{\App\CPU\translate($order['order_status'])}}
+                                        </span>
+                                    @elseif($order['order_status']=='failed')
+                                        <span class="badge badge-danger fz-12">
+                                            {{\App\CPU\translate('failed_to_deliver')}}
+                                        </span>
+                                    @elseif($order['order_status']=='delivered')
+                                        <span class="badge badge-soft-success fz-12">
+                                            {{\App\CPU\translate($order['order_status'])}}
+                                        </span>
+                                    @else
+                                        <span class="badge badge-soft-danger fz-12">
+                                            {{\App\CPU\translate($order['order_status'])}}
+                                        </span>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                    @if($orders->total()==0)
+                        <tr>
+                            <td colspan="9">
+                                <div class="text-center p-4">
+                                    <img class="mb-3 w-160" src="{{asset('public/assets/back-end')}}/svg/illustrations/sorry.svg"
+                                         alt="Image Description">
+                                    <p class="mb-0">{{ \App\CPU\translate('No_data_to_found')}}</p>
+                                </div>
+                            </td>
+                        </tr>
+                    @endif
+                    </tbody>
+                </table>
             </div>
         </div>
-        <!-- End Row -->
+        <div class="table-responsive mt-4">
+            <div class="px-4 d-flex justify-content-center justify-content-md-end">
+                <!-- Pagination -->
+                {!! $orders->links() !!}
+            </div>
+        </div>
     </div>
 @endsection
 
-@push('script')
-
-@endpush
-
 @push('script_2')
 
-    <script src="{{asset('public/assets/back-end')}}/vendor/chart.js/dist/Chart.min.js"></script>
-    <script
-        src="{{asset('public/assets/back-end')}}/vendor/chartjs-chart-matrix/dist/chartjs-chart-matrix.min.js"></script>
-    <script src="{{asset('public/assets/back-end')}}/js/hs.chartjs-matrix.js"></script>
-
-    <script>
-        $(document).on('ready', function () {
-
-            // INITIALIZATION OF FLATPICKR
-            // =======================================================
-            $('.js-flatpickr').each(function () {
-                $.HSCore.components.HSFlatpickr.init($(this));
-            });
-
-
-            // INITIALIZATION OF NAV SCROLLER
-            // =======================================================
-            $('.js-nav-scroller').each(function () {
-                new HsNavScroller($(this)).init()
-            });
-
-
-            // INITIALIZATION OF DATERANGEPICKER
-            // =======================================================
-            $('.js-daterangepicker').daterangepicker();
-
-            $('.js-daterangepicker-times').daterangepicker({
-                timePicker: true,
-                startDate: moment().startOf('hour'),
-                endDate: moment().startOf('hour').add(32, 'hour'),
-                locale: {
-                    format: 'M/DD hh:mm A'
-                }
-            });
-
-            var start = moment();
-            var end = moment();
-
-            function cb(start, end) {
-                $('#js-daterangepicker-predefined .js-daterangepicker-predefined-preview').html(start.format('MMM D') + ' - ' + end.format('MMM D, YYYY'));
-            }
-
-            $('#js-daterangepicker-predefined').daterangepicker({
-                startDate: start,
-                endDate: end,
-                ranges: {
-                    'Today': [moment(), moment()],
-                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                    'This Month': [moment().startOf('month'), moment().endOf('month')],
-                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-                }
-            }, cb);
-
-            cb(start, end);
-
-
-            // INITIALIZATION OF CHARTJS
-            // =======================================================
-            $('.js-chart').each(function () {
-                $.HSCore.components.HSChartJS.init($(this));
-            });
-
-            var updatingChart = $.HSCore.components.HSChartJS.init($('#updatingData'));
-
-            // Call when tab is clicked
-            $('[data-toggle="chart"]').click(function (e) {
-                let keyDataset = $(e.currentTarget).attr('data-datasets')
-
-                // Update datasets for chart
-                updatingChart.data.datasets.forEach(function (dataset, key) {
-                    dataset.data = updatingChartDatasets[keyDataset][key];
-                });
-                updatingChart.update();
-            })
-
-
-            // INITIALIZATION OF MATRIX CHARTJS WITH CHARTJS MATRIX PLUGIN
-            // =======================================================
-            function generateHoursData() {
-                var data = [];
-                var dt = moment().subtract(365, 'days').startOf('day');
-                var end = moment().startOf('day');
-                while (dt <= end) {
-                    data.push({
-                        x: dt.format('YYYY-MM-DD'),
-                        y: dt.format('e'),
-                        d: dt.format('YYYY-MM-DD'),
-                        v: Math.random() * 24
-                    });
-                    dt = dt.add(1, 'day');
-                }
-                return data;
-            }
-
-            $.HSCore.components.HSChartMatrixJS.init($('.js-chart-matrix'), {
-                data: {
-                    datasets: [{
-                        label: 'Commits',
-                        data: generateHoursData(),
-                        width: function (ctx) {
-                            var a = ctx.chart.chartArea;
-                            return (a.right - a.left) / 70;
-                        },
-                        height: function (ctx) {
-                            var a = ctx.chart.chartArea;
-                            return (a.bottom - a.top) / 10;
-                        }
-                    }]
-                },
-                options: {
-                    tooltips: {
-                        callbacks: {
-                            title: function () {
-                                return '';
-                            },
-                            label: function (item, data) {
-                                var v = data.datasets[item.datasetIndex].data[item.index];
-
-                                if (v.v.toFixed() > 0) {
-                                    return '<span class="font-weight-bold">' + v.v.toFixed() + ' hours</span> on ' + v.d;
-                                } else {
-                                    return '<span class="font-weight-bold">No time</span> on ' + v.d;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        xAxes: [{
-                            position: 'bottom',
-                            type: 'time',
-                            offset: true,
-                            time: {
-                                unit: 'week',
-                                round: 'week',
-                                displayFormats: {
-                                    week: 'MMM'
-                                }
-                            },
-                            ticks: {
-                                "labelOffset": 20,
-                                "maxRotation": 0,
-                                "minRotation": 0,
-                                "fontSize": 12,
-                                "fontColor": "rgba(22, 52, 90, 0.5)",
-                                "maxTicksLimit": 12,
-                            },
-                            gridLines: {
-                                display: false
-                            }
-                        }],
-                        yAxes: [{
-                            type: 'time',
-                            offset: true,
-                            time: {
-                                unit: 'day',
-                                parser: 'e',
-                                displayFormats: {
-                                    day: 'ddd'
-                                }
-                            },
-                            ticks: {
-                                "fontSize": 12,
-                                "fontColor": "rgba(22, 52, 90, 0.5)",
-                                "maxTicksLimit": 2,
-                            },
-                            gridLines: {
-                                display: false
-                            }
-                        }]
-                    }
-                }
-            });
-
-
-            // INITIALIZATION OF CLIPBOARD
-            // =======================================================
-            $('.js-clipboard').each(function () {
-                var clipboard = $.HSCore.components.HSClipboard.init(this);
-            });
-
-
-            // INITIALIZATION OF CIRCLES
-            // =======================================================
-            $('.js-circle').each(function () {
-                var circle = $.HSCore.components.HSCircles.init($(this));
-            });
-        });
+    <!-- Chart JS -->
+    <script src="{{ asset('public/assets/back-end') }}/js/chart.js/dist/Chart.min.js"></script>
+    <script src="{{ asset('public/assets/back-end') }}/js/chart.js.extensions/chartjs-extensions.js"></script>
+    <script src="{{ asset('public/assets/back-end') }}/js/chartjs-plugin-datalabels/dist/chartjs-plugin-datalabels.min.js">
     </script>
+    <!-- Chart JS -->
+    <!-- Apex Charts -->
+    <script src="{{ asset('/public/assets/back-end/js/apexcharts.js') }}"></script>
+    <!-- Apex Charts -->
+
+    <!-- Dognut Pie Chart -->
+    <script>
+        var options = {
+            series: [
+                {{ \App\CPU\BackEndHelper::usd_to_currency($payment_data['cash_payment']) }},
+                {{ \App\CPU\BackEndHelper::usd_to_currency($payment_data['digital_payment']) }},
+                {{ \App\CPU\BackEndHelper::usd_to_currency($payment_data['wallet_payment']) }},
+                {{ \App\CPU\BackEndHelper::usd_to_currency($payment_data['offline_payment']) }}
+            ],
+            chart: {
+                width: 320,
+                type: 'donut',
+            },
+            labels: [
+                '{{\App\CPU\translate('Cash_Payments')}} ({{ \App\CPU\BackEndHelper::currency_symbol() }}{{ \App\CPU\BackEndHelper::format_currency(\App\CPU\BackEndHelper::usd_to_currency($payment_data['cash_payment'])) }})',
+                '{{\App\CPU\translate('Digital_Payments')}} ({{ \App\CPU\BackEndHelper::currency_symbol() }}{{ \App\CPU\BackEndHelper::format_currency(\App\CPU\BackEndHelper::usd_to_currency($payment_data['digital_payment'])) }})',
+                '{{\App\CPU\translate('Wallet_Payments')}} ({{ \App\CPU\BackEndHelper::currency_symbol() }}{{ \App\CPU\BackEndHelper::format_currency(\App\CPU\BackEndHelper::usd_to_currency($payment_data['wallet_payment'])) }})',
+                '{{\App\CPU\translate('Offline_Payments')}} ({{ \App\CPU\BackEndHelper::currency_symbol() }}{{ \App\CPU\BackEndHelper::format_currency(\App\CPU\BackEndHelper::usd_to_currency($payment_data['offline_payment'])) }})',
+            ],
+            dataLabels: {
+                enabled: false,
+                style: {
+                    colors: ['#004188', '#004188', '#004188', '#7b94a4']
+                }
+            },
+            responsive: [{
+                breakpoint: 1650,
+                options: {
+                    chart: {
+                        width: 260
+                    },
+                }
+            }],
+            colors: ['#004188', '#0177CD', '#0177CD', '#7b94a4'],
+            fill: {
+                colors: ['#004188', '#A2CEEE', '#0177CD', '#7b94a4']
+            },
+            legend: {
+                show: false
+            },
+        };
+
+        var chart = new ApexCharts(document.querySelector("#dognut-pie"), options);
+        chart.render();
+    </script>
+    <!-- Dognut Pie Chart -->
 
     <script>
+
+        // Bar Charts
+        Chart.plugins.unregister(ChartDataLabels);
+
+        $('.js-chart').each(function() {
+            $.HSCore.components.HSChartJS.init($(this));
+        });
+
+        var updatingChart = $.HSCore.components.HSChartJS.init($('#updatingData'));
+
+        $('.js-data-example-ajax').select2({
+            ajax: {
+                url: '{{ url('/') }}/admin/store/get-stores',
+                data: function(params) {
+                    return {
+                        q: params.term, // search term
+                        // all:true,
+                        @if (isset($zone))
+                        zone_ids: [{{ $zone->id }}],
+                        @endif
+                        page: params.page
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: data
+                    };
+                },
+                __port: function(params, success, failure) {
+                    var $request = $.ajax(params);
+
+                    $request.then(success);
+                    $request.fail(failure);
+
+                    return $request;
+                }
+            }
+        });
+
         $('#from_date,#to_date').change(function () {
             let fr = $('#from_date').val();
             let to = $('#to_date').val();
+            if(fr != ''){
+                $('#to_date').attr('required','required');
+            }
+            if(to != ''){
+                $('#from_date').attr('required','required');
+            }
             if (fr != '' && to != '') {
                 if (fr > to) {
                     $('#from_date').val('');
                     $('#to_date').val('');
-                    toastr.error('{{\App\CPU\translate('Invalid date range')}}!', Error, {
+                    toastr.error('Invalid date range!', Error, {
                         CloseButton: true,
                         ProgressBar: true
                     });
@@ -891,5 +488,23 @@
             }
 
         })
+
+        $("#date_type").change(function() {
+            let val = $(this).val();
+            $('#from_div').toggle(val === 'custom_date');
+            $('#to_div').toggle(val === 'custom_date');
+
+            if(val === 'custom_date'){
+                $('#from_date').attr('required','required');
+                $('#to_date').attr('required','required');
+                $('.filter-btn').attr('class','filter-btn col-12 text-right');
+            }else{
+                $('#from_date').val(null).removeAttr('required')
+                $('#to_date').val(null).removeAttr('required')
+                $('.filter-btn').attr('class','col-sm-6 col-md-3 filter-btn');
+            }
+        }).change();
+
     </script>
+
 @endpush

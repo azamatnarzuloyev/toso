@@ -22,7 +22,7 @@
         <h1 class="h3 mb-0 text-black-50">{{\App\CPU\translate('Seller')}} : {{$seller['f_name'].' '.$seller['l_name']}} , {{\App\CPU\translate('ID')}} : {{$seller['id']}}</h1>
     </div>
 
-    <div class="row" style="margin-top: 20px">
+    <div class="row __mt-20">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
@@ -40,7 +40,7 @@
                                     <th>{{\App\CPU\translate('Status')}} </th>
                                     <th>{{\App\CPU\translate('Payment')}}</th>
 
-                                    <th style="width: 30px">{{\App\CPU\translate('Action')}}</th>
+                                    <th class="__w-30px">{{\App\CPU\translate('Action')}}</th>
                                 </tr>
                                 </thead>
                             <tbody>
@@ -68,7 +68,7 @@
                                         @if($order->order_status=='pending')
                                             <label class="badge badge-primary">{{str_replace('_',' ',$order->order_status)}}</label>
                                         @elseif($order->order_status=='processing' || $order->order_status=='out_for_delivery')
-                                            <label class="badge badge-warning">{{str_replace('_',' ',$order->order_status)}}</label>
+                                            <label class="badge badge-warning">{{str_replace('_',' ',$order->order_status=='processing' ? 'packaging':$order->order_status)}}</label>
                                         @elseif($order->order_status=='processed')
                                             <label class="badge badge-warning">{{str_replace('_',' ',$order->order_status)}}</label>
                                         @elseif($order->order_status=='delivered' || $order->order_status=='confirmed')
@@ -76,7 +76,7 @@
                                         @elseif($order->order_status=='returned')
                                             <label class="badge badge-warning">{{str_replace('_',' ',$order->order_status)}}</label>
                                         @elseif($order->order_status=='failed' || $order->order_status=='canceled')
-                                            <label class="badge badge-danger">{{str_replace('_',' ',$order->order_status)}}</label>
+                                            <label class="badge badge-danger">{{str_replace('_',' ',$order->order_status=='failed' ? 'Failed To Deliver':$order->order_status)}}</label>
                                         @endif
                                     </td>
                                     <td>
@@ -107,7 +107,6 @@
                                                         class="tio-download"></i> {{\App\CPU\translate('Invoice')}}</a>
                                             </div>
                                         </div>
-                                        
                                     </td>
                                 </tr>
                             @endforeach
@@ -122,9 +121,7 @@
 
                         <div class="col-sm-auto">
                             <div class="d-flex justify-content-center justify-content-sm-end">
-                                <!-- Pagination -->
                                 {!! $orders->links() !!}
-                                {{--<nav id="datatablePagination" aria-label="Activity pagination"></nav>--}}
                             </div>
                         </div>
                     </div>

@@ -1,18 +1,18 @@
 @if(count($combinations) > 0)
-<table class="table table-bordered">
+<table class="table table-bordered physical_product_show">
     <thead>
     <tr>
         <td class="text-center">
-            <label for="" class="control-label">{{\App\CPU\translate('Variant')}}</label>
+            <label for="" class="title-color">{{\App\CPU\translate('Variant')}}</label>
         </td>
         <td class="text-center">
-            <label for="" class="control-label">{{\App\CPU\translate('Variant Price')}}</label>
+            <label for="" class="title-color">{{\App\CPU\translate('Variant Price')}}</label>
         </td>
         <td class="text-center">
-            <label for="" class="control-label">{{\App\CPU\translate('SKU')}}</label>
+            <label for="" class="title-color">{{\App\CPU\translate('SKU')}}</label>
         </td>
         <td class="text-center">
-            <label for="" class="control-label">{{\App\CPU\translate('Quantity')}}</label>
+            <label for="" class="title-color">{{\App\CPU\translate('Quantity')}}</label>
         </td>
     </tr>
     </thead>
@@ -22,7 +22,7 @@
         <tr>
             <td>
                 <label for="" class="control-label">{{ $combination['type'] }}</label>
-                <input value="{{ $combination['type'] }}" name="type[]" style="display: none">
+                <input value="{{ $combination['type'] }}" name="type[]" class="d-none">
             </td>
             <td>
                 <input type="number" name="price_{{ $combination['type'] }}"

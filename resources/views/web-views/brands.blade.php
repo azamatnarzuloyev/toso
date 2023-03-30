@@ -12,15 +12,6 @@
     <meta property="twitter:title" content="Brands of {{$web_config['name']->value}}"/>
     <meta property="twitter:url" content="{{env('APP_URL')}}">
     <meta property="twitter:description" content="{!! substr($web_config['about']->value,0,100) !!}">
-    <style>
-        .brand_div {
-            background: #fcfcfc no-repeat padding-box;
-            border: 1px solid #e2f0ff;
-            border-radius: 3px;
-            opacity: 1;
-            padding: 5px;
-        }
-    </style>
 @endpush
 
 @section('content')
@@ -36,17 +27,11 @@
             <!-- Content  -->
             <section class="col-lg-12">
                 <!-- Products grid-->
-                <div class="row mx-n2">
+                <div class="row g-3">
                     @foreach($brands as $brand)
-                        <div class="col-lg-2 col-md-3 col-sm-4 col-6 px-2 pb-4 text-center">
-                            <a href="{{route('products',['id'=> $brand['id'],'data_from'=>'brand','page'=>1])}}" class="">
-                                <div class="brand_div d-flex align-items-center justify-content-center"
-                                 style="height: 200px">
-                                    <img
-                                        onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'"
-                                        src="{{asset("storage/app/public/brand/$brand->image")}}"
-                                        alt="{{$brand->name}}">
-                                </div>
+                        <div class="col-lg-2 col-md-3 col-sm-4 col-6 text-center">
+                            <a href="{{route('products',['id'=> $brand['id'],'data_from'=>'brand','page'=>1])}}" class="brand_div">
+                                <img onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'" src="{{asset("storage/app/public/brand/$brand->image")}}" alt="{{$brand->name}}">
                             </a>
                         </div>
                     @endforeach

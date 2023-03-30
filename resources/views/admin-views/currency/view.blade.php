@@ -10,54 +10,52 @@
     @php($currency_model=\App\CPU\Helpers::get_business_settings('currency_model'))
     @php($default=\App\CPU\Helpers::get_business_settings('system_default_currency'))
     <div class="content container-fluid">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a
-                        href="{{route('admin.dashboard')}}">{{\App\CPU\translate('Dashboard')}}</a>
-                </li>
-                <li class="breadcrumb-item" aria-current="page">{{\App\CPU\translate('Currency')}}</li>
-            </ol>
-        </nav>
-        <!-- Page Heading -->
+        <!-- Page Title -->
+        <div class="mb-4 pb-2">
+            <h2 class="h1 mb-0 text-capitalize d-flex align-items-center gap-2">
+                <img src="{{asset('/public/assets/back-end/img/system-setting.png')}}" alt="">
+                {{\App\CPU\translate('System_Setup')}}
+            </h2>
+        </div>
+        <!-- End Page Title -->
 
-        <div class="row">
-            <div class="col-12">
-                <div class="alert alert-danger mb-3" role="alert">
-                    {{\App\CPU\translate('changing_some_settings_will_take_time_to_show_effect_please_clear_session_or_wait_for_60_minutes_else_browse_from_incognito_mode')}}
-                </div>
-            </div>
+        <!-- Inline Menu -->
+        @include('admin-views.business-settings.system-settings-inline-menu')
+        <!-- End Inline Menu -->
+
+        <div class="row gy-2">
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="text-center">
-                            <i class="tio-money"></i>
+                        <h5 class="mb-0">
+                            <img width="18" src="{{asset('/public/assets/back-end/img/currency.png')}}" alt="">
                             {{\App\CPU\translate('Add New Currency')}}
                         </h5>
                     </div>
                     <div class="card-body">
                         <form action="{{route('admin.currency.store')}}" method="post">
                             @csrf
-                            <div class="form-group">
+                            <div class="">
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 mb-3">
                                         <input type="text" name="name" class="form-control"
                                                id="name" placeholder="{{\App\CPU\translate('Enter currency Name')}}">
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 mb-3">
                                         <input type="text" name="symbol" class="form-control"
                                                id="symbol" placeholder="{{\App\CPU\translate('Enter currency symbol')}}">
                                     </div>
                                 </div>
 
                             </div>
-                            <div class="form-group">
+                            <div class="">
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 mb-3">
                                         <input type="text" name="code" class="form-control"
                                                id="code" placeholder="{{\App\CPU\translate('Enter currency code')}}">
                                     </div>
                                     @if($currency_model=='multi_currency')
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 mb-3">
                                             <input type="number" min="0" max="1000000"
                                                    name="exchange_rate" step="0.00000001"
                                                    class="form-control" id="exchange_rate"
@@ -68,8 +66,7 @@
                             </div>
 
                             <div class="form-group text-center">
-                                <button type="submit" id="add" class="btn btn-primary text-capitalize"
-                                        style="color: white">
+                                <button type="submit" id="add" class="btn btn--primary text-capitalize">
                                     <i class="tio-add"></i> {{\App\CPU\translate('add')}}
                                 </button>
                             </div>
@@ -80,7 +77,7 @@
             <div class="col-md-6">
                 <div class="card h-100">
                     <div class="card-header">
-                        <h5 class="text-center">
+                        <h5 class="mb-0">
                             <i class="tio-settings"></i>
                             {{\App\CPU\translate('system_default_currency')}}
                         </h5>
@@ -105,9 +102,9 @@
                                     </div>
                                 </div>
                                 <div class="col-md-12 mt-3">
-                                    <div class="form-group mb-2">
+                                    <div class="d-flex justify-content-end flex-wrap gap-10">
                                         <button type="submit"
-                                                class="btn btn-primary mb-2">{{\App\CPU\translate('Save')}}</button>
+                                                class="btn btn--primary">{{\App\CPU\translate('Save')}}</button>
                                     </div>
                                 </div>
                             </div>
@@ -115,26 +112,20 @@
                     </div>
                 </div>
             </div>
-
-        </div>
-
-
-        <div class="row" style="margin-top: 20px">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">
-                        <div class="row justify-content-between align-items-center flex-grow-1">
-                            <div class="col-lg-3 mb-3 mb-lg-0">
-                                <div class="flex-start">
-                                    <div><h5>{{\App\CPU\translate('Currency')}} {{\App\CPU\translate('table')}}</h5>
-                                    </div>
-                                    <div class="mx-1"><h5 style="color: red;">({{ $currencies->total() }})</h5></div>
-                                </div>
+                    <div class="px-3 py-4">
+                        <div class="row align-items-center">
+                            <div class="col-sm-4 col-md-6 col-lg-8 mb-2 mb-sm-0">
+                                <h5 class="mb-0 d-flex align-items-center gap-10">
+                                    {{\App\CPU\translate('Currency')}} {{\App\CPU\translate('table')}}
+                                    <span class="badge badge-soft-dark radius-50 fz-12 ml-1">{{ $currencies->total() }}</span>
+                                </h5>
                             </div>
-                            <div class="col-lg-6">
+                            <div class="col-sm-8 col-md-6 col-lg-4">
                                 <!-- Search -->
                                 <form action="{{ url()->current() }}" method="GET">
-                                    <div class="input-group input-group-merge input-group-flush">
+                                    <div class="input-group input-group-merge input-group-custom">
                                         <div class="input-group-prepend">
                                             <div class="input-group-text">
                                                 <i class="tio-search"></i>
@@ -143,103 +134,108 @@
                                         <input id="datatableSearch_" type="search" name="search" class="form-control"
                                                placeholder="{{\App\CPU\translate('Search Currency Name or Currency Code')}}"
                                                aria-label="Search orders" value="{{ $search }}" required>
-                                        <button type="submit" class="btn btn-primary">{{\App\CPU\translate('search')}}</button>
+                                        <button type="submit" class="btn btn--primary">{{\App\CPU\translate('search')}}</button>
                                     </div>
                                 </form>
                                 <!-- End Search -->
                             </div>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table
-                                class="table table-borderless table-thead-bordered table-nowrap table-align-middle card-table">
-                                <thead class="thead-light">
-                                <tr class="text-center">
-                                    <th scope="col">{{\App\CPU\translate('SL')}}#</th>
-                                    <th scope="col">{{\App\CPU\translate('currency_name')}}</th>
-                                    <th scope="col">{{\App\CPU\translate('currency_symbol')}}</th>
-                                    <th scope="col">{{\App\CPU\translate('currency_code')}}</th>
+
+                    <div class="table-responsive">
+                        <table
+                            class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table {{ Session::get('direction') === 'rtl' ? 'text-right' : 'text-left' }}
+">
+                            <thead class="thead-light thead-50 text-capitalize">
+                                <tr>
+                                    <th>{{\App\CPU\translate('SL')}}</th>
+                                    <th>{{\App\CPU\translate('currency_name')}}</th>
+                                    <th>{{\App\CPU\translate('currency_symbol')}}</th>
+                                    <th>{{\App\CPU\translate('currency_code')}}</th>
                                     @if($currency_model=='multi_currency')
-                                        <th scope="col">{{\App\CPU\translate('exchange_rate')}}
+                                        <th>{{\App\CPU\translate('exchange_rate')}}
                                             (1 {{App\Model\Currency::where('id', $default->value)->first()->code}}= ?)
                                         </th>
                                     @endif
-                                    <th scope="col">{{\App\CPU\translate('status')}}</th>
-                                    <th scope="col">{{\App\CPU\translate('action')}}</th>
+                                    <th>{{\App\CPU\translate('status')}}</th>
+                                    <th class="text-center">{{\App\CPU\translate('action')}}</th>
                                 </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($currencies as $key =>$data)
-                                    <tr class="text-center">
-                                        <td>{{$currencies->firstitem()+ $key }}</td>
-                                        <td>{{$data->name}}</td>
-                                        <td>{{$data->symbol}}</td>
-                                        <td>{{$data->code}}</td>
-                                        @if($currency_model=='multi_currency')
-                                            <td>{{$data->exchange_rate}}</td>
+                            </thead>
+                            <tbody>
+                            @foreach($currencies as $key =>$data)
+                                <tr>
+                                    <td>{{$currencies->firstitem()+ $key }}</td>
+                                    <td>{{$data->name}}</td>
+                                    <td>{{$data->symbol}}</td>
+                                    <td>{{$data->code}}</td>
+                                    @if($currency_model=='multi_currency')
+                                        <td>{{$data->exchange_rate}}</td>
+                                    @endif
+                                    <td>
+                                        @if($default['value']!=$data->id)
+                                            <label class="switcher">
+                                                <input type="checkbox" class="switcher_input status"
+                                                        id="{{$data->id}}" <?php if ($data->status == 1) echo "checked" ?>>
+                                                <span class="switcher_control"></span>
+                                            </label>
+                                        @else
+                                            <label class="badge badge-info">{{\App\CPU\translate('Default')}}</label>
                                         @endif
-                                        <td>
-                                            @if($default['value']!=$data->id)
-                                                <label class="switch">
-                                                    <input type="checkbox" class="status"
-                                                           id="{{$data->id}}" <?php if ($data->status == 1) echo "checked" ?>><span
-                                                        class="slider round">
-                                                    </span>
-                                                </label>
-                                            @else
-                                                <label class="badge badge-info">{{\App\CPU\translate('Default')}}</label>
-                                            @endif
-                                        </td>
-                                        <td>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-10 justify-content-center">
                                             @if($data->code!='USD')
                                                 <a  title="{{\App\CPU\translate('Edit')}}"
-                                                    type="button" class="btn btn-primary btn-sm btn-xs edit"
+                                                    type="button" class="btn btn-outline--primary btn-sm btn-xs edit"
                                                     href="{{route('admin.currency.edit',[$data->id])}}">
-                                                    <i class="tio-edit"></i> 
+                                                    <i class="tio-edit"></i>
                                                 </a>
                                                 @if ($default['value']!=$data->id)
                                                 <a  title="{{\App\CPU\translate('Delete')}}"
-                                                    type="button" class="btn btn-danger btn-sm btn-xs delete"
+                                                    type="button" class="btn btn-outline-danger btn-sm btn-xs delete"
                                                     id="{{$data->id}}"
                                                     >
-                                                    <i class="tio-delete"></i> 
+                                                    <i class="tio-delete"></i>
                                                 </a>
                                                 @else
                                                     <a href="javascript:" title="{{\App\CPU\translate('Delete')}}"
-                                                        type="button" class="btn btn-danger btn-sm btn-xs"
+                                                        type="button" class="btn btn-outline-danger btn-sm btn-xs"
                                                         onclick="default_currency_delete_alert()"
                                                         >
-                                                        <i class="tio-delete"></i> 
+                                                        <i class="tio-delete"></i>
                                                     </a>
                                                 @endif
                                             @else
                                                 <button title="{{\App\CPU\translate('Edit')}}"
-                                                        class="btn btn-primary btn-sm btn-xs edit" disabled>
-                                                    <i class="tio-edit"></i> 
+                                                        class="btn btn-outline--primary btn-sm btn-xs edit" disabled>
+                                                    <i class="tio-edit"></i>
                                                 </button>
                                             @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-responsive mt-4">
+                        <div class="px-4 d-flex justify-content-lg-end">
+                            <!-- Pagination -->
+                            {{$currencies->links()}}
                         </div>
                     </div>
-                    <div class="card-footer">
-                        {{$currencies->links()}}
-                    </div>
+
                     @if(count($currencies)==0)
                         <div class="text-center p-4">
-                            <img class="mb-3" src="{{asset('public/assets/back-end')}}/svg/illustrations/sorry.svg"
-                                 alt="Image Description" style="width: 7rem;">
+                            <img class="mb-3 w-160" src="{{asset('public/assets/back-end')}}/svg/illustrations/sorry.svg"
+                                 alt="Image Description">
                             <p class="mb-0">{{\App\CPU\translate('No data to show')}}</p>
                         </div>
                     @endif
                 </div>
             </div>
         </div>
-
     </div>
 @endsection
 
@@ -295,7 +291,6 @@
                     } else {
                         toastr.error(response.message);
                     }
-                    location.reload();
                 }
             });
         });
@@ -309,7 +304,7 @@
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: '{{\App\CPU\translate('Yes, delete it')}}!',
+            confirmButtonText: '{{\App\CPU\translate('Yes')}}, {{\App\CPU\translate('delete it')}}!',
             type: 'warning',
             reverseButtons: true
         }).then((result) => {
@@ -324,7 +319,7 @@
                     method: 'POST',
                     data: {id: id},
                     success: function (data) {
-                        
+
                         if(data.status ==1){
                             toastr.success('{{\App\CPU\translate('Currency removed successfully!')}}');
                             location.reload();

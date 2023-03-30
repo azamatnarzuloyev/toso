@@ -77,7 +77,7 @@
                             </div>
                             <div class="form-group col-sm-12">
                                 <br>
-                                <button id="form-checkout__submit" type="submit" class="btn btn-primary btn-block">Pay</button>
+                                <button id="form-checkout__submit" type="submit" class="btn btn--primary btn-block">Pay</button>
                                 <br>
                                 <p id="loading-message">Loading, please wait...</p>
                                 <br>

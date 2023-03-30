@@ -99,6 +99,7 @@
             outline: none;
         }
     </style>
+
 </head>
 <body style="background-color: #e9ecef;">
 <!-- end preheader -->
@@ -107,7 +108,7 @@
         {{\App\CPU\translate('Reset Your password')}}.
     </div>
     <div class="card-body">
-        <a style="background: darkblue" class="btn btn-primary" href="{{$url}}">
+        <a style="background: darkblue" class="btn btn--primary" href="{{$url}}">
             {{\App\CPU\translate('Click to Reset')}}
         </a>
     </div>

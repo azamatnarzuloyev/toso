@@ -8,21 +8,22 @@
 
 @section('content')
 <div class="content container-fluid">
-    <!-- Page Heading -->
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{ \App\CPU\translate('Dashboard')}}</a></li>
-            <li class="breadcrumb-item" aria-current="page">{{ \App\CPU\translate('Attribute')}}</li>
-        </ol>
-    </nav>
+    <!-- Page Title -->
+    <div class="mb-3">
+        <h2 class="h1 mb-0 d-flex gap-2">
+            <img src="{{asset('/public/assets/back-end/img/attribute.png')}}" alt="">
+            {{\App\CPU\translate('Attribute_Setup')}}
+        </h2>
+    </div>
+    <!-- End Page Title -->
 
     <!-- Content Row -->
     <div class="row">
-        <div class="col-md-12" style="margin-bottom: 10px;">
+        <div class="col-md-12 mb-3">
             <div class="card">
-                <div class="card-header">
+                <!-- <div class="card-header">
                     {{ \App\CPU\translate('Add')}} {{ \App\CPU\translate('new')}} {{ \App\CPU\translate('Attribute')}}
-                </div>
+                </div> -->
                 <div class="card-body" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
                     <form action="{{route('admin.attribute.store')}}" method="post">
                         @csrf
@@ -31,9 +32,9 @@
                         @php($default_lang = 'en')
 
                         @php($default_lang = json_decode($language)[0])
-                        <ul class="nav nav-tabs mb-4">
+                        <ul class="nav nav-tabs w-fit-content mb-4">
                             @foreach(json_decode($language) as $lang)
-                                <li class="nav-item">
+                                <li class="nav-item text-capitalize">
                                     <a class="nav-link lang_link {{$lang == $default_lang? 'active':''}}"
                                         href="#"
                                         id="{{$lang}}-link">{{\App\CPU\Helpers::get_language_name($lang).'('.strtoupper($lang).')'}}</a>
@@ -45,7 +46,7 @@
                         <div class="form-group {{$lang != $default_lang ? 'd-none':''}} lang_form"
                                     id="{{$lang}}-form">
                             <input type="hidden" id="id">
-                            <label for="name">{{ \App\CPU\translate('Attribute')}} {{ \App\CPU\translate('Name')}}
+                            <label class="title-color" for="name">{{ \App\CPU\translate('Attribute')}} {{ \App\CPU\translate('Name')}}<span class="text-danger">*</span>
                                     ({{strtoupper($lang)}})</label>
                             <input type="text" name="name[]" class="form-control" id="name"
                                    placeholder="{{\App\CPU\translate('Enter_Attribute_Name')}}" {{$lang == $default_lang? 'required':''}}>
@@ -54,8 +55,10 @@
                         @endforeach
 
 
-                            <button type="submit" class="btn btn-primary float-right">{{ \App\CPU\translate('submit')}}</button>
-
+                        <div class="d-flex flex-wrap gap-2 justify-content-end">
+                            <button type="reset" class="btn btn-secondary">{{\App\CPU\translate('reset')}}</button>
+                            <button type="submit" class="btn btn--primary">{{\App\CPU\translate('submit')}}</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -63,15 +66,17 @@
 
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header">
-                    <div class="row flex-between justify-content-between align-items-center flex-grow-1">
-                            <div class="col-12 col-md-7">
-                                <h5>{{ \App\CPU\translate('Attribute')}} {{ \App\CPU\translate('Table')}} <span style="color: red;">({{ $attributes->total() }})</span></h5>
+                <div class="px-3 py-4">
+                    <div class="row align-items-center">
+                            <div class="col-sm-4 col-md-6 col-lg-8 mb-2 mb-sm-0">
+                                <h5 class="mb-0 d-flex align-items-center gap-2">{{ \App\CPU\translate('Attribute')}} {{ \App\CPU\translate('list')}}
+                                    <span class="badge badge-soft-dark radius-50 fz-12">{{ $attributes->total() }}</span>
+                                </h5>
                             </div>
-                            <div class="col-12 col-md-5" style="width: 30vw">
+                            <div class="col-sm-8 col-md-6 col-lg-4">
                                 <!-- Search -->
                                 <form action="{{ url()->current() }}" method="GET">
-                                    <div class="input-group input-group-merge input-group-flush">
+                                    <div class="input-group input-group-custom input-group-merge">
                                         <div class="input-group-prepend">
                                             <div class="input-group-text">
                                                 <i class="tio-search"></i>
@@ -79,43 +84,42 @@
                                         </div>
                                         <input id="datatableSearch_" type="search" name="search" class="form-control"
                                             placeholder="{{\App\CPU\translate('Search_by_Attribute_Name')}}" aria-label="Search orders" value="{{ $search }}" required>
-                                        <button type="submit" class="btn btn-primary">{{ \App\CPU\translate('Search')}}</button>
+                                        <button type="submit" class="btn btn--primary">{{ \App\CPU\translate('Search')}}</button>
                                     </div>
                                 </form>
                                 <!-- End Search -->
                             </div>
                         </div>
                 </div>
-                <div class="card-body" style="padding: 0; text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
+                <div style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
                     <div class="table-responsive">
                         <table id="datatable"
-                               class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table"
-                               style="width: 100%">
-                            <thead class="thead-light">
-                            <tr>
-                                <th style="">{{ \App\CPU\translate('SL#')}}</th>
-                                <th style="width: 40%;text-align:center;">{{ \App\CPU\translate('Name')}} </th>
-                                <th style="width: 40%;text-align:center;">{{ \App\CPU\translate('Action')}}</th>
-                            </tr>
+                               class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table w-100">
+                            <thead class="thead-light thead-50 text-capitalize">
+                                <tr>
+                                    <th>{{ \App\CPU\translate('SL')}}</th>
+                                    <th class="text-center">{{ \App\CPU\translate('Attribute_Name')}} </th>
+                                    <th class="text-center">{{ \App\CPU\translate('Action')}}</th>
+                                </tr>
                             </thead>
                             <tbody>
                             @foreach($attributes as $key=>$attribute)
                                 <tr>
                                     <td>{{$attributes->firstItem()+$key}}</td>
-                                    <td style="width: 40%;text-align:center;">{{$attribute['name']}}</td>
-                                    <td style="width: 40%;text-align:center;">
-                                        
-                                        <a class="btn btn-primary btn-sm edit" style="cursor: pointer;"
-                                            title="{{ \App\CPU\translate('Edit')}}"
-                                            href="{{route('admin.attribute.edit',[$attribute['id']])}}"> 
-                                            <i class="tio-edit"></i>
-                                        </a>
-                                        <a class="btn btn-danger btn-sm delete"style="cursor: pointer;"
-                                            title="{{ \App\CPU\translate('Delete')}}"
-                                            id="{{$attribute['id']}}">  
-                                            <i class="tio-add-to-trash"></i>
-                                        </a>
-                                            
+                                    <td class="text-center">{{$attribute['name']}}</td>
+                                    <td>
+                                       <div class="d-flex justify-content-center gap-2">
+                                            <a class="btn btn-outline-info btn-sm square-btn"
+                                                title="{{ \App\CPU\translate('Edit')}}"
+                                                href="{{route('admin.attribute.edit',[$attribute['id']])}}">
+                                                <i class="tio-edit"></i>
+                                            </a>
+                                            <a class="btn btn-outline-danger btn-sm delete square-btn"
+                                                title="{{ \App\CPU\translate('Delete')}}"
+                                                id="{{$attribute['id']}}">
+                                                <i class="tio-delete"></i>
+                                            </a>
+                                       </div> 
                                     </td>
                                 </tr>
                             @endforeach
@@ -123,15 +127,20 @@
                         </table>
                     </div>
                 </div>
-                <div class="card-footer">
-                    {!! $attributes->links() !!}
+
+                <div class="table-responsive mt-4">
+                    <div class="d-flex justify-content-lg-end">
+                        <!-- Pagination -->
+                        {!! $attributes->links() !!}
+                    </div>
                 </div>
+
                 @if(count($attributes)==0)
-                        <div class="text-center p-4">
-                            <img class="mb-3" src="{{asset('public/assets/back-end')}}/svg/illustrations/sorry.svg" alt="Image Description" style="width: 7rem;">
-                            <p class="mb-0">{{ \App\CPU\translate('No_data_to_show')}}</p>
-                        </div>
-                    @endif
+                    <div class="text-center p-4">
+                        <img class="mb-3 w-160" src="{{asset('public/assets/back-end')}}/svg/illustrations/sorry.svg" alt="Image Description">
+                        <p class="mb-0">{{ \App\CPU\translate('No_data_to_show')}}</p>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

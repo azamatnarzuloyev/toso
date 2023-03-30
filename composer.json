@@ -2,14 +2,21 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
     "license": "MIT",
     "require": {
-        "php": "^7.3|^8.0",
+        "php": "8.0|^8.2",
         "ext-curl": "*",
+        "ext-intl": "*",
         "ext-json": "*",
+        "ext-mysqli": "*",
         "ext-openssl": "*",
+        "ext-zip": "*",
         "aws/aws-sdk-php": "^3.209",
+        "barryvdh/laravel-dompdf": "^2.0",
         "brian2694/laravel-toastr": "^5.56",
         "ckeditor/ckeditor": "^4.17",
         "doctrine/dbal": "^3.2",
@@ -26,14 +33,17 @@
         "laravel/tinker": "^2.5",
         "laravelpkg/laravelchk": "dev-master",
         "lcobucci/jwt": "^4.1",
-        "league/flysystem-aws-s3-v3": "^1.0",
+        "league/flysystem-aws-s3-v3": "*",
         "madnest/madzipper": "^1.1",
         "mercadopago/dx-php": "^2.4",
+        "milon/barcode": "^8.0",
         "mpdf/mpdf": "^8.0",
         "nexmo/laravel": "^2.4",
+        "nwidart/laravel-modules": "8.2",
         "paypal/rest-api-sdk-php": "^1.14",
         "rap2hpoutre/fast-excel": "^3.1",
         "razorpay/razorpay": "2.*",
+        "seshac/laravel-shiprocket-api": "^2.0",
         "spatie/laravel-sitemap": "^5.9",
         "stripe/stripe-php": "^7.107",
         "symfony/translation": "^5.4",
@@ -63,10 +73,12 @@
             "app/CPU/back-end-helper.php",
             "app/CPU/convert.php",
             "app/CPU/sms_module.php",
-            "app/CPU/filemanager.php"
+            "app/CPU/filemanager.php",
+            "app/Library/Constant.php"
         ],
         "psr-4": {
             "App\\": "app/",
+            "Modules\\": "Modules/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         }

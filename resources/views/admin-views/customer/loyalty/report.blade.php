@@ -8,20 +8,19 @@
 
 @section('content')
     <div class="content container-fluid">
-        <!-- Page Header -->
-        <div class="page-header">
-            <div class="row align-items-center">
-                <div class="col-sm mb-2 mb-sm-0">
-                    <h1 class="page-header-title"><i class="tio-filter-list"></i> {{\App\CPU\translate('customer_loyalty_point')}} {{\App\CPU\translate('report')}} </h1>
-                </div>
-            </div>
+        <!-- Page Title -->
+        <div class="mb-3">
+            <h2 class="h1 mb-0 text-capitalize d-flex align-items-center gap-2">
+                <img width="20" src="{{asset('/public/assets/back-end/img/loyalty_point.png')}}" alt="">
+                {{\App\CPU\translate('customer_loyalty_point_report')}}
+            </h2>
         </div>
-        <!-- End Page Header -->
+        <!-- End Page Title -->
 
         <div class="card">
-            <div class="card-header text-capitalize py-0">
-                <h4 class="pt-1">{{\App\CPU\translate('filter')}} {{\App\CPU\translate('options')}}</h4>
-            </div>                
+            <div class="card-header text-capitalize">
+                <h4 class="mb-0">{{\App\CPU\translate('filter')}} {{\App\CPU\translate('options')}}</h4>
+            </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-lg-12 pt-3">
@@ -55,186 +54,143 @@
                                         <select id='customer' name="customer_id" data-placeholder="{{\App\CPU\translate('select_customer')}}" class="js-data-example-ajax form-control" title="{{\App\CPU\translate('select_customer')}}">
                                             @if (request()->get('customer_id') && $customer_info = \App\User::find(request()->get('customer_id')))
                                                 <option value="{{$customer_info->id}}" selected>{{$customer_info->f_name.' '.$customer_info->l_name}}({{$customer_info->phone}})</option>
-                                            @endif                                            
+                                            @endif
                                         </select>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <button type="submit" class="btn btn-primary col-lg-2 col-md-3 col-sm-4 col-6 mx-3 text-capitalize font-weight-bold"><i class="tio-filter-list mr-1"></i>{{\App\CPU\translate('filter')}}</button>
+                            <div>
+                                <button type="submit" class="btn btn--primary px-4"><i class="tio-filter-list mr-1"></i>{{\App\CPU\translate('filter')}}</button>
                             </div>
                         </form>
                     </div>
-                </div>                
+                </div>
             </div>
 
         </div>
         <div class="card mt-3">
-            <div class="card-header text-capitalize py-0">
-                <h4 class="pt-1">{{\App\CPU\translate('summary')}}</h4>
+            <div class="card-header text-capitalize">
+                <h4 class="mb-0">{{\App\CPU\translate('summary')}}</h4>
             </div>
             <div class="card-body">
-                <div class="row">
+                <div class="d-flex flex-wrap gap-3">
                     @php
                         $credit = $data[0]->total_credit??0;
                         $debit = $data[0]->total_debit??0;
                         $balance = $credit - $debit;
-                    @endphp            
-                    <!--Debit earned-->
-                    <div class="col-sm-4">
-                        <!-- Card -->
-                        <div class="card card-sm">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col">
-                                        <!-- Media -->
-                                        <div class="media">
-                                            <i class="tio-atm nav-icon"></i>
+                    @endphp
 
-                                            <div class="media-body">
-                                                <h4 class="mb-1">{{\App\CPU\translate('debit')}}</h4>
-                                                <span class="font-size-sm text-success">
-                                                    {{$debit}}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <!-- End Media -->
-                                    </div>
-                                </div>
-                                <!-- End Row -->
-                            </div>
+                    <!--Debit earned-->
+                    <div class="order-stats flex-grow-1">
+                        <div class="order-stats__content">
+                            <i class="tio-atm"></i>
+                            <h6 class="order-stats__subtitle">{{\App\CPU\translate('debit')}}</h6>
                         </div>
-                        <!-- End Card -->
+                        <span class="order-stats__title fz-14 text--primary">
+                            {{$debit}}
+                        </span>
                     </div>
                     <!--Debit earned End-->
-                    <!--credit earned-->
-                    <div class="col-sm-4">
-                        <!-- Card -->
-                        <div class="card card-sm">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col">
-                                        <!-- Media -->
-                                        <div class="media">
-                                            <i class="tio-money nav-icon"></i>
 
-                                            <div class="media-body">
-                                                <h4 class="mb-1 text-capitalize">{{\App\CPU\translate('credit')}}</h4>
-                                                <span class="font-size-sm text-warning">
-                                                    {{$credit}}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <!-- End Media -->
-                                    </div>
-                                </div>
-                                <!-- End Row -->
-                            </div>
+                    <!--credit earned-->
+                    <div class="order-stats flex-grow-1">
+                        <div class="order-stats__content">
+                            <i class="tio-money"></i>
+                            <h6 class="order-stats__subtitle">{{\App\CPU\translate('credit')}}</h6>
                         </div>
-                        <!-- End Card -->
+                        <span class="order-stats__title fz-14 text-warning">
+                            {{$credit}}
+                        </span>
                     </div>
                     <!--credit earned end-->
-                    <!--balance earned-->
-                    <div class="col-sm-4">
-                        <!-- Card -->
-                        <div class="card card-sm">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col">
-                                        <!-- Media -->
-                                        <div class="media">
-                                            <i class="tio-wallet nav-icon"></i>
 
-                                            <div class="media-body">
-                                                <h4 class="mb-1 text-capitalize">{{\App\CPU\translate('balance')}}</h4>
-                                                <span class="font-size-sm text-danger">
-                                                    {{$balance}}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <!-- End Media -->
-                                    </div>
-                                </div>
-                                <!-- End Row -->
-                            </div>
+                    <!--balance earned-->
+                    <div class="order-stats flex-grow-1">
+                        <div class="order-stats__content">
+                            <i class="tio-wallet"></i>
+                            <h6 class="order-stats__subtitle">{{\App\CPU\translate('balance')}}</h6>
                         </div>
-                        <!-- End Card -->
+                        <span class="order-stats__title fz-14 text-success">
+                            {{$balance}}
+                        </span>
                     </div>
                     <!--balance earned end-->
-                </div>                
+                </div>
             </div>
-
         </div>
 
-        <!-- End Stats -->
         <!-- Card -->
         <div class="card mt-3">
             <!-- Header -->
-            <div class="card-header text-capitalize py-0">
-                <h4 class="pt-1">{{\App\CPU\translate('transactions')}}</h4>
+            <div class="card-header text-capitalize">
+                <h4 class="mb-0">
+                    {{\App\CPU\translate('transactions')}}
+                    <span class="badge badge-soft-dark radius-50 fz-12 ml-1">{{$transactions->count()}}</span>
+                </h4>
             </div>
             <!-- End Header -->
 
             <!-- Body -->
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table id="datatable"
-                        class="table table-thead-bordered table-align-middle card-table table-nowrap"
-                        style="width: 100%">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>{{\App\CPU\translate('sl#')}}</th>
-                                <th>{{\App\CPU\translate('transaction')}} {{\App\CPU\translate('id')}}</th>
-                                <th>{{\App\CPU\translate('Customer')}}</th>
-                                <th>{{\App\CPU\translate('credit')}}</th>
-                                <th>{{\App\CPU\translate('debit')}}</th>
-                                <th>{{\App\CPU\translate('balance')}}</th>
-                                <th>{{\App\CPU\translate('transaction_type')}}</th>
-                                <th>{{\App\CPU\translate('reference')}}</th>
-                                <!-- <th>{{\App\CPU\translate('admin_bonus')}}</th> -->
-                                <th>{{\App\CPU\translate('created_at')}}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        @foreach($transactions as $k=>$wt)
-                            <tr scope="row">
-                                <td >{{$k+$transactions->firstItem()}}</td>
-                                <td>{{$wt->transaction_id}}</td>
-                                <td><a href="{{route('admin.customer.view',['user_id'=>$wt->user_id])}}">{{Str::limit($wt->user?$wt->user->f_name.' '.$wt->user->l_name:\App\CPU\translate('not_found'),20,'...')}}</a></td>
-                                <td>{{$wt->credit}}</td>
-                                <td>{{$wt->debit}}</td>
-                                <td>{{$wt->balance}}</td>
-                                <td>
-                                    <span class="badge badge-soft-{{$wt->transaction_type=='order_refund'
-                                        ?'danger'
-                                        :($wt->transaction_type=='loyalty_point'?'warning'
-                                            :($wt->transaction_type=='order_place'
-                                                ?'info'
-                                                :'success'))
-                                        }}">
-                                        {{\App\CPU\translate(''.$wt->transaction_type)}}
-                                    </span>
-                                </td>
-                                <td>{{$wt->reference}}</td>
-                                <!-- <td>{{$wt->admin_bonus}}</td> -->
-                                <td>{{date('Y/m/d '.config('timeformat'), strtotime($wt->created_at))}}</td>
-                            </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
+            <div class="table-responsive">
+                <table id="datatable"
+                    class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table {{Session::get('direction') === "rtl" ? 'text-right' : 'text-left'}}">
+                    <thead class="thead-light thead-50 text-capitalize">
+                        <tr>
+                            <th>{{\App\CPU\translate('SL')}}</th>
+                            <th>{{\App\CPU\translate('transaction')}} {{\App\CPU\translate('id')}}</th>
+                            <th>{{\App\CPU\translate('Customer')}}</th>
+                            <th>{{\App\CPU\translate('credit')}}</th>
+                            <th>{{\App\CPU\translate('debit')}}</th>
+                            <th>{{\App\CPU\translate('balance')}}</th>
+                            <th>{{\App\CPU\translate('transaction_type')}}</th>
+                            <th>{{\App\CPU\translate('reference')}}</th>
+                            <th class="text-center">{{\App\CPU\translate('created_at')}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($transactions as $k=>$wt)
+                        <tr scope="row">
+                            <td >{{$k+$transactions->firstItem()}}</td>
+                            <td>{{$wt->transaction_id}}</td>
+                            <td><a href="{{route('admin.customer.view',['user_id'=>$wt->user_id])}}" class="title-color hover-c1">{{Str::limit($wt->user?$wt->user->f_name.' '.$wt->user->l_name:\App\CPU\translate('not_found'),20,'...')}}</a></td>
+                            <td>{{$wt->credit}}</td>
+                            <td>{{$wt->debit}}</td>
+                            <td>{{$wt->balance}}</td>
+                            <td>
+                                <span class="badge badge-soft-{{$wt->transaction_type=='order_refund'
+                                    ?'danger'
+                                    :($wt->transaction_type=='loyalty_point'?'warning'
+                                        :($wt->transaction_type=='order_place'
+                                            ?'info'
+                                            :'success'))
+                                    }}">
+                                    {{\App\CPU\translate($wt->transaction_type)}}
+                                </span>
+                            </td>
+                            <td>{{$wt->reference}}</td>
+                            <td class="text-center">{{date('Y/m/d '.config('timeformat'), strtotime($wt->created_at))}}</td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+
+            <div class="table-responsive mt-4">
+                <div class="px-4 d-flex justify-content-lg-end">
+                    <!-- Pagination -->
+                    {!!$transactions->links()!!}
                 </div>
             </div>
+
             <!-- End Body -->
             @if(count($transactions)==0)
                 <div class="text-center p-4">
-                    <img class="mb-3" src="{{asset('public/assets/back-end')}}/svg/illustrations/sorry.svg" alt="Image Description" style="width: 7rem;">
+                    <img class="mb-3 w-160" src="{{asset('public/assets/back-end')}}/svg/illustrations/sorry.svg" alt="Image Description">
                     <p class="mb-0">{{ \App\CPU\translate('No_data_to_show')}}</p>
                 </div>
-            @endif 
-            <div class="card-footer">
-                {!!$transactions->links()!!}
-            </div> 
-              
+            @endif
+
         </div>
         <!-- End Card -->
     </div>
@@ -245,12 +201,6 @@
 @endpush
 
 @push('script_2')
-
-    <script src="{{asset('public/assets/admin')}}/vendor/chart.js/dist/Chart.min.js"></script>
-    <script
-        src="{{asset('public/assets/admin')}}/vendor/chartjs-chart-matrix/dist/chartjs-chart-matrix.min.js"></script>
-    <script src="{{asset('public/assets/admin')}}/js/hs.chartjs-matrix.js"></script>
-
     <script>
         $(document).on('ready', function () {
             $('.js-data-example-ajax').select2({

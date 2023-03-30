@@ -8,6 +8,7 @@ use App\CPU\ImageManager;
 use App\CPU\ProductManager;
 use App\Http\Controllers\Controller;
 use App\Model\Category;
+use App\Model\Order;
 use App\Model\OrderDetail;
 use App\Model\Product;
 use App\Model\Review;
@@ -62,9 +63,25 @@ class ProductController extends Controller
 
     public function get_product($slug)
     {
-        $product = Product::with(['reviews.customer'])->where(['slug' => $slug])->first();
+        $product = Product::with(['reviews.customer', 'seller.shop','tags'])->where(['slug' => $slug])->first();
         if (isset($product)) {
             $product = Helpers::product_data_formatting($product, false);
+
+            if(isset($product->reviews) && !empty($product->reviews)){
+                $overallRating = \App\CPU\ProductManager::get_overall_rating($product->reviews);
+                $product['average_review'] = $overallRating[0];
+            }else{
+                $product['average_review'] = 0;
+            }
+
+            $temporary_close = Helpers::get_business_settings('temporary_close');
+            $inhouse_vacation = Helpers::get_business_settings('vacation_add');
+            $inhouse_vacation_start_date = $product['added_by'] == 'admin' ? $inhouse_vacation['vacation_start_date'] : null;
+            $inhouse_vacation_end_date = $product['added_by'] == 'admin' ? $inhouse_vacation['vacation_end_date'] : null;
+            $inhouse_temporary_close = $product['added_by'] == 'admin' ? $temporary_close['status'] : false;
+            $product['inhouse_vacation_start_date'] = $inhouse_vacation_start_date;
+            $product['inhouse_vacation_end_date'] = $inhouse_vacation_end_date;
+            $product['inhouse_temporary_close'] = $inhouse_temporary_close;
         }
         return response()->json($product, 200);
     }
@@ -73,6 +90,7 @@ class ProductController extends Controller
     {
         $products = ProductManager::get_best_selling_products($request['limit'], $request['offset']);
         $products['products'] = Helpers::product_data_formatting($products['products'], true);
+
         return response()->json($products, 200);
     }
 
@@ -157,6 +175,7 @@ class ProductController extends Controller
             return response()->json(['errors' => Helpers::error_processor($validator)], 403);
         }
 
+
         $image_array = [];
         if (!empty($request->file('fileUpload'))) {
             foreach ($request->file('fileUpload') as $image) {
@@ -166,13 +185,59 @@ class ProductController extends Controller
             }
         }
 
-        $review = new Review;
-        $review->customer_id = $request->user()->id;
-        $review->product_id = $request->product_id;
-        $review->comment = $request->comment;
-        $review->rating = $request->rating;
-        $review->attachment = json_encode($image_array);
-        $review->save();
+        Review::updateOrCreate(
+            [
+                'delivery_man_id'=> null,
+                'customer_id'=>$request->user()->id,
+                'product_id'=>$request->product_id
+            ],
+            [
+                'customer_id' => $request->user()->id,
+                'product_id' => $request->product_id,
+                'comment' => $request->comment,
+                'rating' => $request->rating,
+                'attachment' => json_encode($image_array),
+            ]
+        );
+
+        return response()->json(['message' => translate('successfully review submitted!')], 200);
+    }
+
+    public function submit_deliveryman_review(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'order_id' => 'required',
+            'comment' => 'required',
+            'rating' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => Helpers::error_processor($validator)], 403);
+        }
+
+        $order = Order::where([
+                'id'=>$request->order_id,
+                'customer_id'=>$request->user()->id,
+                'payment_status'=>'paid'])->first();
+
+        if(!isset($order->delivery_man_id)){
+            return response()->json(['message' => translate('Invalid review!')], 403);
+        }
+
+        Review::updateOrCreate(
+            [
+                'delivery_man_id'=>$order->delivery_man_id,
+                'customer_id'=>$request->user()->id,
+                'order_id' => $order->id
+            ],
+            [
+                'customer_id' => $request->user()->id,
+                'order_id' => $order->id,
+                'delivery_man_id' => $order->delivery_man_id,
+                'comment' => $request->comment,
+                'rating' => $request->rating,
+            ]
+        );
 
         return response()->json(['message' => translate('successfully review submitted!')], 200);
     }

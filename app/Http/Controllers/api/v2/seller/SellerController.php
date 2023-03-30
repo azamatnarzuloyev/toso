@@ -79,6 +79,22 @@ class SellerController extends Controller
         return response()->json($reviews, 200);
     }
 
+    public function shop_product_reviews_status(Request $request)
+    {
+        $data = Helpers::get_seller_by_token($request);
+
+        if ($data['success'] == 1) {
+            $reviews = Review::find($request->id);
+            $reviews->status = $request->status;
+            $reviews->save();
+            return response()->json(['message'=>translate('status updated successfully!!')],200);
+        } else {
+            return response()->json([
+                'auth-001' => translate('Your existing session token does not authorize you any more')
+            ], 401);
+        }
+    }
+
     public function seller_info(Request $request)
     {
         $data = Helpers::get_seller_by_token($request);
@@ -336,5 +352,27 @@ class SellerController extends Controller
         ]);
 
         return response()->json(['message' => translate('successfully updated!')], 200);
+    }
+
+    public function account_delete(Request $request)
+    {
+        $data = Helpers::get_seller_by_token($request);
+        if ($data['success'] == 1) {
+            $seller = $data['data'];
+        }else {
+            return response()->json([
+                'auth-001' => translate('Your existing session token does not authorize you any more')
+            ], 401);
+        }
+
+        if($seller->id){
+            ImageManager::delete('/seller/' . $seller['image']);
+
+            $seller->delete();
+            return response()->json(['message' => translate('Your_account_deleted_successfully!!')],200);
+
+        }else{
+            return response()->json(['message' =>'access_denied!!'],403);
+        }
     }
 }

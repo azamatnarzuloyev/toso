@@ -8,21 +8,19 @@
 
 @section('content')
     <div class="content container-fluid">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{\App\CPU\translate('Dashboard')}}</a>
-                </li>
-                <li class="breadcrumb-item" aria-current="page">{{\App\CPU\translate('category')}}</li>
-            </ol>
-        </nav>
+        <!-- Page Title -->
+        <div class="mb-3">
+            <h2 class="h1 mb-0 d-flex gap-10">
+                <img src="{{asset('/public/assets/back-end/img/brand-setup.png')}}" alt="">
+                {{\App\CPU\translate('Category')}} {{\App\CPU\translate('Setup')}}
+            </h2>
+        </div>
+        <!-- End Page Title -->
 
         <!-- Content Row -->
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">
-                        {{ \App\CPU\translate('category_form')}}
-                    </div>
                     <div class="card-body" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
                         <form action="{{route('admin.category.store')}}" method="POST" enctype="multipart/form-data">
                             @csrf
@@ -30,64 +28,62 @@
                             @php($language = $language->value ?? null)
                             @php($default_lang = 'en')
                             @php($default_lang = json_decode($language)[0])
-                            <ul class="nav nav-tabs mb-4">
+                            <ul class="nav nav-tabs w-fit-content mb-4">
                                 @foreach(json_decode($language) as $lang)
-                                    <li class="nav-item">
+                                    <li class="nav-item text-capitalize">
                                         <a class="nav-link lang_link {{$lang == $default_lang? 'active':''}}"
                                            href="#"
-                                           id="{{$lang}}-link">{{\App\CPU\Helpers::get_language_name($lang).'('.strtoupper($lang).')'}}</a>
+                                           id="{{$lang}}-link">{{ucfirst(\App\CPU\Helpers::get_language_name($lang)).'('.strtoupper($lang).')'}}</a>
                                     </li>
                                 @endforeach
                             </ul>
                             <div class="row">
-                                <div class="col-12 col-md-5">
-                                    @foreach(json_decode($language) as $lang)
+                                <div class="col-lg-6">
+                                    <div>
+                                        @foreach(json_decode($language) as $lang)
                                         <div class="form-group {{$lang != $default_lang ? 'd-none':''}} lang_form"
-                                             id="{{$lang}}-form">
-                                            <label class="input-label"
-                                                   for="exampleFormControlInput1">{{\App\CPU\translate('name')}}
-                                                ({{strtoupper($lang)}})</label>
+                                            id="{{$lang}}-form">
+                                            <label class="title-color">{{\App\CPU\translate('Category_Name')}}<span class="text-danger">*</span> ({{strtoupper($lang)}})</label>
                                             <input type="text" name="name[]" class="form-control"
-                                                   placeholder="{{\App\CPU\translate('New')}} {{\App\CPU\translate('Category')}}" {{$lang == $default_lang? 'required':''}}>
+                                                placeholder="{{\App\CPU\translate('New')}} {{\App\CPU\translate('Category')}}" {{$lang == $default_lang? 'required':''}}>
                                         </div>
                                         <input type="hidden" name="lang[]" value="{{$lang}}">
-                                    @endforeach
-                                    <input name="position" value="0" style="display: none">
-                                </div>
-                                <div class="col-12 col-md-3">
+                                        @endforeach
+                                        <input name="position" value="0" class="d-none">
+                                    </div>
                                     <div class="form-group">
-                                        <label class="input-label" for="priority">{{\App\CPU\translate('choose_priority_number')}} 
+                                        <label class="title-color" for="priority">{{\App\CPU\translate('priority')}}
                                             <span>
                                             <i class="tio-info-outined" title="{{\App\CPU\translate('the_lowest_number_will_get_the_highest_priority')}}"></i>
                                             </span>
                                         </label>
-                                        
+
                                         <select class="form-control" name="priority" id="" required>
+                                            <option disabled selected>{{\App\CPU\translate('Set_Priority')}}</option>
                                             @for ($i = 0; $i <= 10; $i++)
                                             <option
                                             value="{{$i}}" >{{$i}}</option>
                                             @endfor
                                         </select>
                                     </div>
-                                </div>
-                                <div class="col-12 col-md-4 from_part_2">
-                                    <label>{{\App\CPU\translate('image')}}</label><small style="color: red">*
-                                        ( {{\App\CPU\translate('ratio')}} 1:1 )</small>
-                                    <div class="custom-file" style="text-align: left">
-                                        <input type="file" name="image" id="customFileEg1"
-                                               class="custom-file-input"
-                                               accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-                                               required>
-                                        <label class="custom-file-label"
-                                               for="customFileEg1">{{\App\CPU\translate('choose')}} {{\App\CPU\translate('file')}}</label>
+                                    <div class="from_part_2">
+                                        <label class="title-color">{{\App\CPU\translate('Category_Logo')}}</label>
+                                        <span class="text-info"><span class="text-danger">*</span> ( {{\App\CPU\translate('ratio')}} 1:1 )</span>
+                                        <div class="custom-file text-left">
+                                            <input type="file" name="image" id="customFileEg1"
+                                                class="custom-file-input"
+                                                accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                                                required>
+                                            <label class="custom-file-label"
+                                                for="customFileEg1">{{\App\CPU\translate('choose')}} {{\App\CPU\translate('file')}}</label>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-12 from_part_2">
+                                <div class="col-lg-6 mt-4 mt-lg-0 from_part_2">
                                     <div class="form-group">
-                                        <hr>
                                         <center>
                                             <img
-                                                style="width: 200px;height:200px;border: 1px solid; border-radius: 10px;"
+                                                class="upload-img-view"
                                                 id="viewer"
                                                 src="{{asset('public/assets/back-end/img/900x400/img1.jpg')}}"
                                                 alt="image"/>
@@ -95,26 +91,32 @@
                                     </div>
                                 </div>
                             </div>
-                    
-                            <button type="submit" class="btn btn-primary float-right">{{\App\CPU\translate('submit')}}</button>
+
+                            <div class="d-flex flex-wrap gap-2 justify-content-end">
+                                <button type="reset" id="reset" class="btn btn-secondary">{{\App\CPU\translate('reset')}}</button>
+                                <button type="submit" class="btn btn--primary">{{\App\CPU\translate('submit')}}</button>
+                            </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row" style="margin-top: 20px" id="cate-table">
+        <div class="row mt-20" id="cate-table">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">
-                        <div class="row flex-between justify-content-between align-items-center flex-grow-1">
-                            <div class="col-12 col-sm-6 col-md-6">
-                                <h5>{{ \App\CPU\translate('category_table')}} <span style="color: red;">({{ $categories->total() }})</span></h5>
+                    <div class="px-3 py-4">
+                        <div class="row align-items-center">
+                            <div class="col-sm-4 col-md-6 col-lg-8 mb-2 mb-sm-0">
+                                <h5 class="text-capitalize d-flex gap-1">
+                                    {{ \App\CPU\translate('category_list')}}
+                                    <span class="badge badge-soft-dark radius-50 fz-12">{{ $categories->total() }}</span>
+                                </h5>
                             </div>
-                            <div class="col-12 col-sm-6 col-md-4" style="width: 30vw">
+                            <div class="col-sm-8 col-md-6 col-lg-4">
                                 <!-- Search -->
                                 <form action="{{ url()->current() }}" method="GET">
-                                    <div class="input-group input-group-merge input-group-flush">
+                                    <div class="input-group input-group-custom input-group-merge">
                                         <div class="input-group-prepend">
                                             <div class="input-group-text">
                                                 <i class="tio-search"></i>
@@ -122,85 +124,77 @@
                                         </div>
                                         <input id="" type="search" name="search" class="form-control"
                                             placeholder="{{ \App\CPU\translate('search_here')}}" value="{{ $search }}" required>
-                                        <button type="submit" class="btn btn-primary">{{\App\CPU\translate('search')}}</button>
+                                        <button type="submit" class="btn btn--primary">{{\App\CPU\translate('search')}}</button>
                                     </div>
                                 </form>
                                 <!-- End Search -->
                             </div>
                         </div>
                     </div>
-                    <div class="card-body" style="padding: 0">
-                        <div class="table-responsive">
-                            <table style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};"
-                                class="table table-borderless table-thead-bordered table-nowrap table-align-middle card-table">
-                                <thead class="thead-light">
+
+                    <div class="table-responsive">
+                        <table style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};"
+                            class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table w-100">
+                            <thead class="thead-light thead-50 text-capitalize">
                                 <tr>
-                                    <th style="width: 100px">{{ \App\CPU\translate('category')}} {{ \App\CPU\translate('ID')}}</th>
+                                    <th>{{ \App\CPU\translate('SL')}}</th>
+                                    <th class="text-center">{{ \App\CPU\translate('Category')}} {{ \App\CPU\translate('Image')}}</th>
                                     <th>{{ \App\CPU\translate('name')}}</th>
-                                    <th>{{ \App\CPU\translate('slug')}}</th>
-                                    <th>{{ \App\CPU\translate('icon')}}</th>
-                                    <th>{{\App\CPU\translate('priority')}}</th>
-                                    <th>{{ \App\CPU\translate('home_status')}}</th>
-                                    <th  style="width:15%;">{{ \App\CPU\translate('action')}}</th>
+                                    <th>{{\App\CPU\translate('Priority')}}</th>
+                                    <th class="text-center">{{ \App\CPU\translate('home_category_status')}}</th>
+                                    <th class="text-center">{{ \App\CPU\translate('action')}}</th>
                                 </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($categories as $key=>$category)
-                                    <tr>
-                                        <td >{{$category['id']}}</td>
-                                        <td>{{$category['name']}}</td>
-                                        <td>{{$category['slug']}}</td>
-                                        <td>
-                                            <img class="rounded" width="64"
-                                                 onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'"
-                                                 src="{{asset('storage/app/public/category')}}/{{$category['icon']}}">
-                                        </td>
-                                        <td>
-                                            {{$category['priority']}}
-                                        </td>
-                                        <td>
-                                            {{-- @if($category->home_status == true)
-                                                <div style="padding: 10px;border: 1px solid;cursor: pointer"
-                                                     onclick="location.href='{{route('admin.category.status',[$category['id'],0])}}'">
-                                                    <span class="legend-indicator bg-success" style="{{Session::get('direction') === "rtl" ? 'margin-right: 0;margin-left: .4375rem;' : 'margin-left: 0;margin-right: .4375rem;'}}"></span>{{\App\CPU\translate('active')}}
-                                                </div>
-                                            @elseif($category->home_status == false)
-                                                <div style="padding: 10px;border: 1px solid;cursor: pointer"
-                                                     onclick="location.href='{{route('admin.category.status',[$category['id'],1])}}'">
-                                                    <span class="legend-indicator bg-danger" style="{{Session::get('direction') === "rtl" ? 'margin-right: 0;margin-left: .4375rem;' : 'margin-left: 0;margin-right: .4375rem;'}}"></span>{{\App\CPU\translate('disabled')}}
-                                                </div>
-                                            @endif --}}
-                                            <label class="switch switch-status">
-                                                <input type="checkbox" class="category-status"
-                                                       id="{{$category['id']}}" {{$category->home_status == 1?'checked':''}}>
-                                                <span class="slider round"></span>
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <a class="btn btn-primary btn-sm edit" style="cursor: pointer;"
+                            </thead>
+                            <tbody>
+                            @foreach($categories as $key=>$category)
+                                <tr>
+                                    <td >{{$category['id']}}</td>
+                                    <td class="text-center">
+                                        <img class="rounded" width="64"
+                                                onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'"
+                                                src="{{asset('storage/app/public/category')}}/{{$category['icon']}}">
+                                    </td>
+                                    <td>{{$category['name']}}</td>
+                                    <td>
+                                        {{$category['priority']}}
+                                    </td>
+                                    <td class="text-center">
+                                        <label class="switcher mx-auto">
+                                            <input type="checkbox" class="switcher_input category-status"
+                                                    id="{{$category['id']}}" {{$category->home_status == 1?'checked':''}}>
+                                            <span class="switcher_control"></span>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex justify-content-center gap-10">
+                                            <a class="btn btn-outline-info btn-sm square-btn"
                                                 title="{{ \App\CPU\translate('Edit')}}"
-                                               href="{{route('admin.category.edit',[$category['id']])}}">
+                                                href="{{route('admin.category.edit',[$category['id']])}}">
                                                 <i class="tio-edit"></i>
                                             </a>
-                                            <a class="btn btn-danger btn-sm delete" style="cursor: pointer;"
+                                            <a class="btn btn-outline-danger btn-sm delete square-btn"
                                                 title="{{ \App\CPU\translate('Delete')}}"
-                                               id="{{$category['id']}}">
-                                                <i class="tio-add-to-trash"></i>
+                                                id="{{$category['id']}}">
+                                                <i class="tio-delete"></i>
                                             </a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
                     </div>
 
-                    <div class="card-footer">
-                        {{$categories->links()}}
+
+                    <div class="table-responsive mt-4">
+                        <div class="d-flex justify-content-lg-end">
+                            <!-- Pagination -->
+                            {{$categories->links()}}
+                        </div>
                     </div>
                     @if(count($categories)==0)
                         <div class="text-center p-4">
-                            <img class="mb-3" src="{{asset('public/assets/back-end')}}/svg/illustrations/sorry.svg" alt="Image Description" style="width: 7rem;">
+                            <img class="mb-3 w-160" src="{{asset('public/assets/back-end')}}/svg/illustrations/sorry.svg" alt="Image Description">
                             <p class="mb-0">{{\App\CPU\translate('no_data_found')}}</p>
                         </div>
                     @endif

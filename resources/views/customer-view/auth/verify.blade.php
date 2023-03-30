@@ -2,19 +2,8 @@
 
 @section('title', \App\CPU\translate('Verify'))
 
-@push('css_or_js')
-    <style>
-        @media(max-width:500px){
-            #sign_in{
-                margin-top: -23% !important;
-            }
-
-        }
-    </style>
-@endpush
-
 @section('content')
-    <div class="container py-4 py-lg-5 my-4">
+    <div class="container py-4 py-lg-5 my-4 __inline-7">
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card border-0 box-shadow">

@@ -37,14 +37,14 @@ class CartController extends Controller
             $count = count(json_decode($product->variation));
             for ($i = 0; $i < $count; $i++) {
                 if (json_decode($product->variation)[$i]->type == $str) {
-                    $tax = Helpers::tax_calculation(json_decode($product->variation)[$i]->price, $product['tax'], $product['tax_type']);
+                    $tax = $product->tax_model=='exclude' ? Helpers::tax_calculation(json_decode($product->variation)[$i]->price, $product['tax'], $product['tax_type']):0;
                     $discount = Helpers::get_product_discount($product, json_decode($product->variation)[$i]->price);
                     $price = json_decode($product->variation)[$i]->price - $discount + $tax;
                     $quantity = json_decode($product->variation)[$i]->qty;
                 }
             }
         } else {
-            $tax = Helpers::tax_calculation($product->unit_price, $product['tax'], $product['tax_type']);
+            $tax = $product->tax_model=='exclude' ? Helpers::tax_calculation($product->unit_price, $product['tax'], $product['tax_type']) : 0;
             $discount = Helpers::get_product_discount($product, $product->unit_price);
             $price = $product->unit_price - $discount + $tax;
             $quantity = $product->current_stock;
@@ -53,7 +53,7 @@ class CartController extends Controller
         return [
             'price' => \App\CPU\Helpers::currency_converter($price * $request->quantity),
             'discount' => \App\CPU\Helpers::currency_converter($discount),
-            'tax' => \App\CPU\Helpers::currency_converter($tax),
+            'tax' => $product->tax_model=='exclude' ? \App\CPU\Helpers::currency_converter($tax) : 'incl.',
             'quantity' => $quantity
         ];
     }
@@ -62,7 +62,10 @@ class CartController extends Controller
     {
         $cart = CartManager::add_to_cart($request);
         session()->forget('coupon_code');
+        session()->forget('coupon_type');
+        session()->forget('coupon_bearer');
         session()->forget('coupon_discount');
+        session()->forget('coupon_seller_id');
         return response()->json($cart);
     }
 
@@ -95,7 +98,10 @@ class CartController extends Controller
         }
 
         session()->forget('coupon_code');
+        session()->forget('coupon_type');
+        session()->forget('coupon_bearer');
         session()->forget('coupon_discount');
+        session()->forget('coupon_seller_id');
         session()->forget('shipping_method_id');
         session()->forget('order_note');
 
@@ -108,7 +114,10 @@ class CartController extends Controller
         $response = CartManager::update_cart_qty($request);
 
         session()->forget('coupon_code');
+        session()->forget('coupon_type');
+        session()->forget('coupon_bearer');
         session()->forget('coupon_discount');
+        session()->forget('coupon_seller_id');
 
         if ($response['status'] == 0) {
             return response()->json($response);

@@ -15,8 +15,7 @@ class BannerController extends Controller
     {
         $query_param = [];
         $search = $request['search'];
-        if ($request->has('search'))
-        {
+        if ($request->has('search')) {
             $key = explode(' ', $request['search']);
             $banners = Banner::where(function ($q) use ($key) {
                 foreach ($key as $value) {
@@ -24,12 +23,12 @@ class BannerController extends Controller
                 }
             })->orderBy('id', 'desc');
             $query_param = ['search' => $request['search']];
-        }else{
+        } else {
             $banners = Banner::orderBy('id', 'desc');
         }
         $banners = $banners->paginate(Helpers::pagination_limit())->appends($query_param);
 
-        return view('admin-views.banner.view', compact('banners','search'));
+        return view('admin-views.banner.view', compact('banners', 'search'));
     }
 
     public function store(Request $request)
@@ -46,7 +45,7 @@ class BannerController extends Controller
         $banner = new Banner;
         $banner->banner_type = $request->banner_type;
         $banner->resource_type = $request->resource_type;
-        $banner->resource_id = $request[$request->resource_type.'_id'];
+        $banner->resource_id = $request[$request->resource_type . '_id'];
         $banner->url = $request->url;
         $banner->photo = ImageManager::upload('banner/', 'png', $request->file('image'));
         $banner->save();
@@ -68,10 +67,10 @@ class BannerController extends Controller
     public function edit($id)
     {
         $banner = Banner::where('id', $id)->first();
-        return view('admin-views.banner.edit',compact('banner'));
+        return view('admin-views.banner.edit', compact('banner'));
     }
 
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'url' => 'required',
@@ -82,9 +81,9 @@ class BannerController extends Controller
         $banner = Banner::find($id);
         $banner->banner_type = $request->banner_type;
         $banner->resource_type = $request->resource_type;
-        $banner->resource_id = $request[$request->resource_type.'_id'];
+        $banner->resource_id = $request[$request->resource_type . '_id'];
         $banner->url = $request->url;
-        if($request->file('image')) {
+        if ($request->file('image')) {
             $banner->photo = ImageManager::update('banner/', $banner['photo'], 'png', $request->file('image'));
         }
         $banner->save();
@@ -97,7 +96,7 @@ class BannerController extends Controller
     {
         $br = Banner::find($request->id);
         ImageManager::delete('/banner/' . $br['photo']);
-        $br->delete();
+        Banner::where('id', $request->id)->delete();
         return response()->json();
     }
 }

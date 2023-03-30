@@ -8,73 +8,76 @@
 
 @section('content')
     <div class="content container-fluid">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{\App\CPU\translate('Dashboard')}}</a>
-                </li>
-                <li class="breadcrumb-item" aria-current="page">{{\App\CPU\translate('social_login')}}</li>
-            </ol>
-        </nav>
+        <!-- Page Title -->
+        <div class="mb-4 pb-2">
+            <h2 class="h1 mb-0 text-capitalize d-flex align-items-center gap-2">
+                <img src="{{asset('/public/assets/back-end/img/3rd-party.png')}}" alt="">
+                {{\App\CPU\translate('3rd_party')}}
+            </h2>
+        </div>
+        <!-- End Page Title -->
+
+        <!-- Inlile Menu -->
+        @include('admin-views.business-settings.third-party-inline-menu')
+        <!-- End Inlile Menu -->
 
         <?php
         $data = App\Model\BusinessSetting::where(['type' => 'social_login'])->first();
         $socialLoginServices = json_decode($data['value'], true);
         ?>
-        <div class="row" style="padding-bottom: 20px">
+        <div class="row gy-3">
             @if (isset($socialLoginServices))
-            @foreach ($socialLoginServices as $socialLoginService)
-                    <div class="col-md-6 mt-4">
+                @foreach ($socialLoginServices as $socialLoginService)
+                    <div class="col-lg-6">
                         <div class="card">
-                            <div class="card-body text-{{Session::get('direction') === "rtl" ? 'right' : 'left'}}" style="padding: 20px">
-                                <div class="flex-between">
-                                    <h4 class="text-center">{{\App\CPU\translate(''.$socialLoginService['login_medium'])}}</h4>
-                                    <div class="btn btn-dark p-2" data-toggle="modal" data-target="#{{$socialLoginService['login_medium']}}-modal" style="cursor: pointer">
-                                        <i class="tio-info-outined"></i> {{\App\CPU\translate('Credentials SetUp')}}
-                                    </div>
-                                </div>
+                            <div class="card-body text-{{Session::get('direction') === "rtl" ? 'right' : 'left'}}">
                                 <form
                                     action="{{route('admin.social-login.update',[$socialLoginService['login_medium']])}}"
                                     method="post">
                                     @csrf
-                                    <div class="form-group mb-2 mt-5">
-                                        <input type="radio" name="status"
-                                               value="1" {{$socialLoginService['status']==1?'checked':''}}>
-                                        <label style="padding-{{Session::get('direction') === "rtl" ? 'right' : 'left'}}: 10px">{{\App\CPU\translate('Active')}}</label>
-                                        <br>
+                                    <label class="switcher position-absolute right-3 top-3">
+                                        <input class="switcher_input" type="checkbox" {{$socialLoginService['status']==1?'checked':''}} value="1" name="status">
+                                        <span class="switcher_control"></span>
+                                    </label>
+
+                                    <div class="d-flex flex-column align-items-center gap-2 mb-3">
+                                        <h4 class="text-center">{{\App\CPU\translate($socialLoginService['login_medium'])}}</h4>
                                     </div>
-                                    <div class="form-group mb-2">
-                                        <input type="radio" name="status"
-                                               value="0" {{$socialLoginService['status']==0?'checked':''}}>
-                                        <label style="padding-{{Session::get('direction') === "rtl" ? 'right' : 'left'}}: 10px">{{\App\CPU\translate('Inactive')}}</label>
-                                        <br>
+
+                                    <div class="form-group">
+                                        <label class="title-color font-weight-bold text-capitalize">{{\App\CPU\translate('Callback_URI')}}</label>
+                                        <div class="form-control d-flex align-items-center justify-content-between py-1 pl-3 pr-2">
+                                            <span class="form-ellipsis" id="id_{{$socialLoginService['login_medium']}}">{{ url('/') }}/customer/auth/login/{{$socialLoginService['login_medium']}}/callback</span>
+                                            <span class="btn btn--primary text-nowrap btn-xs" onclick="copyToClipboard('#id_{{$socialLoginService['login_medium']}}')">
+                                        <i class="tio-copy"></i>
+                                        {{\App\CPU\translate('Copy URI')}}
+                                    </span>
+                                        </div>
                                     </div>
-                                    <div class="form-group mb-2">
-                                        <label style="padding-{{Session::get('direction') === "rtl" ? 'right' : 'left'}}: 10px">{{\App\CPU\translate('Callback_URI')}}</label>
-                                        <span class="btn btn-secondary btn-sm m-2" onclick="copyToClipboard('#id_{{$socialLoginService['login_medium']}}')"><i class="tio-copy"></i> {{\App\CPU\translate('Copy URI')}}</span>
-                                        <br>
-                                        <span class="form-control" id="id_{{$socialLoginService['login_medium']}}" style="height: unset">{{ url('/') }}/customer/auth/login/{{$socialLoginService['login_medium']}}/callback</span>
-                                    </div>
-                                    <div class="form-group mb-2">
-                                        <label
-                                            style="padding-{{Session::get('direction') === "rtl" ? 'right' : 'left'}}: 10px">{{\App\CPU\translate('Store')}} {{\App\CPU\translate('client_id')}} </label><br>
-                                        <input type="text" class="form-control" name="client_id"
+                                    <div class="form-group">
+                                        <label class="title-color font-weight-bold text-capitalize">{{\App\CPU\translate('Store_Client_ID')}}</label><br>
+                                        <input type="text" class="form-control form-ellipsis" name="client_id"
                                                value="{{ $socialLoginService['client_id'] }}">
                                     </div>
-                                    <div class="form-group mb-2">
-                                        <label
-                                            style="padding-{{Session::get('direction') === "rtl" ? 'right' : 'left'}}: 10px">{{\App\CPU\translate('Store')}} {{\App\CPU\translate('client_secret')}}</label><br>
-                                        <input type="text" class="form-control" name="client_secret"
+                                    <div class="form-group">
+                                        <label class="title-color font-weight-bold text-capitalize">{{\App\CPU\translate('Store_Client_Secret_Key')}}</label>
+                                        <input type="text" class="form-control form-ellipsis" name="client_secret"
                                                value="{{ $socialLoginService['client_secret'] }}">
                                     </div>
-                                    <button type="{{env('APP_MODE')!='demo'?'submit':'button'}}"
-                                            class="btn btn-primary mb-2 float-right">{{\App\CPU\translate('save')}}</button>
+                                    <div class="d-flex justify-content-between flex-wrap gap-2">
+                                        <button class="btn btn-outline--primary" type="button" data-toggle="modal" data-target="#{{$socialLoginService['login_medium']}}-modal">
+                                            {{\App\CPU\translate('See_Credential_Setup_Instructions')}}
+                                        </button>
+                                        <button type="{{env('APP_MODE')!='demo'?'submit':'button'}}" class="btn btn--primary px-4">{{\App\CPU\translate('save')}}</button>
+                                    </div>
                                 </form>
                             </div>
                         </div>
                     </div>
-            @endforeach
+                @endforeach
             @endif
         </div>
+
         {{-- Modal Starts--}}
         <!-- Google -->
         <div class="modal fade" id="google-modal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -97,7 +100,7 @@
                         </ol>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">{{\App\CPU\translate('Close')}}</button>
+                        <button type="button" class="btn btn--primary" data-dismiss="modal">{{\App\CPU\translate('Close')}}</button>
                     </div>
                 </div>
             </div>
@@ -136,7 +139,7 @@
                         </ol>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary float-right" data-dismiss="modal">{{\App\CPU\translate('Close')}}</button>
+                        <button type="button" class="btn btn--primary float-right" data-dismiss="modal">{{\App\CPU\translate('Close')}}</button>
                     </div>
                 </div>
             </div>
@@ -155,7 +158,7 @@
                         {{\App\CPU\translate('Instruction will be available very soon')}}
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary float-right" data-dismiss="modal">{{\App\CPU\translate('Close')}}</button>
+                        <button type="button" class="btn btn--primary float-right" data-dismiss="modal">{{\App\CPU\translate('Close')}}</button>
                     </div>
                 </div>
             </div>

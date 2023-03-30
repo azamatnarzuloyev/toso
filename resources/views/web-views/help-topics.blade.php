@@ -14,58 +14,9 @@
     <meta property="twitter:description" content="{!! substr($web_config['about']->value,0,100) !!}">
 
     <style>
-        .headerTitle {
-            font-size: 25px;
-            font-weight: 700;
-            margin-top: 2rem;
-        }
-
-        body {
-            font-family: 'Titillium Web', sans-serif
-        }
-
-        .product-qty span {
-            font-size: 14px;
-            color: #6A6A6A;
-        }
-
-        .btn-link {
-            color: #4c5056e3;
-        }
-
-        .btnF {
-            display: inline-block;
-            font-weight: normal;
-            margin-top: 4%;
-            color: #4b566b;
-            text-align: center;
-            vertical-align: middle;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            background-color: transparent;
-            border: 1px solid transparent;
-            font-size: .9375rem;
-            transition: color 0.25s ease-in-out, background-color 0.25s ease-in-out, border-color 0.25s ease-in-out, box-shadow 0.2s ease-in-out;
-        }
-
         @media (max-width: 600px) {
             .sidebar_heading {
                 background: {{$web_config['primary_color']}}
-            }
-
-            .sidebar_heading h1 {
-                text-align: center;
-                color: aliceblue;
-                padding-bottom: 17px;
-                font-size: 19px;
-            }
-
-            .headerTitle {
-
-                font-weight: 700;
-                margin-top: 1rem;
             }
         }
 
@@ -73,6 +24,7 @@
 @endpush
 
 @section('content')
+<div class="__inline-60">
     <!-- Page Title-->
     <div class="container rtl">
         <div class="row">
@@ -96,7 +48,7 @@
                                 @php if($length%2!=0){$first=($length+1)/2;}else{$first=$length/2;}@endphp
                                 @for($i=0;$i<$first;$i++)
                                     <div id="accordion">
-                                        <div class="row mb-0" style="color: black;">
+                                        <div class="row mb-0 text-black">
                                             <div class="col-1 mt-3">
                                                 <i class="czi-book text-muted mr-2"></i>
                                             </div>
@@ -124,7 +76,7 @@
                             <ul class="list-unstyled">
                                 @for($i=$first;$i<$length;$i++)
                                     <div id="accordion">
-                                        <div class="row mb-0" style="color: black;">
+                                        <div class="row mb-0 text-black">
                                             <div class="col-1 mt-3">
                                                 <i class="czi-book text-muted mr-2"></i>
                                             </div>
@@ -154,6 +106,7 @@
             </section>
         </div>
     </div>
+</div>
 @endsection
 
 

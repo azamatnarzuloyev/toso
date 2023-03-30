@@ -1,6 +1,6 @@
 <div class="card-header">
     <h4>{{\App\CPU\translate('Product price & stock')}}</h4>
-    <input name="product_id" value="{{$product['id']}}" style="display: none">
+    <input name="product_id" value="{{$product['id']}}" class="d-none">
 </div>
 <div class="card-body">
     <div class="form-group">

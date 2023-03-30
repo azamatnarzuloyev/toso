@@ -33,6 +33,19 @@ class SystemController extends Controller
         ]);
     }
 
+    //data import into search_function table
+    public function importSearchFunctionData(){
+        $jsonSidebarData = file_get_contents(storage_path('data/sidebar-search.json'));
+        $datas = json_decode($jsonSidebarData, True);
+
+        SearchFunction::truncate();
+        foreach($datas as $data){
+            SearchFunction::create($data);
+        }
+
+        dd('success');
+    }
+
     public function maintenance_mode()
     {
         $maintenance_mode = BusinessSetting::where('type', 'maintenance_mode')->first();

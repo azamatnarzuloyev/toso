@@ -8,113 +8,100 @@
 
 @section('content')
     <div class="content container-fluid">
-        <!-- Page Header -->
-        <div class="page-header">
-            <div class="media mb-3">
-                <!-- Avatar -->
-                <div class="avatar avatar-xl avatar-4by3 {{Session::get('direction') === "rtl" ? 'ml-2' : 'mr-2'}}">
-                    <img class="avatar-img" src="{{asset('public/assets/back-end')}}/svg/illustrations/earnings.png"
-                         alt="Image Description">
-                </div>
-                <!-- End Avatar -->
+        <!-- Page Title -->
+        <div class="mb-3">
+            <h2 class="h1 mb-0 text-capitalize d-flex align-items-center gap-2">
+                <img width="20" src="{{asset('/public/assets/back-end/img/earning_report.png')}}" alt="">
+                {{\App\CPU\translate('Earning_Report')}}
+            </h2>
+        </div>
+        <!-- End Page Title -->
 
-                <div class="media-body">
-                    <div class="row">
-                        <div class="row col-lg mb-3 mb-lg-0 {{Session::get('direction') === "rtl" ? 'mr-2' : 'ml-2'}}" style="display: block; text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
-                            <div>
-                                <h1 class="page-header-title">{{\App\CPU\translate('Earning')}} {{\App\CPU\translate('Report')}}  {{\App\CPU\translate('Overview')}} </h1>
-                            </div>
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="media align-items-center">
+                    <!-- Avatar -->
+                    <div class="avatar avatar-xl avatar-4by3">
+                        <img class="avatar-img" src="{{asset('public/assets/back-end')}}/svg/illustrations/earnings.png"
+                             alt="Image Description">
+                    </div>
+                    <!-- End Avatar -->
 
-                            <div class="row align-items-center">
-                                <div class="flex-between col-auto">
-                                    <h5 class="text-muted {{Session::get('direction') === "rtl" ? 'ml-1' : 'mr-1'}}">{{\App\CPU\translate('Admin')}} : </h5>
-                                    <h5 class="text-muted">{{auth('admin')->user()->name}}</h5>
+                    <div class="media-body">
+                        <div class="row align-items-center">
+                            <div class="d-block col-sm mb-1 mb-sm-0 {{Session::get('direction') === "rtl" ? 'mr-2' : 'ml-2'}}" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
+                                <div>
+                                    <h1 class="page-header-title">{{\App\CPU\translate('Earning')}} {{\App\CPU\translate('Report')}}  {{\App\CPU\translate('Overview')}} </h1>
                                 </div>
 
-                                <div class="col-auto">
-                                    <div class="row align-items-center g-0">
-                                        <h5 class="text-muted col-auto {{Session::get('direction') === "rtl" ? 'pl-2' : 'pr-2'}}">{{\App\CPU\translate('Date')}}</h5>
+                                <div class="row align-items-center">
+                                    <div class="flex-between col-auto">
+                                        <h5 class="text-muted {{Session::get('direction') === "rtl" ? 'ml-1' : 'mr-1'}}">{{\App\CPU\translate('Admin')}} : </h5>
+                                        <h5 class="text-muted">{{auth('admin')->user()->name}}</h5>
+                                    </div>
 
-                                        <!-- Flatpickr -->
-                                        <h5 class="text-muted">( {{session('from_date')}} - {{session('to_date')}} )</h5>
-                                        <!-- End Flatpickr -->
+                                    <div class="col-auto">
+                                        <div class="row align-items-center g-0">
+                                            <h5 class="text-muted col-auto {{Session::get('direction') === "rtl" ? 'pl-2' : 'pr-2'}}">{{\App\CPU\translate('Date')}}</h5>
+
+                                            <!-- Flatpickr -->
+                                            <h5 class="text-muted">( {{session('from_date')}} - {{session('to_date')}} )</h5>
+                                            <!-- End Flatpickr -->
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="col-lg-auto">
-                            <div class="d-flex">
-                                <a class="btn btn-icon btn-primary rounded-circle" href="{{route('admin.dashboard')}}">
-                                    <i class="tio-home-outlined"></i>
-                                </a>
+                            <div class="col-sm-auto">
+                                <div class="d-flex">
+                                    <a class="btn btn-icon btn--primary rounded-circle" href="{{route('admin.dashboard')}}">
+                                        <i class="tio-home-outlined"></i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- End Media -->
-
-            <!-- Nav -->
-            <!-- Nav -->
-            <div class="js-nav-scroller hs-nav-scroller-horizontal">
-            <span class="hs-nav-scroller-arrow-prev" style="display: none;">
-              <a class="hs-nav-scroller-arrow-link" href="javascript:;">
-                <i class="tio-chevron-{{Session::get('direction') === "rtl" ? 'right' : 'left'}}"></i>
-              </a>
-            </span>
-
-                <span class="hs-nav-scroller-arrow-next" style="display: none;">
-              <a class="hs-nav-scroller-arrow-link" href="javascript:;">
-                <i class="tio-chevron-{{Session::get('direction') === "rtl" ? 'left' : 'right'}}"></i>
-              </a>
-            </span>
-
-                <ul class="nav nav-tabs page-header-tabs" id="projectsTab" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="javascript:">{{\App\CPU\translate('Overview')}}</a>
-                    </li>
-                </ul>
-            </div>
-            <!-- End Nav -->
         </div>
-        <!-- End Page Header -->
 
-        <div class="row border-bottom border-right border-left border-top">
-            <div class="col-lg-12">
-                <form action="{{route('admin.report.set-date')}}" method="post">
-                    @csrf
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">{{\App\CPU\translate('show_data_by_date_range')}}</label>
+        <div class="row">
+            <div class="col-lg-12 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="{{route('admin.report.set-date')}}" method="post">
+                            @csrf
+                            <div class="row">
+                                <div class="col-12 mb-2">
+                                    <label class="title-color d-flex">{{\App\CPU\translate('show_data_by_date_range')}}</label>
+                                </div>
+                                <div class="col-sm-6 col-lg-4">
+                                    <div class="mb-3">
+                                        <input type="date" name="from" value="{{date('Y-m-d',strtotime($from))}}" id="from_date"
+                                               class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-lg-4">
+                                    <div class="mb-3">
+                                        <input type="date" value="{{date('Y-m-d',strtotime($to))}}" name="to" id="to_date"
+                                               class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="mb-3">
+                                        <button type="submit" class="btn btn--primary btn-block">{{\App\CPU\translate('Show')}}</button>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="mb-3">
-                                <input type="date" name="from" value="{{date('Y-m-d',strtotime($from))}}" id="from_date"
-                                       class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="mb-3">
-                                <input type="date" value="{{date('Y-m-d',strtotime($to))}}" name="to" id="to_date"
-                                       class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="mb-3">
-                                <button type="submit" class="btn btn-primary btn-block">{{\App\CPU\translate('Show')}}</button>
-                            </div>
-                        </div>
+                        </form>
                     </div>
-                </form>
+                </div>
             </div>
 
             @php
-               $total_tax=\App\Model\OrderTransaction::where(['status'=>'disburse'])
-               ->whereBetween('created_at', [$from, $to])
-               ->sum('tax');
+                $total_tax=\App\Model\OrderTransaction::where(['status'=>'disburse'])
+                ->whereBetween('created_at', [$from, $to])
+                ->sum('tax');
             @endphp
             @php
                 $total_earning =\App\Model\OrderTransaction::where(['status'=>'disburse'])
@@ -130,17 +117,17 @@
                 $total = $total_earning+$total_tax + $total_commission;
             @endphp
 
-            <div class="col-sm-3 col-lg-4 mb-3 mb-lg-6">
-            <!-- Card -->
+            <div class="col-sm-6 mb-3 col-lg-4">
+                <!-- Card -->
                 <div class="card card-sm">
                     <div class="card-body">
                         <div class="row">
                             <div class="col">
                                 <!-- Media -->
                                 <div class="media">
-                                    <i class="tio-dollar-outlined nav-icon"></i>
+                                    <i class="tio-dollar-outlined nav-icon {{Session::get('direction') === "rtl" ? 'text-right' : 'text-left'}}"></i>
 
-                                    <div class="media-body">
+                                    <div class="media-body {{Session::get('direction') === "rtl" ? 'text-right' : 'text-left'}}">
                                         <h4 class="mb-1">{{\App\CPU\translate('Total')}} {{\App\CPU\translate('earning')}} </h4>
                                         <span class="font-size-sm text-success">
                                           <i class="tio-trending-up"></i> {{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($total_earning))}}
@@ -177,7 +164,7 @@
                 <!-- End Card -->
             </div>
 
-            <div class="col-sm-3 col-lg-4 mb-3 mb-lg-6">
+            <div class="col-sm-6 mb-3 col-lg-4">
                 <!-- Card -->
                 <div class="card card-sm">
                     <div class="card-body">
@@ -185,9 +172,9 @@
                             <div class="col">
                                 <!-- Media -->
                                 <div class="media">
-                                    <i class="tio-money nav-icon"></i>
+                                    <i class="tio-money nav-icon {{Session::get('direction') === "rtl" ? 'text-right' : 'text-left'}}"></i>
 
-                                    <div class="media-body">
+                                    <div class="media-body {{Session::get('direction') === "rtl" ? 'text-right' : 'text-left'}}">
                                         <h4 class="mb-1">{{\App\CPU\translate('Total')}} {{\App\CPU\translate('Tax')}} </h4>
                                         <span class="font-size-sm text-warning">
                                           <i class="tio-trending-up"></i>  {{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($total_tax))}}
@@ -222,7 +209,7 @@
                 </div>
                 <!-- End Card -->
             </div>
-            <div class="col-sm-3 col-lg-4 mb-3 mb-lg-6">
+            <div class="col-sm-6 mb-3 col-lg-4">
                 <!-- Card -->
                 <div class="card card-sm">
                     <div class="card-body">
@@ -230,9 +217,9 @@
                             <div class="col">
                                 <!-- Media -->
                                 <div class="media">
-                                    <i class="tio-money nav-icon"></i>
+                                    <i class="tio-money nav-icon {{Session::get('direction') === "rtl" ? 'text-right' : 'text-left'}}"></i>
 
-                                    <div class="media-body">
+                                    <div class="media-body {{Session::get('direction') === "rtl" ? 'text-right' : 'text-left'}}">
                                         <h4 class="mb-1">{{\App\CPU\translate('Total')}} {{\App\CPU\translate('commission')}} </h4>
                                         <span class="font-size-sm text-primary">
                                           <i class="tio-trending-up"></i>  {{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($total_commission))}}
@@ -269,11 +256,11 @@
             </div>
         </div>
         <!-- End Stats -->
-        <hr>
+
         <!-- Card -->
         <div class="card mb-3 mb-lg-5 border-top border-left border-right border-bottom">
             <!-- Header -->
-            <div class="card-header">
+            <div class="card-header flex-wrap">
                 @php
                     $total_sold=\App\Model\OrderTransaction::where(['status'=>'disburse'])->whereBetween('created_at', [date('y-01-01'), date('y-12-31')])->sum('order_amount');
                     $t=\App\Model\OrderTransaction::where(['status'=>'disburse'])->whereBetween('created_at', [date('y-01-01'), date('y-12-31')])->sum('tax');
@@ -297,73 +284,73 @@
             </div>
             <!-- End Header -->
 
-        @php
-            $sold=[];
+            @php
+                $sold=[];
 
-            $from = \Carbon\Carbon::now()->startOfYear()->format('Y-m-d');
-            $to = \Carbon\Carbon::now()->endOfYear()->format('Y-m-d');
+                $from = \Carbon\Carbon::now()->startOfYear()->format('Y-m-d');
+                $to = \Carbon\Carbon::now()->endOfYear()->format('Y-m-d');
 
-            $data=\App\Model\OrderTransaction::where(['status'=>'disburse'])->select(
-            \Illuminate\Support\Facades\DB::raw('SUM(order_amount) as sum'),
-            \Illuminate\Support\Facades\DB::raw('YEAR(created_at) year, MONTH(created_at) month')
-            )->whereBetween('created_at', [$from, $to])->groupby('year', 'month')->get()->toArray();
+                $data=\App\Model\OrderTransaction::where(['status'=>'disburse'])->select(
+                \Illuminate\Support\Facades\DB::raw('SUM(order_amount) as sum'),
+                \Illuminate\Support\Facades\DB::raw('YEAR(created_at) year, MONTH(created_at) month')
+                )->whereBetween('created_at', [$from, $to])->groupby('year', 'month')->get()->toArray();
 
-            for ($inc = 1; $inc <= 12; $inc++) {
-            $sold[$inc] = 0;
-            foreach ($data as $match) {
-                if ($match['month'] == $inc) {
-                    $sold[$inc] = $match['sum'];
+                for ($inc = 1; $inc <= 12; $inc++) {
+                $sold[$inc] = 0;
+                foreach ($data as $match) {
+                    if ($match['month'] == $inc) {
+                        $sold[$inc] = $match['sum'];
+                    }
                 }
             }
-        }
-        @endphp
+            @endphp
 
-        @php
-            $tax=[];
+            @php
+                $tax=[];
 
-            $from = \Carbon\Carbon::now()->startOfYear()->format('Y-m-d');
-            $to = \Carbon\Carbon::now()->endOfYear()->format('Y-m-d');
+                $from = \Carbon\Carbon::now()->startOfYear()->format('Y-m-d');
+                $to = \Carbon\Carbon::now()->endOfYear()->format('Y-m-d');
 
-            $data=\App\Model\OrderTransaction::where(['status'=>'disburse'])->select(
-            \Illuminate\Support\Facades\DB::raw('SUM(tax) as sum'),
-            \Illuminate\Support\Facades\DB::raw('YEAR(created_at) year, MONTH(created_at) month')
-            )->whereBetween('created_at', [$from, $to])->groupby('year', 'month')->get()->toArray();
+                $data=\App\Model\OrderTransaction::where(['status'=>'disburse'])->select(
+                \Illuminate\Support\Facades\DB::raw('SUM(tax) as sum'),
+                \Illuminate\Support\Facades\DB::raw('YEAR(created_at) year, MONTH(created_at) month')
+                )->whereBetween('created_at', [$from, $to])->groupby('year', 'month')->get()->toArray();
 
-            for ($inc = 1; $inc <= 12; $inc++) {
-            $tax[$inc] = 0;
-            foreach ($data as $match) {
-                if ($match['month'] == $inc) {
-                    $tax[$inc] = $match['sum'];
+                for ($inc = 1; $inc <= 12; $inc++) {
+                $tax[$inc] = 0;
+                foreach ($data as $match) {
+                    if ($match['month'] == $inc) {
+                        $tax[$inc] = $match['sum'];
+                    }
                 }
             }
-        }
-        @endphp
-        @php
-            $commission=[];
+            @endphp
+            @php
+                $commission=[];
 
-            $from = \Carbon\Carbon::now()->startOfYear()->format('Y-m-d');
-            $to = \Carbon\Carbon::now()->endOfYear()->format('Y-m-d');
+                $from = \Carbon\Carbon::now()->startOfYear()->format('Y-m-d');
+                $to = \Carbon\Carbon::now()->endOfYear()->format('Y-m-d');
 
-            $data=\App\Model\OrderTransaction::where(['status'=>'disburse'])->select(
-            \Illuminate\Support\Facades\DB::raw('SUM(admin_commission) as sum'),
-            \Illuminate\Support\Facades\DB::raw('YEAR(created_at) year, MONTH(created_at) month')
-            )->whereBetween('created_at', [$from, $to])->groupby('year', 'month')->get()->toArray();
+                $data=\App\Model\OrderTransaction::where(['status'=>'disburse'])->select(
+                \Illuminate\Support\Facades\DB::raw('SUM(admin_commission) as sum'),
+                \Illuminate\Support\Facades\DB::raw('YEAR(created_at) year, MONTH(created_at) month')
+                )->whereBetween('created_at', [$from, $to])->groupby('year', 'month')->get()->toArray();
 
-            for ($inc = 1; $inc <= 12; $inc++) {
-            $commission[$inc] = 0;
-            foreach ($data as $match) {
-                if ($match['month'] == $inc) {
-                    $commission[$inc] = $match['sum'];
+                for ($inc = 1; $inc <= 12; $inc++) {
+                $commission[$inc] = 0;
+                foreach ($data as $match) {
+                    if ($match['month'] == $inc) {
+                        $commission[$inc] = $match['sum'];
+                    }
                 }
             }
-        }
-        @endphp
+            @endphp
 
 
-        <!-- Body -->
+                <!-- Body -->
             <div class="card-body">
                 <!-- Bar Chart -->
-                <div class="chartjs-custom" style="height: 18rem;">
+                <div class="chartjs-custom __h-18rem">
                     <canvas class="js-chart"
                             data-hs-chartjs-options='{
                         "type": "line",
@@ -416,13 +403,12 @@
                                   "zeroLineColor": "#e7eaf3"
                                 },
                                 "ticks": {
-                                  "min": 0,
-                                  "max": {{$t_c_t}},
-                                  "stepSize": {{round($t_c_t/5)}},
-                                  "fontColor": "#97a4af",
-                                  "fontFamily": "Open Sans, sans-serif",
-                                  "padding": 10,
-                                  "postfix": " {{\App\CPU\BackEndHelper::currency_symbol()}}"
+                                    "beginAtZero": true,
+                                    "fontSize": 12,
+                                    "fontColor": "#97a4af",
+                                    "fontFamily": "Open Sans, sans-serif",
+                                    "padding": 5,
+                                    "postfix": " {{ \App\CPU\BackEndHelper::currency_symbol() }}"
                                 }
                               }],
                               "xAxes": [{
@@ -679,3 +665,4 @@
         })
     </script>
 @endpush
+

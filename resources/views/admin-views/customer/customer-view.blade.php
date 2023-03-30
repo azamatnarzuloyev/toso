@@ -12,28 +12,24 @@
         <div class="d-print-none pb-2">
             <div class="row align-items-center">
                 <div class="col-sm mb-2 mb-sm-0">
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb breadcrumb-no-gutter">
-                            <li class="breadcrumb-item">
-                                <a class="breadcrumb-link"
-                                   href="{{route('admin.customer.list')}}">
-                                    {{\App\CPU\translate('Customers')}}
-                                </a>
-                            </li>
-                            <li class="breadcrumb-item active" aria-current="page">{{\App\CPU\translate('Customer details')}}</li>
-                        </ol>
-                    </nav>
+
+                    <!-- Page Title -->
+                    <div class="mb-3">
+                        <h2 class="h1 mb-0 text-capitalize d-flex gap-2">
+                            <img width="20" src="{{asset('/public/assets/back-end/img/customer.png')}}" alt="">
+                            {{\App\CPU\translate('customer_details')}}
+                        </h2>
+                    </div>
+                    <!-- End Page Title -->
 
                     <div class="d-sm-flex align-items-sm-center">
-                        <h1 class="page-header-title">{{\App\CPU\translate('Customer ID')}} #{{$customer['id']}}</h1>
+                        <h3 class="page-header-title">{{\App\CPU\translate('Customer ID')}} #{{$customer['id']}}</h3>
                         <span class="{{Session::get('direction') === "rtl" ? 'mr-2 mr-sm-3' : 'ml-2 ml-sm-3'}}">
                         <i class="tio-date-range">
                         </i> {{\App\CPU\translate('Joined At')}} : {{date('d M Y H:i:s',strtotime($customer['created_at']))}}
                         </span>
                     </div>
                 </div>
-
-
             </div>
         </div>
         <!-- End Page Header -->
@@ -41,38 +37,37 @@
         <div class="row" id="printableArea">
             <div class="col-lg-8 mb-3 mb-lg-0">
                 <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-header-title"></h5>
-                        <form action="{{ url()->current() }}" method="GET">
-                            <!-- Search -->
-                            <div class="input-group input-group-merge input-group-flush">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">
-                                        <i class="tio-search"></i>
+                    <div class="p-3">
+                        <div class="row justify-content-end">
+                            <div class="col-auto">
+                                <form action="{{ url()->current() }}" method="GET">
+                                    <!-- Search -->
+                                    <div class="input-group input-group-merge input-group-custom">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                <i class="tio-search"></i>
+                                            </div>
+                                        </div>
+                                        <input id="datatableSearch_" type="search" name="search" class="form-control"
+                                            placeholder="{{\App\CPU\translate('Search orders')}}" aria-label="Search orders" value="{{ $search }}"
+                                            required>
+                                        <button type="submit" class="btn btn--primary">{{\App\CPU\translate('search')}}</button>
                                     </div>
-                                </div>
-                                <input id="datatableSearch_" type="search" name="search" class="form-control"
-                                       placeholder="{{\App\CPU\translate('Search orders')}}" aria-label="Search orders" value="{{ $search }}"
-                                       required>
-                                <button type="submit" class="btn btn-primary">{{\App\CPU\translate('search')}}</button>
+                                    <!-- End Search -->
+                                </form>
                             </div>
-                            <!-- End Search -->
-                        </form>
+                        </div>
                     </div>
                     <!-- Table -->
                     <div class="table-responsive datatable-custom">
                         <table
-                               class="table table-borderless table-thead-bordered table-nowrap table-align-middle card-table"
-                               data-hs-datatables-options='{
-                                 "order": [],
-                                 "orderCellsTop": true
-                               }'>
-                            <thead class="thead-light">
+                               class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table w-100">
+                            <thead class="thead-light thead-50 text-capitalize">
                             <tr>
-                                <th>{{\App\CPU\translate('sl')}}#</th>
-                                <th style="width: 50%" class="text-center">{{\App\CPU\translate('Order ID')}}</th>
-                                <th style="width: 50%">{{\App\CPU\translate('Total')}}</th>
-                                <th style="width: 10%">{{\App\CPU\translate('Action')}}</th>
+                                <th>{{\App\CPU\translate('sl')}}</th>
+                                <th>{{\App\CPU\translate('Order ID')}}</th>
+                                <th>{{\App\CPU\translate('Total')}}</th>
+                                <th class="text-center">{{\App\CPU\translate('Action')}}</th>
                             </tr>
 
                             </thead>
@@ -81,22 +76,23 @@
                             @foreach($orders as $key=>$order)
                                 <tr>
                                     <td>{{$orders->firstItem()+$key}}</td>
-                                    <td class="table-column-pl-0 text-center">
-                                        <a href="{{route('admin.orders.details',['id'=>$order['id']])}}">{{$order['id']}}</a>
+                                    <td>
+                                        <a href="{{route('admin.orders.details',['id'=>$order['id']])}}" class="title-color hover-c1">{{$order['id']}}</a>
                                     </td>
                                     <td> {{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($order['order_amount']))}}</td>
 
                                     <td>
-                                        
-                                        <a class="btn btn-primary btn-sm edit"
-                                            title="{{\App\CPU\translate('View')}}"
-                                            href="{{route('admin.orders.details',['id'=>$order['id']])}}"><i
-                                                class="tio-visible"></i> </a>
-                                        <a class="btn btn-info btn-sm" 
-                                            title="{{\App\CPU\translate('Invoice')}}"
-                                            target="_blank"
-                                            href="{{route('admin.orders.generate-invoice',[$order['id']])}}"><i
-                                                class="tio-download"></i> </a>
+                                        <div class="d-flex justify-content-center gap-10">
+                                            <a class="btn btn-outline--primary btn-sm edit square-btn"
+                                                title="{{\App\CPU\translate('View')}}"
+                                                href="{{route('admin.orders.details',['id'=>$order['id']])}}"><i
+                                                    class="tio-invisible"></i> </a>
+                                            <a class="btn btn-outline-info btn-sm square-btn"
+                                                title="{{\App\CPU\translate('Invoice')}}"
+                                                target="_blank"
+                                                href="{{route('admin.orders.generate-invoice',[$order['id']])}}"><i
+                                                    class="tio-download"></i> </a>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -104,7 +100,7 @@
                         </table>
                         @if(count($orders)==0)
                             <div class="text-center p-4">
-                                <img class="mb-3" src="{{asset('public/assets/back-end')}}/svg/illustrations/sorry.svg" alt="Image Description" style="width: 7rem;">
+                                <img class="mb-3 w-160" src="{{asset('public/assets/back-end')}}/svg/illustrations/sorry.svg" alt="Image Description">
                                 <p class="mb-0">{{ \App\CPU\translate('No_data_to_show')}}</p>
                             </div>
                         @endif
@@ -121,68 +117,33 @@
             <div class="col-lg-4">
                 <!-- Card -->
                 <div class="card">
-                    <!-- Header -->
-                    <div class="card-header">
-                        <h4 class="card-header-title">{{\App\CPU\translate('Customer')}}</h4>
-                    </div>
-                    <!-- End Header -->
-
-                    <!-- Body -->
-
-
                     @if($customer)
-
                         <div class="card-body">
-                            <div class="media align-items-center" href="javascript:">
-                                <div class="avatar avatar-circle {{Session::get('direction') === "rtl" ? 'ml-3' : 'mr-3'}}">
+                            <h4 class="mb-4 d-flex align-items-center gap-2">
+                                <img src="{{asset('/public/assets/back-end/img/seller-information.png')}}" alt="">
+                                {{\App\CPU\translate('Customer')}}
+                            </h4>
+
+                            <div class="media">
+                                <div class="mr-3">
                                     <img
-                                        class="avatar-img"
+                                        class="avatar rounded-circle avatar-70"
                                         onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'"
-                                        src="{{asset('storage/app/public/profile/'.$customer->image)}}"
-                                        alt="Image Description">
+                                        src="{{asset('storage/app/public/profile/'.$customer->image??'')}}"
+                                        alt="Image">
                                 </div>
-                                <div class="media-body">
-                                <span
-                                    class="text-body text-hover-primary">{{$customer['f_name'].' '.$customer['l_name']}}</span>
-                                </div>
-                                <div class="media-body text-right">
-                                    {{--<i class="tio-chevron-right text-body"></i>--}}
-                                </div>
-                            </div>
-
-                            <hr>
-
-                            <div class="media align-items-center" href="javascript:">
-                                <div class="icon icon-soft-info icon-circle {{Session::get('direction') === "rtl" ? 'ml-3' : 'mr-3'}}">
-                                    <i class="tio-shopping-basket-outlined"></i>
-                                </div>
-                                <div class="media-body">
-                                    <span class="text-body text-hover-primary"> {{\App\Model\Order::where('customer_id',$customer['id'])->count()}} {{\App\CPU\translate('orders')}}</span>
+                                <div class="media-body d-flex flex-column gap-1">
+                                    <span class="title-color hover-c1"><strong>{{$customer['f_name'].' '.$customer['l_name']}}</strong></span>
+                                    <span class="title-color">
+                                        <strong>{{\App\Model\Order::where('customer_id',$customer['id'])->count()}} </strong>{{\App\CPU\translate('orders')}}
+                                    </span>
+                                    <span class="title-color"><strong>{{$customer['phone']}}</strong></span>
+                                    <span class="title-color">{{$customer['email']}}</span>
                                 </div>
                                 <div class="media-body text-right">
                                     {{--<i class="tio-chevron-right text-body"></i>--}}
                                 </div>
                             </div>
-
-                            <hr>
-
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h5>{{\App\CPU\translate('Contact info')}}</h5>
-                            </div>
-
-                            <ul class="list-unstyled list-unstyled-py-2">
-                                <li>
-                                    <i class="tio-online {{Session::get('direction') === "rtl" ? 'ml-2' : 'mr-2'}}"></i>
-                                    {{$customer['email']}}
-                                </li>
-                                <li>
-                                    <i class="tio-android-phone-vs {{Session::get('direction') === "rtl" ? 'ml-2' : 'mr-2'}}"></i>
-                                    {{$customer['phone']}}
-                                </li>
-                            </ul>
-
-                            <hr>
-
                         </div>
                 @endif
 
@@ -197,33 +158,4 @@
 
 @push('script_2')
 
-    <script>
-        $(document).on('ready', function () {
-            // INITIALIZATION OF DATATABLES
-            // =======================================================
-            var datatable = $.HSCore.components.HSDatatables.init($('#columnSearchDatatable'));
-
-            $('#column1_search').on('keyup', function () {
-                datatable
-                    .columns(1)
-                    .search(this.value)
-                    .draw();
-            });
-
-
-            $('#column3_search').on('change', function () {
-                datatable
-                    .columns(2)
-                    .search(this.value)
-                    .draw();
-            });
-
-
-            // INITIALIZATION OF SELECT2
-            // =======================================================
-            $('.js-select2-custom').each(function () {
-                var select2 = $.HSCore.components.HSSelect2.init($(this));
-            });
-        });
-    </script>
 @endpush

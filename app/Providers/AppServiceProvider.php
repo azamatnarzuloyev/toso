@@ -4,12 +4,17 @@ namespace App\Providers;
 
 use App\CPU\Helpers;
 use App\Model\BusinessSetting;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 ini_set('memory_limit',-1);
+ini_set('upload_max_filesize','180M');
+ini_set('post_max_size','200M');
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -49,6 +54,7 @@ class AppServiceProvider extends ServiceProvider
                 'about' => Helpers::get_settings($web, 'about_us'),
                 'footer_logo' => Helpers::get_settings($web, 'company_footer_logo'),
                 'copyright_text' => Helpers::get_settings($web, 'company_copyright_text'),
+                'cookie_setting' => Helpers::get_settings($web, 'cookie_setting'),
             ];
 
             //language
@@ -63,5 +69,31 @@ class AppServiceProvider extends ServiceProvider
         } catch (\Exception $ex) {
 
         }
+
+        /**
+         * Paginate a standard Laravel Collection.
+         *
+         * @param int $perPage
+         * @param int $total
+         * @param int $page
+         * @param string $pageName
+         * @return array
+         */
+
+        Collection::macro('paginate', function ($perPage, $total = null, $page = null, $pageName = 'page') {
+            $page = $page ?: LengthAwarePaginator::resolveCurrentPage($pageName);
+
+            return new LengthAwarePaginator(
+                $this->forPage($page, $perPage),
+                $total ?: $this->count(),
+                $perPage,
+                $page,
+                [
+                    'path' => LengthAwarePaginator::resolveCurrentPath(),
+                    'pageName' => $pageName,
+                ]
+            );
+        });
+
     }
 }

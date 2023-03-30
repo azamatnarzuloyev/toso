@@ -21,7 +21,7 @@
         <h4 class="mb-0 text-black-50">{{\App\CPU\translate('General Business Settings')}}</h4>
     </div>
 
-    <div class="row" style="margin-top: 20px">
+    <div class="row __mt-20">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
@@ -35,7 +35,7 @@
                     @csrf
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="table_id" class="display table table-hover " style="width:100%">
+                            <table id="table_id" class="display table table-hover">
                                 <thead>
                                 <tr>
                                     <th scope="col">#{{\App\CPU\translate('SL')}}</th>
@@ -53,7 +53,7 @@
                                         <td>{{$data['id']}}</td>
                                         <td>{{$data['name']}}</td>
                                         <td>{{$data['code']}}</td>
-                                        <td style="width: 100px">
+                                        <td class="__w-100px">
                                             <label class="switch">
                                                 <input type="checkbox" onclick="updateStatus('{{route('admin.business-settings.update-language')}}','{{$data['id']}}')"
                                                        class="status" {{$data['status']==1?'checked':''}}>
@@ -62,8 +62,6 @@
                                         </td>
                                     </tr>
                                 @endforeach
-
-
                                 </tbody>
                             </table>
                         </div>

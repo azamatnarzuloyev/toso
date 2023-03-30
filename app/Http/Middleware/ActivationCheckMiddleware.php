@@ -3,25 +3,33 @@
 namespace App\Http\Middleware;
 
 use App\CPU\Helpers;
+use App\Traits\ActivationClass;
 use Brian2694\Toastr\Facades\Toastr;
 use Closure;
 use http\Client;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class ActivationCheckMiddleware
 {
+    use ActivationClass;
+
     /**
      * Handle an incoming request.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure $next
+     * @param Request $request
+     * @param Closure $next
      * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next)
     {
-        $data = Helpers::requestSender();
-        if ($data['active']) {
-            return $next($request);
+        if ($request->is('admin/auth/login')) {
+            $response = $this->actch();
+            $data = json_decode($response->getContent(), true);
+            if (!$data['active']) {
+                return Redirect::away(base64_decode('aHR0cHM6Ly82YW10ZWNoLmNvbS9zb2Z0d2FyZS1hY3RpdmF0aW9u'))->send();
+            }
         }
-        return redirect(base64_decode('aHR0cHM6Ly82YW10ZWNoLmNvbS9zb2Z0d2FyZS1hY3RpdmF0aW9u'));
+        return $next($request);
     }
 }

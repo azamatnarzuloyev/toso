@@ -8,34 +8,34 @@
 
 @section('content')
     <div class="content container-fluid">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{route('seller.dashboard.index')}}">{{\App\CPU\translate('Dashboard')}}</a>
-                </li>
-                <li class="breadcrumb-item" aria-current="page">{{\App\CPU\translate('shipping_method')}}</li>
 
-            </ol>
-        </nav>
+        <!-- Page Title -->
+        <div class="mb-3">
+            <h2 class="h1 mb-0 text-capitalize d-flex align-items-center gap-2">
+                <img width="20" src="{{asset('/public/assets/back-end/img/shipping_method.png')}}" alt="">
+                {{\App\CPU\translate('shipping_method')}}
+            </h2>
+        </div>
+        <!-- End Page Title -->
 
         <div class="row">
             <div class="col-md-12 ">
-                <div class="card" style="height: 200px;">
+                <div class="card">
                     <div class="card-header text-capitalize">
-                        <h4>{{\App\CPU\translate('choose_shipping_method')}}</h4>
+                        <h5 class="mb-0">{{\App\CPU\translate('choose_shipping_method')}}</h5>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-12 text-capitalize" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
-                                <select class="form-control text-capitalize" name="shippingCategory" onchange="seller_shipping_type(this.value);"
-                                            style="width: 100%">
+                                <select class="form-control text-capitalize" name="shippingCategory" onchange="seller_shipping_type(this.value);">
                                     <option value="0" selected disabled>---{{\App\CPU\translate('select')}}---</option>
                                     <option value="order_wise" {{$shippingType=='order_wise'?'selected':'' }} >{{\App\CPU\translate('order_wise')}} </option>
                                     <option  value="category_wise" {{$shippingType=='category_wise'?'selected':'' }} >{{\App\CPU\translate('category_wise')}}</option>
                                     <option  value="product_wise" {{$shippingType=='product_wise'?'selected':'' }}>{{\App\CPU\translate('product_wise')}}</option>
                                 </select>
                             </div>
-                            <div class="col-12 mt-2" id="product_wise_note">
-                                <p class="m-2" style="color: red;">{{\App\CPU\translate('note')}}: {{\App\CPU\translate("Please_make_sure_all_the product's_delivery_charges_are_up_to_date.")}}</p>
+                            <div class="col-12 mt-2" id="product_wise_note" style="display: none">
+                                <p class="m-2" class="text-danger">{{\App\CPU\translate('note')}}: {{\App\CPU\translate("Please_make_sure_all_the product's_delivery_charges_are_up_to_date.")}}</p>
                             </div>
                         </div>
                     </div>
@@ -44,169 +44,159 @@
         </div>
         <!-- Content Row -->
         <div id="order_wise_shipping">
-            <div class="row mt-2">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h1 class="h3 mb-0 text-black-50 text-capitalize">{{\App\CPU\translate('add_order_wise_shipping')}} </h1>
-                        </div>
-                        <div class="card-body">
-                            <form action="{{route('seller.business-settings.shipping-method.add')}}" method="post"
-                                  style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
-                                @csrf
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <label for="title">{{\App\CPU\translate('title')}}</label>
-                                            <input type="text" name="title" class="form-control" placeholder="">
-                                        </div>
-    
-                                        <div class="col-md-3">
-                                            <label for="duration">{{\App\CPU\translate('duration')}}</label>
-                                            <input type="text" name="duration" class="form-control"
-                                                   placeholder="{{\App\CPU\translate('Ex')}} : 4-6 {{\App\CPU\translate('days')}}">
-                                        </div>
-    
-                                        <div class="col-md-3">
-                                            <label for="cost">{{\App\CPU\translate('cost')}}</label>
-                                            <input type="number" min="0" max="1000000" name="cost" class="form-control" placeholder="{{\App\CPU\translate('Ex')}} : 10 $">
-                                        </div>
-                                    </div>
-                                </div>
-    
-                                <div class="card-footer" style="padding-{{Session::get('direction') === "rtl" ? 'right' : 'left'}}: 0">
-                                    <button type="submit" class="btn btn-primary float-right">{{\App\CPU\translate('Submit')}}</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+            <div class="card mt-2">
+                <div class="card-header">
+                    <h5 class="mb-0 text-capitalize">{{\App\CPU\translate('add_order_wise_shipping')}} </h5>
                 </div>
-            </div>
-    
-            <div class="row" style="margin-top: 20px">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="text-capitalize">{{\App\CPU\translate('order_wise_shipping_method')}}  <span style="color: red;">({{ $shipping_methods->total() }})</span></h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table id="datatable" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};"
-                                   class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table"
-                                   style="width: 100%">
-                                <thead class="thead-light">
-                                <tr>
-                                    <th>{{\App\CPU\translate('sl#')}}</th>
-                                    <th>{{\App\CPU\translate('title')}}</th>
-                                    <th>{{\App\CPU\translate('duration')}}</th>
-                                    <th>{{\App\CPU\translate('cost')}}</th>
-                                    <th>{{\App\CPU\translate('status')}}</th>
-                                    <th scope="col" style="width: 50px">{{\App\CPU\translate('action')}}</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($shipping_methods as $k=>$method)
-                                    <tr>
-                                        <th scope="row">{{$shipping_methods->firstItem()+$k}}</th>
-                                        <td>{{$method['title']}}</td>
-                                        <td>
-                                            {{$method['duration']}}
-                                        </td>
-                                        <td>
-                                            {{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($method['cost']))}}
-                                        </td>
-    
-                                        <td>
-                                            <label class="switch">
-                                                    <input type="checkbox" class="status"
-                                                           id="{{$method['id']}}" {{$method->status == 1?'checked':''}}>
-                                                    <span class="slider round"></span>
-                                                </label>
-                                        </td>
-                                        <td>
-                                            
-                                            <a  class="btn btn-primary btn-sm"
-                                                title="{{\App\CPU\translate('Edit')}}"
-                                                href="{{route('seller.business-settings.shipping-method.edit',[$method['id']])}}">
-                                                <i class="tio-edit"></i>
-                                            </a>
-                                            <a  class="btn btn-danger btn-sm delete" 
-                                                title="{{\App\CPU\translate('Delete')}}"
-                                                style="cursor: pointer;"
-                                                id="{{ $method['id'] }}">
-                                                <i class="tio-add-to-trash"></i>
-                                            </a>
-                                                
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
+                <div class="card-body">
+                    <form action="{{route('seller.business-settings.shipping-method.add')}}" method="post"
+                            style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
+                        @csrf
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="title" class="title-color">{{\App\CPU\translate('title')}}</label>
+                                    <input type="text" name="title" class="form-control" placeholder="Ex: Name of Shipping Category">
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label for="duration" class="title-color">{{\App\CPU\translate('duration')}}</label>
+                                    <input type="text" name="duration" class="form-control"
+                                            placeholder="{{\App\CPU\translate('Ex')}} : 4-6 {{\App\CPU\translate('days')}}">
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label for="cost" class="title-color">{{\App\CPU\translate('cost')}}</label>
+                                    <input type="number" min="0" max="1000000" step="0.01" name="cost" class="form-control" placeholder="{{\App\CPU\translate('Ex')}} : 10 $">
+                                </div>
                             </div>
                         </div>
-                        <div class="card-footer">
-                        {!! $shipping_methods->links() !!}
+                        <div class="d-flex justify-content-end" style="padding-{{Session::get('direction') === "rtl" ? 'right' : 'left'}}: 0">
+                            <button type="submit" class="btn btn--primary">{{\App\CPU\translate('Submit')}}</button>
                         </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mt-2">
+                <div class="card-header">
+                    <h5 class="mb-0 text-capitalize">
+                        {{\App\CPU\translate('order_wise_shipping_method')}}
+                        <span class="badge badge-soft-dark radius-50 fz-12 ml-1">{{ $shipping_methods->total() }}</span>
+                    </h5>
+                </div>
+                <div class="table-responsive">
+                    <table id="datatable" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};"
+                        class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table">
+                        <thead class="thead-light thead-50 text-capitalize">
+                            <tr>
+                                <th>{{\App\CPU\translate('SL')}}</th>
+                                <th>{{\App\CPU\translate('title')}}</th>
+                                <th>{{\App\CPU\translate('duration')}}</th>
+                                <th>{{\App\CPU\translate('cost')}}</th>
+                                <th class="text-center">{{\App\CPU\translate('status')}}</th>
+                                <th class="text-center">{{\App\CPU\translate('action')}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($shipping_methods as $k=>$method)
+                            <tr>
+                                <th>{{$shipping_methods->firstItem()+$k}}</th>
+                                <td>{{$method['title']}}</td>
+                                <td>
+                                    {{$method['duration']}}
+                                </td>
+                                <td>
+                                    {{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($method['cost']))}}
+                                </td>
+
+                                <td>
+                                    <label class="switcher mx-auto">
+                                        <input type="checkbox" class="status switcher_input"
+                                                id="{{$method['id']}}" {{$method->status == 1?'checked':''}}>
+                                        <span class="switcher_control"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2 justify-content-center">
+                                        <a  class="btn btn-outline--primary btn-sm square-btn"
+                                            title="{{\App\CPU\translate('Edit')}}"
+                                            href="{{route('seller.business-settings.shipping-method.edit',[$method['id']])}}">
+                                            <i class="tio-edit"></i>
+                                        </a>
+                                        <a  class="btn btn-outline-danger btn-sm delete"
+                                            title="{{\App\CPU\translate('Delete')}}"
+                                            id="{{ $method['id'] }}">
+                                            <i class="tio-delete"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-responsive mt-4">
+                    <div class="px-4 d-flex justify-content-lg-end">
+                        <!-- Pagination -->
+                        {!! $shipping_methods->links() !!}
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <div class="card mt-2" id="update_category_shipping_cost">
             <div class="card-header text-capitalize">
-                <h4>{{\App\CPU\translate('update_category_shipping_cost')}}</h4>
+                <h5 class="mb-0">{{\App\CPU\translate('update_category_shipping_cost')}}</h5>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <div class="col-12">
-                        <table class="table table-bordered" width="100%" cellspacing="0"
-                            style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
-                            <thead>
+            <div class="table-responsive">
+                <table class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table" cellspacing="0"
+                    style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
+                    <thead class="thead-light thead-50 text-capitalize">
+                        <tr>
+                            <th>{{\App\CPU\translate('SL')}}</th>
+                            <th>{{\App\CPU\translate('category_name')}}</th>
+                            <th>{{\App\CPU\translate('cost_per_product')}}</th>
+                            <th class="text-center">{{\App\CPU\translate('multiply_with_QTY')}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <form action="{{route('seller.business-settings.category-shipping-cost.store')}}" method="POST">
+                            @csrf
+                            @foreach ($all_category_shipping_cost as $key=>$item)
                                 <tr>
-                                    <th scope="col">{{\App\CPU\translate('sl#')}}</th>
-                                    <th scope="col">{{\App\CPU\translate('category_name')}}</th>
-                                    <th scope="col">{{\App\CPU\translate('cost_per_product')}}</th>
-                                    <th scope="col">{{\App\CPU\translate('multiply_with_QTY')}}</th>
+                                    <td>
+                                        {{$key+1}}
+                                    </td>
+                                    <td>
+                                        {{$item->category!=null?$item->category->name:\App\CPU\translate('not_found')}}
+                                    </td>
+                                    <td>
+                                        <input type="hidden" class="form-control w-auto" name="ids[]" value="{{$item->id}}">
+                                        <input type="number" class="form-control w-auto" min="0" step="0.01" name="cost[]" value="{{\App\CPU\BackEndHelper::usd_to_currency($item->cost)}}">
+                                    </td>
+                                    <td>
+                                        <label class="switcher mx-auto">
+                                            <input type="checkbox" name="multiplyQTY[]" class="switcher_input"
+                                                id="" value="{{$item->id}}" {{$item->multiply_qty == 1?'checked':''}}>
+                                            <span class="switcher_control"></span>
+                                        </label>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <form action="{{route('seller.business-settings.category-shipping-cost.store')}}" method="POST">
-                                    @csrf
-                                    @foreach ($all_category_shipping_cost as $key=>$item)
-                                        <tr>
-                                            <td>
-                                                {{$key+1}}
-                                            </td>
-                                            <td>
-                                                {{$item->category!=null?$item->category->name:\App\CPU\translate('not_found')}}
-                                            </td>
-                                            <td>
-                                                <input type="hidden" class="form-control" name="ids[]" value="{{$item->id}}">
-                                                <input type="number" class="form-control" min="0" step="0.01" name="cost[]" value="{{\App\CPU\BackEndHelper::usd_to_currency($item->cost)}}">
-                                            </td>
-                                            <td>
-                                                <label class="switch">
-                                                    <input type="checkbox" name="multiplyQTY[]"
-                                                        id="" value="{{$item->id}}" {{$item->multiply_qty == 1?'checked':''}}>
-                                                    <span class="slider round"></span>
-                                                </label>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                    <tr>
-                                        <td colspan="4">
-                                            <button type="submit" class="btn btn-primary ">{{\App\CPU\translate('Update')}}</button>
-                                        </td>
-                                    </tr>
-                                </form>
-                            </tbody>
-                            
-                        </table>
-                        
-                        
-                    </div>
-                </div>
+                            @endforeach
+                            <tr>
+                                <td colspan="4">
+                                    <div class="d-flex justify-content-end">
+                                        <button type="submit" class="btn btn--primary ">{{\App\CPU\translate('Update')}}</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </form>
+                    </tbody>
+                </table>
             </div>
+
         </div>
     </div>
 @endsection
@@ -229,7 +219,7 @@
                 $('#update_category_shipping_cost').hide();
                 $('#order_wise_shipping').show();
             }else{
-                
+
                 $('#update_category_shipping_cost').hide();
                 $('#order_wise_shipping').hide();
                 $('#product_wise_note').show();
@@ -268,7 +258,7 @@
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: '{{\App\CPU\translate('Yes, delete it!')}}'
+                confirmButtonText: '{{\App\CPU\translate('Yes')}}, {{\App\CPU\translate('delete it')}}'
             }).then((result) => {
                 if (result.value) {
                     $.ajaxSetup({
@@ -305,9 +295,9 @@
             }else{
                 $('#update_category_shipping_cost').hide();
                 $('#order_wise_shipping').hide();
-                $('#product_wise_note').show(); 
+                $('#product_wise_note').show();
             }
-            
+
             $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')

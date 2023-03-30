@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class RefundTransaction extends Model
 {
     use HasFactory;
-    
+
     protected $casts = [
         'order_id' => 'integer',
         'payment_for'=>'string',
@@ -22,6 +22,14 @@ class RefundTransaction extends Model
         'amount' => 'float',
         'transaction_type'=>'string',
         'refund_id'=>'string'
-             
+
     ];
+
+    public function order_details(){
+        return $this->belongsTo(OrderDetail::class);
+    }
+
+    public function order(){
+        return $this->belongsTo(Order::class);
+    }
 }

@@ -2,47 +2,24 @@
 @section('title', \App\CPU\translate('Deal Update'))
 @push('css_or_js')
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <style>
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        input:checked + .slider {
-            background-color: #377dff;
-        }
-
-        input:focus + .slider {
-            box-shadow: 0 0 1px #377dff;
-        }
-
-        input:checked + .slider:before {
-            -webkit-transform: translateX(26px);
-            -ms-transform: translateX(26px);
-            transform: translateX(26px);
-        }
-    </style>
     <link href="{{ asset('public/assets/select2/css/select2.min.css')}}" rel="stylesheet">
 @endpush
 
 @section('content')
 <div class="content container-fluid">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{\App\CPU\translate('Dashboard')}}</a></li>
-            <li class="breadcrumb-item" aria-current="page">{{\App\CPU\translate('Deal of the Day')}}</li>
-            <li class="breadcrumb-item">{{\App\CPU\translate('Update Deal')}}</li>
-        </ol>
-    </nav>
+    <!-- Page Title -->
+    <div class="mb-3">
+        <h2 class="h1 mb-0 text-capitalize d-flex align-items-center gap-2">
+            <img width="20" src="{{asset('/public/assets/back-end/img/deal_of_the_day.png')}}" alt="">
+            {{\App\CPU\translate('Update Deal of The Day')}}
+        </h2>
+    </div>
+    <!-- End Page Title -->
 
     <!-- Content Row -->
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header">
-                    {{ \App\CPU\translate('deal_form')}}
-                </div>
                 <div class="card-body">
                     <form action="{{route('admin.deal.day-update',[$deal['id']])}}"
                           style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};"
@@ -53,9 +30,9 @@
                         @php($default_lang = 'en')
 
                         @php($default_lang = json_decode($language)[0])
-                        <ul class="nav nav-tabs mb-4">
+                        <ul class="nav nav-tabs w-fit-content mb-4">
                             @foreach(json_decode($language) as $lang)
-                                <li class="nav-item">
+                                <li class="nav-item text-capitalize">
                                     <a class="nav-link lang_link {{$lang == $default_lang? 'active':''}}"
                                        href="#"
                                        id="{{$lang}}-link">{{\App\CPU\Helpers::get_language_name($lang).'('.strtoupper($lang).')'}}</a>
@@ -77,7 +54,7 @@
                                 ?>
                                 <div class="row {{$lang != $default_lang ? 'd-none':''}} lang_form" id="{{$lang}}-form">
                                     <div class="col-md-12">
-                                        <label for="name">{{ \App\CPU\translate('title')}} ({{strtoupper($lang)}})</label>
+                                        <label for="name" class="title-color">{{ \App\CPU\translate('title')}} ({{strtoupper($lang)}})</label>
                                         <input type="text" name="title[]"
                                                value="{{$lang==$default_lang?$deal['title']:($translate[$lang]['title']??'')}}"
                                                class="form-control" id="title"
@@ -87,8 +64,8 @@
                                 <input type="hidden" name="lang[]" value="{{$lang}}" id="lang">
                             @endforeach
                             <div class="row">
-                                <div class="col-md-12">
-                                    <label for="name">{{ \App\CPU\translate('product')}}</label>
+                                <div class="col-md-12 mt-3">
+                                    <label for="name" class="title-color">{{ \App\CPU\translate('product')}}</label>
                                     <select
                                         class="js-example-basic-multiple js-states js-example-responsive form-control"
                                         name="product_id">
@@ -102,9 +79,9 @@
                             </div>
                         </div>
 
-                        <div class=" pl-0">
-                            <button type="submit"
-                                    class="btn btn-primary float-right">{{ \App\CPU\translate('update')}}</button>
+                        <div class="d-flex justify-content-end gap-3">
+                            <button type="reset" id="reset" class="btn btn-secondary">{{ \App\CPU\translate('reset')}}</button>
+                            <button type="submit" class="btn btn--primary">{{ \App\CPU\translate('update')}}</button>
                         </div>
                     </form>
                 </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Seller;
 use App\CPU\ImageManager;
 use App\Http\Controllers\Controller;
 use App\Model\Seller;
+use App\Model\Shop;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 use function App\CPU\translate;
@@ -24,11 +25,23 @@ class ProfileController extends Controller
             return back();
         }
         $data = Seller::where('id', auth('seller')->id())->first();
-        return view('seller-views.profile.edit', compact('data'));
+        $shop_banner = Shop::select('banner')->where('seller_id', auth('seller')->id())->first()->banner;
+        
+        return view('seller-views.profile.edit', compact('data', 'shop_banner'));
     }
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'f_name' => 'required',
+            'l_name' => 'required',
+            'phone' => 'required'
+        ], [
+            'f_name.required' => 'First name is required!',
+            'l_name.required' => 'Last name is required!',
+            'phone.required' => 'Phone number is required!',
+        ]);
+
         $seller = Seller::find(auth('seller')->id());
         $seller->f_name = $request->f_name;
         $seller->l_name = $request->l_name;

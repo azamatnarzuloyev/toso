@@ -25,8 +25,8 @@
 <body>
 <!-- ========== MAIN CONTENT ========== -->
 <main id="content" role="main" class="main">
-    <div class="position-fixed top-0 right-0 left-0 bg-img-hero"
-         style="height: 32rem; background-image: url({{asset('public/assets/admin')}}/svg/components/abstract-bg-4.svg);">
+    <div class="position-fixed top-0 right-0 left-0 bg-img-hero __h-32rem"
+         style="background-image: url({{asset('public/assets/admin')}}/svg/components/abstract-bg-4.svg);">
         <!-- SVG Bottom Shape -->
         <figure class="position-absolute right-0 bottom-0 left-0">
             <svg preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 1921 273">
@@ -40,9 +40,8 @@
     <div class="container py-5 py-sm-7">
         @php($e_commerce_logo=\App\Model\BusinessSetting::where(['type'=>'company_web_logo'])->first()->value)
         <a class="d-flex justify-content-center mb-5" href="javascript:">
-            <img class="z-index-2"  src="{{asset("storage/app/public/company/".$e_commerce_logo)}}" alt="Logo"
-                 onerror="this.src='{{asset('public/assets/back-end/img/400x400/img2.jpg')}}'"
-                 style="width: 8rem;">
+            <img class="z-index-2 __w-8rem"  src="{{asset("storage/app/public/company/".$e_commerce_logo)}}" alt="Logo"
+                 onerror="this.src='{{asset('public/assets/back-end/img/400x400/img2.jpg')}}'">
         </a>
 
         <div class="row justify-content-center">
@@ -58,7 +57,7 @@
                     <form class="card-body needs-validation" novalidate method="POST"
                           action="{{request('seller.auth.reset-password')}}">
                         @csrf
-                        <div class="form-group" style="display: none">
+                        <div class="form-group d-none">
                             <input type="text" name="reset_token" value="{{$token}}" required>
                         </div>
 
@@ -89,7 +88,7 @@
                             </div>
                         </div>
 
-                        <button class="btn btn-primary" type="submit">{{\App\CPU\translate('reset_password')}}</button>
+                        <button class="btn btn--primary" type="submit">{{\App\CPU\translate('reset_password')}}</button>
                     </form>
                 </div>
             </div>

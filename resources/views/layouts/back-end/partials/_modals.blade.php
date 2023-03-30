@@ -13,7 +13,7 @@
                 <form action="{{route('admin.auth.logout')}}" method="post">
                     @csrf
                     <button class="btn btn-danger" type="button" data-dismiss="modal">{{\App\CPU\translate('Cancel')}}</button>
-                    <button class="btn btn-primary" type="submit">{{\App\CPU\translate('Logout')}}</button>
+                    <button class="btn btn--primary" type="submit">{{\App\CPU\translate('Logout')}}</button>
                 </form>
             </div>
         </div>
@@ -27,11 +27,11 @@
                 <div class="row">
                     <div class="col-12">
                         <center>
-                            <h2 style="color: rgba(96,96,96,0.68)">
+                            <h2 class="__color-8a8a8a">
                                 <i class="tio-shopping-cart-outlined"></i> You have new order, Check Please.
                             </h2>
                             <hr>
-                            <button onclick="check_order()" class="btn btn-primary">Ok, let me check</button>
+                            <button onclick="check_order()" class="btn btn--primary">Ok, let me check</button>
                         </center>
                     </div>
                 </div>

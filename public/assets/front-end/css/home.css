@@ -330,7 +330,7 @@ widget .btn > i {
     overflow: hidden;
     max-height: 2.4em; /* (Number of lines you want visible) * (line-height) */
     line-height: 1.2em;
-    
+
 }
 
 .flash_deal_product_details .flash-product-title a {
@@ -491,7 +491,7 @@ widget .btn > i {
     .deal-title {
         font-size: 20px !important;
     }
-    
+
     .btn-sm,
     .btn-group-sm > .btn {
         padding: 5px 10px;
@@ -566,5 +566,14 @@ widget .btn > i {
 
 .featured_deal {
     min-height: 108px;
+}
 
+.btn-outline--info {
+    border: 1px solid #1b7fed;
+    color: #1b7fed !important;
+}
+.btn-outline--info:hover {
+    border-color: #1b7fed;
+    color: #fff !important;
+    background-color: #1b7fed;
 }

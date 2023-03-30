@@ -58,7 +58,7 @@ class LoginController extends Controller
             'user_id' => 'required',
             'password' => 'required|min:8'
         ]);
-        
+
         //recaptcha validation
         $recaptcha = Helpers::get_business_settings('recaptcha');
         if (isset($recaptcha) && $recaptcha['status'] == 1) {
@@ -104,7 +104,11 @@ class LoginController extends Controller
         }
 
         if (isset($user) && $user->is_active && auth('customer')->attempt(['email' => $user->email, 'password' => $request->password], $remember)) {
-            session()->put('wish_list', Wishlist::where('customer_id', auth('customer')->user()->id)->pluck('product_id')->toArray());
+            $wish_list = Wishlist::whereHas('wishlistProduct',function($q){
+                return $q;
+            })->where('customer_id', auth('customer')->user()->id)->pluck('product_id')->toArray();
+
+            session()->put('wish_list', $wish_list);
             Toastr::info('Welcome to ' . Helpers::get_business_settings('company_name') . '!');
             CartManager::cart_to_db();
             return redirect(session('keep_return_url'));

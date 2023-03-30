@@ -18,9 +18,9 @@ class SellerController extends Controller
     {
         $data=[];
         $seller = Seller::with(['shop'])->where(['id' => $request['seller_id']])->first(['id', 'f_name', 'l_name', 'phone', 'image']);
-        
+
         $product_ids = Product::where(['added_by' => 'seller', 'user_id' => $request['seller_id']])->active()->pluck('id')->toArray();
-                
+
         $avg_rating = Review::whereIn('product_id', $product_ids)->avg('rating');
         $total_review = Review::whereIn('product_id', $product_ids)->count();
         $total_order = OrderDetail::whereIn('product_id', $product_ids)->groupBy('order_id')->count();
@@ -40,6 +40,30 @@ class SellerController extends Controller
         $data = ProductManager::get_seller_products($seller_id, $request['limit'], $request['offset']);
         $data['products'] = Helpers::product_data_formatting($data['products'], true);
         return response()->json($data, 200);
+    }
+
+    public function get_seller_all_products($seller_id, Request $request)
+    {
+        $products = Product::with(['rating','tags'])
+            ->where(['user_id' => $seller_id, 'added_by' => 'seller'])
+            ->when($request->search, function ($query) use($request){
+                $key = explode(' ', $request->search);
+                foreach ($key as $value) {
+                    $query->where('name', 'like', "%{$value}%");
+                }
+            })
+            ->latest()
+            ->paginate($request->limit, ['*'], 'page', $request->offset);
+
+
+        $products_final = Helpers::product_data_formatting($products->items(), true);
+
+        return [
+            'total_size' => $products->total(),
+            'limit' => (int)$request->limit,
+            'offset' => (int)$request->offset,
+            'products' => $products_final
+        ];
     }
 
     public function get_top_sellers()

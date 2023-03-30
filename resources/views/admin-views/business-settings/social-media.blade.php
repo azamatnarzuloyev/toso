@@ -6,19 +6,21 @@
 
 @section('content')
     <div class="content container-fluid">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{\App\CPU\translate('dashboard')}}</a></li>
-                <li class="breadcrumb-item" aria-current="page">{{\App\CPU\translate('Social Media')}}</li>
-            </ol>
-        </nav>
+        <!-- Page Title -->
+        <div class="mb-3">
+            <h2 class="h1 mb-0 text-capitalize d-flex align-items-center gap-2">
+                <img src="{{asset('/public/assets/back-end/img/social media.png')}}" width="20" alt="">
+                {{\App\CPU\translate('social_media')}}
+            </h2>
+        </div>
+        <!-- End Page Title -->
 
         <!-- Content Row -->
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        {{ \App\CPU\translate('social_media_form')}}
+                        <h5 class="mb-0">{{ \App\CPU\translate('social_media_form')}}</h5>
                     </div>
                     <div class="card-body">
                         <form style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
@@ -26,8 +28,8 @@
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <label for="name" class="{{Session::get('direction') === "rtl" ? 'mr-1' : ''}}">{{\App\CPU\translate('name')}}</label>
-                                        <select class="form-control" name="name" id="name" style="width: 100%">
+                                        <label for="name" class="title-color">{{\App\CPU\translate('name')}}</label>
+                                        <select class="form-control w-100" name="name" id="name">
                                             <option>---{{\App\CPU\translate('select')}}---</option>
                                             <option value="instagram">{{\App\CPU\translate('Instagram')}}</option>
                                             <option value="facebook">{{\App\CPU\translate('Facebook')}}</option>
@@ -39,51 +41,47 @@
                                     </div>
                                     <div class="col-md-12 mt-2">
                                         <input type="hidden" id="id">
-                                        <label for="link" class="{{Session::get('direction') === "rtl" ? 'mr-1' : ''}}">{{ \App\CPU\translate('social_media_link')}}</label>
+                                        <label for="link" class="title-color">{{ \App\CPU\translate('social_media_link')}}</label>
                                         <input type="text" name="link" class="form-control" id="link"
                                                placeholder="{{\App\CPU\translate('Enter Social Media Link')}}" required>
                                     </div>
                                     <div class="col-md-12">
                                         <input type="hidden" id="id">
                                     </div>
-
                                 </div>
                             </div>
 
-                            {{-- <div class="card-footer"> --}}
-                                <a id="add" class="btn btn-primary float-right" style="color: white">{{ \App\CPU\translate('save')}}</a>
-                                <a id="update" class="btn btn-primary float-right"
-                                   style="display: none; color: #fff;">{{ \App\CPU\translate('update')}}</a>
-                            {{-- </div> --}}
+                            <div class="d-flex gap-10 justify-content-end flex-wrap">
+                                <a id="add" class="btn btn--primary px-4">{{ \App\CPU\translate('save')}}</a>
+                                <a id="update" class="btn btn--primary px-4 d--none">{{ \App\CPU\translate('update')}}</a>
+                            </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row" style="margin-top: 20px">
+        <div class="row mt-3">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h5>{{ \App\CPU\translate('social_media_table')}}</h5>
+                    <div class="px-3 py-4">
+                        <h5 class="mb-0 d-flex">{{ \App\CPU\translate('social_media_table')}}</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="pb-3">
                         <div class="table-responsive">
-                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0"
+                            <table class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table w-100" id="dataTable" cellspacing="0"
                                    style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
-                                <thead>
-                                <tr>
-                                    <th scope="col">{{ \App\CPU\translate('sl')}}</th>
-                                    <th scope="col">{{ \App\CPU\translate('name')}}</th>
-                                    <th scope="col">{{ \App\CPU\translate('link')}}</th>
-                                    <th scope="col">{{ \App\CPU\translate('status')}}</th>
-                                    {{-- <th scope="col">{{ \App\CPU\translate('icon')}}</th> --}}
-                                    <th scope="col" style="width: 120px">{{ \App\CPU\translate('action')}}</th>
-                                </tr>
+                                <thead class="thead-light thead-50 text-capitalize">
+                                    <tr>
+                                        <th>{{ \App\CPU\translate('sl')}}</th>
+                                        <th>{{ \App\CPU\translate('name')}}</th>
+                                        <th>{{ \App\CPU\translate('link')}}</th>
+                                        <th>{{ \App\CPU\translate('status')}}</th>
+                                        {{-- <th>{{ \App\CPU\translate('icon')}}</th> --}}
+                                        <th>{{ \App\CPU\translate('action')}}</th>
+                                    </tr>
                                 </thead>
-                                <tbody>
-
-                                </tbody>
+                                <tbody></tbody>
                             </table>
                         </div>
                     </div>
@@ -116,13 +114,13 @@
                             html += '<td class="column_name" data-column_name="name" data-id="' + data[count].id + '">' + data[count].name + '</td>';
                             html += '<td class="column_name" data-column_name="slug" data-id="' + data[count].id + '">' + data[count].link + '</td>';
                             html += `<td class="column_name" data-column_name="status" data-id="${data[count].id}">
-                                <label class="switch">
-                                    <input type="checkbox" class="status" id="${data[count].id}" ${data[count].active_status == 1 ? "checked" : ""} >
-                                    <span class="slider round"></span>
+                                <label class="switcher">
+                                    <input type="checkbox" class="switcher_input status" id="${data[count].id}" ${data[count].active_status == 1 ? "checked" : ""} >
+                                    <span class="switcher_control"></span>
                                 </label>
                             </td>`;
-                            // html += '<td><a type="button" class="btn btn-primary btn-xs edit" id="' + data[count].id + '"><i class="fa fa-edit text-white"></i></a> <a type="button" class="btn btn-danger btn-xs delete" id="' + data[count].id + '"><i class="fa fa-trash text-white"></i></a></td></tr>';
-                            html += '<td><a type="button" class="btn btn-primary btn-xs edit" id="' + data[count].id + '"><i class="tio-edit"></i></a> </td></tr>';
+                            // html += '<td><a type="button" class="btn btn--primary btn-xs edit" id="' + data[count].id + '"><i class="fa fa-edit text-white"></i></a> <a type="button" class="btn btn-danger btn-xs delete" id="' + data[count].id + '"><i class="fa fa-trash text-white"></i></a></td></tr>';
+                            html += '<td><a type="button" class="btn btn-outline--primary btn-xs edit square-btn" id="' + data[count].id + '"><i class="tio-edit"></i></a> </td></tr>';
                         }
                         $('tbody').html(html);
                     }

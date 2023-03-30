@@ -21,7 +21,7 @@
         </div>
     </div>
 
-    <div class="row" style="margin-top: 20px">
+    <div class="row __mt-20">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
@@ -29,12 +29,10 @@
                         <span class="badge badge-soft-dark ml-2">{{$product->total()}}</span>
                     </h5>
                 </div>
-                <div class="card-body" style="padding: 0">
+                <div class="card-body p-0">
                     <div class="table-responsive">
                         <table id="datatable"
-                               style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};"
-                               class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table"
-                               style="width: 100%">
+                               style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};" class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table">
                             <thead class="thead-light">
                             <tr>
                                 <th>{{\App\CPU\translate('SL#')}}</th>
@@ -43,7 +41,7 @@
                                 <th>{{\App\CPU\translate('selling_price')}}</th>
                                 <th>{{\App\CPU\translate('featured')}}</th>
                                 <th>{{\App\CPU\translate('status')}}</th>
-                                <th style="width: 5px">{{\App\CPU\translate('Action')}}</th>
+                                <th class="__w-5px">{{\App\CPU\translate('Action')}}</th>
                             </tr>
                             </thead>
                             <tbody>

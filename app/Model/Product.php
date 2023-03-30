@@ -3,6 +3,7 @@
 namespace App\Model;
 
 use App\CPU\Helpers;
+use App\Model\Tag;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
@@ -29,10 +30,10 @@ class Product extends Model
         'purchase_price' => 'float',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
-        'shipping_cost'=>'float',
-        'multiply_qty'=> 'integer',
-        'temp_shipping_cost'=>'float',
-        'is_shipping_cost_updated'=>'integer'
+        'shipping_cost' => 'float',
+        'multiply_qty' => 'integer',
+        'temp_shipping_cost' => 'float',
+        'is_shipping_cost_updated' => 'integer'
     ];
 
     public function translations()
@@ -42,11 +43,34 @@ class Product extends Model
 
     public function scopeActive($query)
     {
-        return $query->whereHas('seller', function ($query) {
-            $query->where(['status' => 'approved']);
+        $brand_setting = BusinessSetting::where('type', 'product_brand')->first()->value;
+        $digital_product_setting = BusinessSetting::where('type', 'digital_product')->first()->value;
+
+        if (!$digital_product_setting) {
+            $product_type = ['physical'];
+        } else {
+            $product_type = ['digital', 'physical'];
+        }
+
+        return $query->when($brand_setting, function ($q) {
+            $q->whereHas('brand', function ($query) {
+                $query->where(['status' => 1]);
+            });
+        })->when(!$brand_setting, function ($q) {
+            $q->whereNull('brand_id');
         })->where(['status' => 1])->orWhere(function ($query) {
+            $query->whereNull('brand_id')->where('status', 1);
+        })->SellerApproved()->whereIn('product_type', $product_type);
+    }
+
+    public function scopeSellerApproved($query)
+    {
+        $query->whereHas('seller', function ($query) {
+            $query->where(['status' => 'approved']);
+        })->orWhere(function ($query) {
             $query->where(['added_by' => 'admin', 'status' => 1]);
         });
+
     }
 
     public function stocks()
@@ -56,7 +80,7 @@ class Product extends Model
 
     public function reviews()
     {
-        return $this->hasMany(Review::class,'product_id');
+        return $this->hasMany(Review::class, 'product_id');
     }
 
     public function brand()
@@ -83,6 +107,7 @@ class Product extends Model
     {
         return $this->hasMany(Review::class)
             ->select(DB::raw('avg(rating) average, product_id'))
+            ->whereNull('delivery_man_id')
             ->groupBy('product_id');
     }
 
@@ -91,16 +116,22 @@ class Product extends Model
         return $this->hasMany(OrderDetail::class, 'product_id');
     }
 
+
     public function order_delivered()
     {
         return $this->hasMany(OrderDetail::class, 'product_id')
-                        ->where('delivery_status','delivered');
-                    
+            ->where('delivery_status', 'delivered');
+
     }
 
     public function wish_list()
     {
         return $this->hasMany(Wishlist::class, 'product_id');
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class);
     }
 
     public function getNameAttribute($name)
@@ -124,12 +155,16 @@ class Product extends Model
         parent::boot();
         static::addGlobalScope('translate', function (Builder $builder) {
             $builder->with(['translations' => function ($query) {
-                if (strpos(url()->current(), '/api')){
+                if (strpos(url()->current(), '/api')) {
                     return $query->where('locale', App::getLocale());
-                }else{
+                } else {
                     return $query->where('locale', Helpers::default_lang());
                 }
-            },'reviews'])->withCount('reviews');
+            }, 'reviews'=>function($query){
+                $query->whereNull('delivery_man_id');
+            }])->withCount(['reviews'=>function($query){
+                $query->whereNull('delivery_man_id');
+            }]);
         });
     }
 }

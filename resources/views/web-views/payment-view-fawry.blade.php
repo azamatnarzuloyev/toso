@@ -47,7 +47,7 @@
             background: #eee
         }
 
-        .btn.btn-primary {
+        .btn.btn--primary {
             background-color: #ddd;
             color: black;
             box-shadow: none;
@@ -57,7 +57,7 @@
             height: 100%
         }
 
-        .btn.btn-primary:focus {
+        .btn.btn--primary:focus {
             box-shadow: none
         }
 
@@ -75,7 +75,7 @@
             font-size: 24px
         }
 
-        .container .card-body .btn.btn-primary .fab.fa-cc-paypal {
+        .container .card-body .btn.btn--primary .fab.fa-cc-paypal {
             font-size: 32px;
             color: #3333f7
         }
@@ -108,7 +108,7 @@
             background-color: #ddd
         }
 
-        .btn.btn-primary.payment {
+        .btn.btn--primary.payment {
             background-color: #1c6acf;
             color: white;
             border-radius: 0px;
@@ -251,7 +251,7 @@
                                                 <label for="" class="form__label">name of the card</label></div>
                                         </div>
                                         <div class="col-12">
-                                            <button type="submit" class="btn btn-primary payment w-100">Sumbit</button>
+                                            <button type="submit" class="btn btn--primary payment w-100">Sumbit</button>
                                         </div>
                                     </div>
                                 </form>

@@ -15,7 +15,7 @@
                     <h1 class="page-header-title">{{$dm['f_name'].' '.$dm['f_name']}}</h1>
                 </div>
                 <div class="col-6">
-                    <a href="{{url()->previous()}}" class="btn btn-primary float-right">
+                    <a href="{{url()->previous()}}" class="btn btn--primary float-right">
                         <i class="tio-back-ui"></i> {{\App\CentralLogics\translate('back')}}
                     </a>
                 </div>
@@ -186,7 +186,7 @@
                                 </a>
                             </td>
                             <td>
-                                <div class="text-wrap" style="width: 18rem;">
+                                <div class="text-wrap __w-18rem">
                                     <div class="d-flex mb-2">
                                         <label class="badge badge-soft-info">
                                             {{$review->rating}} <i class="tio-star"></i>

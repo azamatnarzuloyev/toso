@@ -8,20 +8,21 @@
 
 @section('content')
 <div class="content container-fluid">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{ \App\CPU\translate('Dashboard')}}</a></li>
-            <li class="breadcrumb-item" aria-current="page">{{ \App\CPU\translate('flash_deal')}}</li>
-            <li class="breadcrumb-item">{{ \App\CPU\translate('Add new product')}}</li>
-        </ol>
-    </nav>
+    <!-- Page Title -->
+    <div class="mb-3">
+        <h2 class="h1 mb-0 text-capitalize">
+            <img src="{{asset('/public/assets/back-end/img/inhouse-product-list.png')}}" class="mb-1 mr-1" alt="">
+            {{\App\CPU\translate('Add_new_product')}}
+        </h2>
+    </div>
+    <!-- End Page Title -->
 
     <!-- Content Row -->
     <div class="row">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h1 class="h3 mb-0 text-black-50">{{$deal['title']}}</h1>
+                    <h3 class="mb-0 text-capitalize">{{$deal['title']}}</h3>
                 </div>
                 <div class="card-body">
                     <form action="{{route('admin.deal.add-product',[$deal['id']])}}" method="post">
@@ -29,10 +30,13 @@
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <label for="name">{{ \App\CPU\translate('Add new product')}}</label>
+                                    <label for="name" class="title-color text-capitalize">{{ \App\CPU\translate('Add new product')}}</label>
                                     <select
                                         class="js-example-basic-multiple js-states js-example-responsive form-control"
                                         name="product_id">
+                                        <option disabled selected>
+                                            {{ \App\CPU\translate('Select product')}}
+                                        </option>
                                         @foreach (\App\Model\Product::active()->orderBy('name', 'asc')->get() as $key => $product)
                                             <option value="{{ $product->id }}">
                                                 {{$product['name']}}
@@ -43,9 +47,8 @@
                             </div>
                         </div>
 
-                        <div class="">
-                            <button type="submit"
-                                    class="btn btn-primary float-right">{{ \App\CPU\translate('add')}}</button>
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn--primary px-4">{{ \App\CPU\translate('add')}}</button>
                         </div>
                     </form>
                 </div>
@@ -53,47 +56,51 @@
         </div>
     </div>
 
-    <div class="row" style="margin-top: 20px">
+    <div class="row mt-3">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header">
-                    <h5>{{ \App\CPU\translate('Product')}} {{ \App\CPU\translate('Table')}}</h5>
+                <div class="px-3 py-4">
+                    <h5 class="mb-0 text-capitalize">
+                        {{ \App\CPU\translate('Product')}} {{ \App\CPU\translate('Table')}}
+                        <span class="badge badge-soft-dark radius-50 fz-12 ml-1">{{ $products->total() }}</span>
+                    </h5>
                 </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered" width="100%" cellspacing="0">
-                            <thead>
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table w-100" cellspacing="0">
+                        <thead class="thead-light thead-50 text-capitalize">
                             <tr>
-                                <th scope="col">{{ \App\CPU\translate('sl')}}</th>
-                                <th scope="col">{{ \App\CPU\translate('name')}}</th>
-                                <th scope="col">{{ \App\CPU\translate('price')}}</th>
-                                <th scope="col" style="width: 50px">{{ \App\CPU\translate('action')}}</th>
+                                <th>{{ \App\CPU\translate('SL')}}</th>
+                                <th>{{ \App\CPU\translate('name')}}</th>
+                                <th>{{ \App\CPU\translate('price')}}</th>
+                                <th class="text-center">{{ \App\CPU\translate('action')}}</th>
                             </tr>
-                            </thead>
-                            <tbody>
-                            @foreach($products as $k=>$de_p)
-                                <tr>
-                                    <th scope="row">{{$products->firstitem()+$k}}</th>
-                                    <td>{{$de_p['name']}}</td>
-                                    <td>{{\App\CPU\BackEndHelper::usd_to_currency($de_p['unit_price'])}}</td>
-                                    
-                                    <td>
+                        </thead>
+                        <tbody>
+                        @foreach($products as $k=>$de_p)
+                            <tr>
+                                <td>{{$products->firstitem()+$k}}</td>
+                                <td><a href="#" target="_blank" class="font-weight-semibold title-color hover-c1">{{$de_p['name']}}</a></td>
+                                <td>{{\App\CPU\BackEndHelper::usd_to_currency($de_p['unit_price'])}}</td>
+
+                                <td>
+                                    <div class="d-flex justify-content-center">
                                         <a  title="{{ trans ('Delete')}}"
-                                            class="btn btn-danger btn-sm delete"
+                                            class="btn btn-outline-danger btn-sm delete"
                                             id="{{$de_p['id']}}">
-                                            <i class="tio-add-to-trash"></i>
+                                            <i class="tio-delete"></i>
                                         </a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-                        <table>
-                            <tfoot>
-                                {!! $products->links() !!}
-                            </tfoot>
-                        </table>
-                    </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                    <table>
+                        <tfoot>
+                            {!! $products->links() !!}
+                        </tfoot>
+                    </table>
                 </div>
             </div>
         </div>

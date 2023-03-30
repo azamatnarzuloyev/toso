@@ -1,11 +1,11 @@
-    <div class="d-flex flex-row" style="max-height: 300px; overflow-y: scroll;">
-        <table class="table table-bordered">
-            <thead class="text-muted">
+    <div class="table-responsive pos-cart-table border">
+        <table class="table table-align-middle">
+            <thead class="text-capitalize bg-light">
                 <tr>
-                    <th scope="col">{{\App\CPU\translate('item')}}</th>
-                    <th scope="col" class="text-center">{{\App\CPU\translate('qty')}}</th>
-                    <th scope="col">{{\App\CPU\translate('price')}}</th>
-                    <th scope="col">{{\App\CPU\translate('delete')}}</th>
+                    <th class="border-0 min-w-120">{{\App\CPU\translate('item')}}</th>
+                    <th class="border-0">{{\App\CPU\translate('qty')}}</th>
+                    <th class="border-0">{{\App\CPU\translate('price')}}</th>
+                    <th class="border-0 text-center">{{\App\CPU\translate('Action')}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -17,6 +17,7 @@
                 $discount_type = 'amount';
                 $discount_on_product = 0;
                 $total_tax = 0;
+                $total_tax_show = 0;
                 $ext_discount = 0;
                 $ext_discount_type = 'amount';
                 $coupon_discount =0;
@@ -45,36 +46,48 @@
                 @foreach(session()->get($cart_id) as $key => $cartItem)
                 @if(is_array($cartItem))
                     <?php
-                    
-                    $product_subtotal = ($cartItem['price'])*$cartItem['quantity'];
-                    $discount_on_product += ($cartItem['discount']*$cartItem['quantity']);
-                    $subtotal += $product_subtotal;
+                        $product = \App\Model\Product::find($cartItem['id']);
 
-                    //tax calculation
-                    $product = \App\Model\Product::find($cartItem['id']);
-                    $total_tax += \App\CPU\Helpers::tax_calculation($cartItem['price'], $product['tax'], $product['tax_type'])*$cartItem['quantity'];
-                    
+                        //tax calculation
+                        $tax_calculate = \App\CPU\Helpers::tax_calculation($cartItem['price'], $product['tax'], $product['tax_type'])*$cartItem['quantity'];
+                        $total_tax_show += $cartItem['tax_model'] != 'include' ? $tax_calculate : 0;
+                        $total_tax += $product['tax_model']=='include' ? 0:$tax_calculate;
+
+                        $product_subtotal = $cartItem['price']*$cartItem['quantity'];
+                        $subtotal += $product_subtotal;
+
+                        $discount_on_product += ($cartItem['discount']*$cartItem['quantity']);
                     ?>
                 <tr>
-                    <td class="media align-items-center">
-                        <img class="avatar avatar-sm mr-1" src="{{asset('storage/app/public/product/thumbnail')}}/{{$cartItem['image']}}"
-                                onerror="this.src='{{asset('public/assets/back-end/img/160x160/img2.jpg')}}'" alt="{{$cartItem['name']}} image">
-                        <div class="media-body">
-                            <h5 class="text-hover-primary mb-0">{{Str::limit($cartItem['name'], 10)}}</h5>
-                            <small>{{Str::limit($cartItem['variant'], 20)}}</small>
-                            
+                    <td>
+                        <div class="media align-items-center gap-10">
+                            <img class="avatar avatar-sm" src="{{asset('storage/app/public/product/thumbnail')}}/{{$cartItem['image']}}"
+                                    onerror="this.src='{{asset('public/assets/back-end/img/160x160/img2.jpg')}}'" alt="{{$cartItem['name']}} image">
+                            <div class="media-body">
+                                <h5 class="text-hover-primary mb-0">
+                                    {{Str::limit($cartItem['name'], 12)}}
+                                    @if($cartItem['tax_model'] == 'include')
+                                        <span class="ml-2" data-toggle="tooltip" data-placement="top" title="{{\App\CPU\translate('tax_included')}}">
+                                            <img class="info-img" src="{{asset('/public/assets/back-end/img/info-circle.svg')}}" alt="img">
+                                        </span>
+                                    @endif
+                                </h5>
+                                <small>{{Str::limit($cartItem['variant'], 20)}}</small>
+                            </div>
                         </div>
                     </td>
                     <td class="align-items-center text-center">
-                        <input type="number"  data-key="{{$key}}" style="width:50px;text-align: center;" value="{{$cartItem['quantity']}}" min="1" onkeyup="updateQuantity('{{$cartItem['id']}}',this.value,event)">
+                        <input type="number"  data-key="{{$key}}" class="form-control qty" value="{{$cartItem['quantity']}}" min="1" onkeyup="updateQuantity('{{$cartItem['id']}}',this.value,event, '{{$cartItem['variant']}}')">
                     </td>
-                    <td class="text-center px-0 py-1">
-                        <div class="btn">
+                    <td>
+                        <div>
                             {{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($product_subtotal))}}
                         </div> <!-- price-wrap .// -->
                     </td>
-                    <td class="align-items-center text-center">
-                        <a href="javascript:removeFromCart({{$key}})" class="btn btn-sm btn-outline-danger"> <i class="tio-delete-outlined"></i></a>
+                    <td class="d-flex justify-content-center">
+                        <a href="javascript:removeFromCart({{$key}})" class="btn btn-sm btn-outline-danger">
+                            <i class="tio-delete"></i>
+                        </a>
                     </td>
                 </tr>
                 @endif
@@ -98,24 +111,23 @@
             $total -= $extra_discount;
         }
 
-        $total_tax_amount= $total_tax;
+        $total_tax_amount= $total_tax_show;
     ?>
-    <div class="box p-3">
-        <dl class="row text-sm-right">
-
-            <div class="col-12 d-flex justify-content-between">
-                <dt  class="col-sm-6">{{\App\CPU\translate('sub_total')}} : </dt>
-                <dd class="col-sm-6 text-right">{{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($subtotal))}}</dd>
+    <div class="pt-4">
+        <dl>
+            <div class="d-flex gap-2 justify-content-between">
+                <dt  class="title-color text-capitalize font-weight-normal">{{\App\CPU\translate('sub_total')}} : </dt>
+                <dd>{{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($subtotal))}}</dd>
             </div>
 
-            <div class="col-12 d-flex justify-content-between">
-                <dt  class="col-sm-6">{{\App\CPU\translate('product')}} {{\App\CPU\translate('discount')}} :</dt>
-                <dd class="col-sm-6 text-right">{{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency(round($discount_amount,2))) }}</dd>
+            <div class="d-flex gap-2 justify-content-between">
+                <dt  class="title-color text-capitalize font-weight-normal">{{\App\CPU\translate('product')}} {{\App\CPU\translate('discount')}} :</dt>
+                <dd>{{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency(round($discount_amount,2))) }}</dd>
             </div>
 
-            <div class="col-12 d-flex justify-content-between">
-                <dt  class="col-sm-6">{{\App\CPU\translate('extra')}} {{\App\CPU\translate('discount')}} :</dt>
-                <dd class="col-sm-6 text-right">
+            <div class="d-flex gap-2 justify-content-between">
+                <dt  class="title-color text-capitalize font-weight-normal">{{\App\CPU\translate('extra')}} {{\App\CPU\translate('discount')}} :</dt>
+                <dd>
                     <button id="extra_discount" class="btn btn-sm" type="button" data-toggle="modal" data-target="#add-discount">
                         <i class="tio-edit"></i>
                     </button>
@@ -123,35 +135,55 @@
                 </dd>
             </div>
 
-            <div class="col-12 d-flex justify-content-between">
-                <dt  class="col-sm-6">{{\App\CPU\translate('coupon')}} {{\App\CPU\translate('discount')}} :</dt>
-                <dd class="col-sm-6 text-right">
+            <div class="d-flex gap-2 justify-content-between">
+                <dt  class="title-color text-capitalize font-weight-normal">{{\App\CPU\translate('coupon')}} {{\App\CPU\translate('discount')}} :</dt>
+                <dd>
                     <button id="coupon_discount" class="btn btn-sm" type="button" data-toggle="modal" data-target="#add-coupon-discount">
                         <i class="tio-edit"></i>
                     </button>
-                    {{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($coupon_discount))}}</dd>
+                    {{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($coupon_discount))}}
+                </dd>
             </div>
 
-            <div class="col-12 d-flex justify-content-between">
-                <dt  class="col-sm-6">{{\App\CPU\translate('tax')}} : </dt>
-                <dd class="col-sm-6 text-right">{{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency(round($total_tax_amount,2)))}}</dd>
+            <div class="d-flex gap-2 justify-content-between">
+                <dt  class="title-color text-capitalize font-weight-normal">{{\App\CPU\translate('tax')}} : </dt>
+                <dd>{{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency(round($total_tax_amount,2)))}}</dd>
             </div>
 
-            <div class="col-12 d-flex justify-content-between">
-                <dt  class="col-sm-6">{{\App\CPU\translate('total')}} : </dt>
-                <dd class="col-sm-6 text-right h4 b">{{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency(round($total+$total_tax_amount-$coupon_discount, 2)))}}</dd>
+            <div class="d-flex gap-2 justify-content-between">
+                <dt  class="title-color text-capitalize font-weight-normal">{{\App\CPU\translate('total')}} : </dt>
+                <dd class="font-weight-bold title-color">{{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency(round($total+$total_tax-$coupon_discount, 2)))}}</dd>
             </div>
         </dl>
-        <div class="row">
-            <div class="col-md-6 mb-2">
-                <a href="#" class="btn btn-danger btn-lg btn-block" onclick="emptyCart()"><i
-                        class="fa fa-times-circle "></i> {{\App\CPU\translate('Cancel')}} </a>
+        <form action="{{route('seller.pos.order')}}" id='order_place' method="post">
+        @csrf
+            <div class="form-group col-12">
+                <input type="hidden" class="form-control" name="amount" min="0" step="0.01"
+                       value="{{\App\CPU\BackEndHelper::usd_to_currency($total+$total_tax-$coupon_discount)}}"
+                       readonly>
             </div>
-            <div class="col-md-6">
-                <button id="submit_order" type="button" class="btn  btn-primary btn-lg btn-block" data-toggle="modal" data-target="#paymentModal"><i class="fa fa-shopping-bag"></i>
-                    {{\App\CPU\translate('Order')}} </button>
+            <div class="pt-4 mb-4">
+                <div class="title-color d-flex mb-2">{{\App\CPU\translate('Paid By')}}:</div>
+                <ul class="list-unstyled option-buttons">
+                    <li>
+                        <input type="radio" id="cash" value="cash" name="type" hidden checked>
+                        <label for="cash" class="btn btn--bordered btn--bordered-black px-4 mb-0">{{\App\CPU\translate('cash')}}</label>
+                    </li>
+                    <li>
+                        <input type="radio" value="card" id="card" name="type" hidden>
+                        <label for="card" class="btn btn--bordered btn--bordered-black px-4 mb-0">{{\App\CPU\translate('Card')}}</label>
+                    </li>
+                </ul>
             </div>
-        </div>
+            <div class="d-flex gap-2 justify-content-between align-items-center pt-3">
+                <a href="#" class="btn btn-danger btn-block" onclick="emptyCart()">
+                    <i class="fa fa-times-circle "></i>
+                    {{\App\CPU\translate('Cancel_order')}}
+                </a>
+                <button type="button" onclick="form_submit()" class="btn btn--primary btn-block m-0"><i class="fa fa-shopping-bag"></i>
+                    {{\App\CPU\translate('place_Order')}} </button>
+            </div>
+        </form>
     </div>
 
     <div class="modal fade" id="add-discount" tabindex="-1">
@@ -164,24 +196,20 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="row">
-                        <div class="form-group col-sm-6">
-                            <label for="">{{\App\CPU\translate('discount')}}</label>
-                            <input type="number" id="dis_amount" class="form-control" name="discount">
-                        </div>
-                        <div class="form-group col-sm-6">
-                            <label for="">{{\App\CPU\translate('type')}}</label>
-                            <select name="type" id="type_ext_dis" class="form-control">
-                                <option value="amount" {{$discount_type=='amount'?'selected':''}}>{{\App\CPU\translate('amount')}}()</option>
-                                <option value="percent" {{$discount_type=='percent'?'selected':''}}>{{\App\CPU\translate('percent')}}(%)</option>
-                            </select>
-                        </div>
-                        <div class="form-group col-sm-12">
-                            <button class="btn btn-primary" onclick="extra_discount();" type="submit">{{\App\CPU\translate('submit')}}</button>
-                        </div>
+                    <div class="form-group">
+                        <label class="title-color">{{\App\CPU\translate('type')}}</label>
+                        <select name="type" id="type_ext_dis" class="form-control">
+                            <option value="amount" {{$discount_type=='amount'?'selected':''}}>{{\App\CPU\translate('amount')}}</option>
+                            <option value="percent" {{$discount_type=='percent'?'selected':''}}>{{\App\CPU\translate('percent')}}(%)</option>
+                        </select>
                     </div>
-                        
-                    
+                    <div class="form-group">
+                        <label class="title-color">{{\App\CPU\translate('discount')}}</label>
+                        <input type="number" id="dis_amount" class="form-control" name="discount" placeholder="Ex: 500">
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn--primary" onclick="extra_discount();" type="submit">{{\App\CPU\translate('submit')}}</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -197,17 +225,14 @@
                     </button>
                 </div>
                 <div class="modal-body">
-    
-                        <div class="form-group col-sm-12">
-                            <label for="">{{\App\CPU\translate('coupon_code')}}</label>
-                            <input type="text" id="coupon_code" class="form-control" name="coupon_code">
-                            
-                        </div>
-    
-                        <div class="form-group col-sm-12">
-                            <button class="btn btn-primary" type="submit" onclick="coupon_discount();">{{\App\CPU\translate('submit')}}</button>
-                        </div>
-    
+                    <div class="form-group">
+                        <label class="title-color">{{\App\CPU\translate('coupon_code')}}</label>
+                        <input type="text" id="coupon_code" class="form-control" name="coupon_code" placeholder="Ex: SULTAN200">
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <button class="btn btn--primary px-4" type="submit" onclick="coupon_discount();">{{\App\CPU\translate('apply')}}</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -231,41 +256,7 @@
                         </div>
 
                         <div class="form-group col-sm-12">
-                            <button class="btn btn-primary" type="submit">{{\App\CPU\translate('submit')}}</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="paymentModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{\App\CPU\translate('payment')}}</h5>
-                    <button id="payment_close" type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form action="{{route('seller.pos.order')}}" id='order_place' method="post" class="row">
-                        @csrf
-                        <div class="form-group col-12">
-                            <label class="input-label" for="">{{\App\CPU\translate('amount')}}({{\App\CPU\currency_symbol()}})</label>
-                            <input type="number" class="form-control" name="amount" min="0" step="0.01" 
-                                    value="{{\App\CPU\BackEndHelper::usd_to_currency($total+$total_tax_amount-$coupon_discount)}}"
-                                    readonly>
-                        </div>
-                        <div class="form-group col-12">
-                            <label class="input-label" for="">{{\App\CPU\translate('type')}}</label>
-                            <select name="type" class="form-control">
-                                <option value="cash">{{\App\CPU\translate('cash')}}</option>
-                                <option value="card">{{\App\CPU\translate('card')}}</option>
-                            </select>
-                        </div>
-                        <div class="form-group col-12">
-                            <button id="order_complete" class="btn btn-primary" type="submit">{{\App\CPU\translate('submit')}}</button>
+                            <button class="btn btn--primary" type="submit">{{\App\CPU\translate('submit')}}</button>
                         </div>
                     </form>
                 </div>
@@ -302,4 +293,18 @@
             </div>
         </div>
     </div>
+
+<script>
+    $('#type_ext_dis').on('change', function (){
+        let type = $('#type_ext_dis').val();
+        if(type === 'amount'){
+            $('#dis_amount').attr('placeholder', 'Ex: 500');
+        }else if(type === 'percent'){
+            $('#dis_amount').attr('placeholder', 'Ex: 10%');
+        }
+    });
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
 

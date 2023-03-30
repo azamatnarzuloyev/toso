@@ -2,16 +2,6 @@
 
 @section('title', \App\CPU\translate('shiprocket_login'))
 
-@push('css_or_js')
-<style>
-    .center {
-        margin: auto;
-        width: 50%;
-        padding: 10px;
-    }
-</style>
-@endpush
-
 @section('content')
     <div class="content container-fluid">
         <div class="row gx-2 gx-lg-3">
@@ -20,7 +10,7 @@
                     @csrf
                     <div class="card">
                         <div class="card-header">
-                            <div style="margin: auto">
+                            <div class="m-auto">
                                 <h3>
                                     <i class="tio-user"></i>
                                     {{\App\CPU\translate('login_to_your_shiprocket_account')}}
@@ -42,8 +32,8 @@
                             </div>
                         </div>
                         <div class="card-footer">
-                            <div style="margin: auto">
-                                <button type="submit" class="btn btn-primary btn-block">
+                            <div class="m-auto">
+                                <button type="submit" class="btn btn--primary btn-block">
                                     <i class="tio-key"></i>
                                     {{\App\CPU\translate('login')}}
                                 </button>

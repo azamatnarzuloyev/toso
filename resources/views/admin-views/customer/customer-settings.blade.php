@@ -7,183 +7,138 @@
 @endpush
 
 @section('content')
-<div class="content container-fluid">
-    <!-- Page Header -->
-    <div class="page-header">
-        <div class="row align-items-center">
-            <div class="col-sm mb-2 mb-sm-0">
-                <h1 class="page-header-title">{{\App\CPU\translate('customer_settings')}}</h1>
-            </div>
-        </div>
-    </div>
-    <!-- End Page Header -->
-    <div class="card gx-2 gx-lg-3">
-        <div class="card-body">
-            <form action="{{ route('admin.customer.customer-settings-update') }}" method="post" enctype="multipart/form-data" id="update-settings">
-                @csrf
-                <div class="row pb-4">
-                    <div class="col-sm-6 col-12">
-                        <div class="form-group">
-                            <label class="toggle-switch toggle-switch-sm d-flex justify-content-between border border-secondary rounded px-4 form-control" for="customer_wallet">
-                            <span class="pr-2">{{\App\CPU\translate('customer_wallet')}} :</span>
-                                <input type="checkbox" class="toggle-switch-input" onclick="section_visibility('customer_wallet')" name="customer_wallet" id="customer_wallet" value="1" data-section="wallet-section" {{isset($data['wallet_status'])&&$data['wallet_status']==1?'checked':''}}>
-                                <span class="toggle-switch-label text">
-                                    <span class="toggle-switch-indicator"></span>
-                                </span>
-                            </label>
-                        </div>
-                    </div>
+    <div class="content container-fluid">
 
-                    <div class="col-sm-6 col-12">
-                        <div class="form-group">
-                            <label class="toggle-switch toggle-switch-sm d-flex justify-content-between border border-secondary rounded px-4 form-control" for="customer_loyalty_point">
-                            <span class="pr-2">{{\App\CPU\translate('customer_loyalty_point')}}:</span>
-                                <input type="checkbox" class="toggle-switch-input" onclick="section_visibility('customer_loyalty_point')" name="customer_loyalty_point" id="customer_loyalty_point" data-section="loyalty-point-section" value="1" {{isset($data['loyalty_point_status'])&&$data['loyalty_point_status']==1?'checked':''}}>
-                                <span class="toggle-switch-label text">
-                                    <span class="toggle-switch-indicator"></span>
-                                </span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <small class="nav-subtitle text-secondary border-bottom wallet-section">{{\App\CPU\translate('wallet')}} {{\App\CPU\translate('settings')}}</small>
-                <div class="row pt-2 pb-4 wallet-section">
-                    <div class="col-sm-12 col-12">
-                        <div class="form-group">
-                            <label class="toggle-switch toggle-switch-sm d-flex justify-content-between border border-secondary rounded px-4 form-control" for="refund_to_wallet">
-                            <span class="pr-2">{{\App\CPU\translate('refund_to_wallet')}}<span class="input-label-secondary" title="{{\App\CPU\translate('refund_to_wallet_hint')}}"><img src="{{asset('/public/assets/back-end/img/info-circle.svg')}}" alt="{{\App\CPU\translate('show_hide_food_menu')}}"></span> :</span>
-                                <input type="checkbox" class="toggle-switch-input" name="refund_to_wallet" id="refund_to_wallet" value="1" {{isset($data['wallet_add_refund'])&&$data['wallet_add_refund']==1?'checked':''}}>
-                                <span class="toggle-switch-label text">
-                                    <span class="toggle-switch-indicator"></span>
-                                </span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <small class="nav-subtitle text-secondary border-bottom loyalty-point-section">{{\App\CPU\translate('customer_loyalty_point')}} {{\App\CPU\translate('settings')}}</small>
-                <div class="row pt-2 loyalty-point-section">
-                    <div class="col-sm-6 col-12">
-                        <div class="form-group">
-                            <label class="input-label" for="loyalty_point_exchange_rate">1 {{\App\CPU\Helpers::currency_code()}} = {{\App\CPU\translate('how_much_point')}}</label>
-                            <input type="number" class="form-control" name="loyalty_point_exchange_rate" step="1" value="{{$data['loyalty_point_exchange_rate']??'0'}}">
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-12">
-                        <div class="form-group">
-                            <label class="input-label" for="intem_purchase_point">{{\App\CPU\translate('percentage_of_loyalty_point_on_order_amount')}}</label>
-                            <input type="number" class="form-control" name="item_purchase_point" step=".01" value="{{$data['loyalty_point_item_purchase_point']??'0'}}">
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-12">
-                        <div class="form-group">
-                            <label class="input-label" for="intem_purchase_point">{{\App\CPU\translate('minimum_point_to_transfer')}}</label>
-                            <input type="number" class="form-control" name="minimun_transfer_point" min="0" step="1" value="{{$data['loyalty_point_minimum_point']??'0'}}">
-                        </div>
-                    </div>
-                </div>
-                <button type="submit" id="submit" class="btn btn-primary">{{\App\CPU\translate('submit')}}</button>
-            </form>
+        <!-- Page Title -->
+        <div class="mb-4 pb-2">
+            <h2 class="h1 mb-0 text-capitalize d-flex align-items-center gap-2">
+                <img src="{{asset('/public/assets/back-end/img/business-setup.png')}}" alt="">
+                {{\App\CPU\translate('Business_Setup')}}
+            </h2>
         </div>
-        <!-- End Table -->
+        <!-- End Page Title -->
+
+        <!-- Inlile Menu -->
+    @include('admin-views.business-settings.business-setup-inline-menu')
+    <!-- End Inlile Menu -->
+        <form action="{{ route('admin.customer.customer-settings-update') }}" method="post"
+              enctype="multipart/form-data" id="update-settings">
+            @csrf
+            <div class="row gy-2 pb-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="border-bottom py-3 px-4">
+                            <div class="d-flex justify-content-between align-items-center gap-10">
+                                <h5 class="mb-0 text-capitalize d-flex align-items-center gap-2">
+                                    <i class="tio-wallet"></i>
+                                    {{\App\CPU\translate('customer_wallet_settings')}} :
+                                </h5>
+
+                                <label class="switcher" for="customer_wallet">
+                                    <input type="checkbox" class="switcher_input"
+                                           onclick="section_visibility('customer_wallet')" name="customer_wallet"
+                                           id="customer_wallet" value="1"
+                                           data-section="wallet-section" {{isset($data['wallet_status'])&&$data['wallet_status']==1?'checked':''}}>
+                                    <span class="switcher_control"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center gap-10 form-control mt-4" id="customer_wallet_section">
+                                <span class="title-color">{{\App\CPU\translate('refund_to_wallet')}}<span
+                                        class="input-label-secondary"
+                                        title="{{\App\CPU\translate('refund_to_wallet_hint')}}"><img
+                                            src="{{asset('/public/assets/back-end/img/info-circle.svg')}}"
+                                            alt="{{\App\CPU\translate('show_hide_food_menu')}}"></span> :</span>
+
+                                <label class="switcher" for="refund_to_wallet">
+                                    <input type="checkbox" class="switcher_input" name="refund_to_wallet"
+                                           id="refund_to_wallet"
+                                           value="1" {{isset($data['wallet_add_refund'])&&$data['wallet_add_refund']==1?'checked':''}}>
+                                    <span class="switcher_control"></span>
+                                </label>
+                            </div>
+
+                            <div class="d-flex justify-content-end mt-3">
+                                <button class="btn btn--primary px-4">{{\App\CPU\translate('Save')}}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="border-bottom py-3 px-4">
+                            <div class="d-flex justify-content-between align-items-center gap-10">
+                                <h5 class="mb-0 text-capitalize d-flex align-items-center gap-2">
+                                    <i class="tio-award"></i>
+                                    {{\App\CPU\translate('loyalty_point')}}:
+                                </h5>
+                                <label class="switcher" for="customer_loyalty_point">
+                                    <input type="checkbox" class="switcher_input"
+                                           onclick="section_visibility('customer_loyalty_point')"
+                                           name="customer_loyalty_point" id="customer_loyalty_point"
+                                           data-section="loyalty-point-section"
+                                           value="1" {{isset($data['loyalty_point_status'])&&$data['loyalty_point_status']==1?'checked':''}}>
+                                    <span class="switcher_control"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="loyalty-point-section" id="customer_loyalty_point_section">
+                                <div class="form-group">
+                                    <label class="title-color d-flex"
+                                           for="loyalty_point_exchange_rate">1 {{\App\CPU\Helpers::currency_code()}}
+                                        = {{\App\CPU\translate('how_much_point')}}</label>
+                                    <input type="number" class="form-control" name="loyalty_point_exchange_rate"
+                                           step="1" value="{{$data['loyalty_point_exchange_rate']??'0'}}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="title-color d-flex"
+                                           for="intem_purchase_point">{{\App\CPU\translate('percentage_of_loyalty_point_on_order_amount')}}</label>
+                                    <input type="number" class="form-control" name="item_purchase_point" step=".01"
+                                           value="{{$data['loyalty_point_item_purchase_point']??'0'}}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="title-color d-flex"
+                                           for="intem_purchase_point">{{\App\CPU\translate('minimum_point_to_transfer')}}</label>
+                                    <input type="number" class="form-control" name="minimun_transfer_point" min="0"
+                                           step="1" value="{{$data['loyalty_point_minimum_point']??'0'}}">
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" id="submit"
+                                        class="btn px-4 btn--primary">{{\App\CPU\translate('save')}}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
-</div>
 
 @endsection
 
 @push('script_2')
     <script>
         $(document).on('ready', function () {
-
             @if (isset($data['wallet_status'])&&$data['wallet_status']!=1)
-                $('.wallet-section').hide();
+            $('#customer_wallet_section').attr('style', 'display: none !important');
             @endif
 
             @if (isset($data['loyalty_point_status'])&&$data['loyalty_point_status']!=1)
-                $('.loyalty-point-section').hide();
+            $('.loyalty-point-section').attr('style', 'display: none !important');
             @endif
-
-            // INITIALIZATION OF DATATABLES
-            // =======================================================
-            var datatable = $.HSCore.components.HSDatatables.init($('#columnSearchDatatable'));
-
-            $('#column1_search').on('keyup', function () {
-                datatable
-                    .columns(1)
-                    .search(this.value)
-                    .draw();
-            });
-
-
-            $('#column3_search').on('change', function () {
-                datatable
-                    .columns(2)
-                    .search(this.value)
-                    .draw();
-            });
         });
     </script>
 
     <script>
-        function section_visibility(id)
-        {
-            console.log($('#'+id).data('section'));
-            if($('#'+id).is(':checked'))
-            {
-                console.log('checked');
-                $('.'+$('#'+id).data('section')).show();
-            }
-            else
-            {
-                console.log('unchecked');
-                $('.'+$('#'+id).data('section')).hide();
+        function section_visibility(id) {
+            if ($('#' + id).is(':checked')) {
+                $('#' + id + '_section').attr('style', 'display: block');
+            } else {
+                $('#' + id + '_section').attr('style', 'display: none !important');
             }
         }
-        $('#add_fund').on('submit', function (e) {
-
-            e.preventDefault();
-            var formData = new FormData(this);
-
-            Swal.fire({
-                title: '{{\App\CPU\translate('are_you_sure')}}',
-                text: '{{\App\CPU\translate('you_want_to_add_fund')}}'+$('#amount').val()+' {{\App\CPU\Helpers::currency_code().' '.\App\CPU\translate('to')}} '+$('#customer option:selected').text()+'{{\App\CPU\translate('to_wallet')}}',
-                type: 'info',
-                showCancelButton: true,
-                cancelButtonColor: 'default',
-                confirmButtonColor: 'primary',
-                cancelButtonText: '{{\App\CPU\translate('no')}}',
-                confirmButtonText: '{{\App\CPU\translate('send')}}',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.value) {
-                    $.ajaxSetup({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        }
-                    });
-                    $.post({
-                        url: '',
-                        data: formData,
-                        cache: false,
-                        contentType: false,
-                        processData: false,
-                        success: function (data) {
-                            if (data.errors) {
-                                for (var i = 0; i < data.errors.length; i++) {
-                                    toastr.error(data.errors[i].message, {
-                                        CloseButton: true,
-                                        ProgressBar: true
-                                    });
-                                }
-                            } else {
-                                toastr.success('{{__("messages.fund_added_successfully")}}', {
-                                    CloseButton: true,
-                                    ProgressBar: true
-                                });
-                            }
-                        }
-                    });
-                }
-            })
-        })
     </script>
 @endpush

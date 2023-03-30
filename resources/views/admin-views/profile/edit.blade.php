@@ -13,12 +13,13 @@
         <!-- Page Header -->
         <div class="page-header">
             <div class="row align-items-end">
-                <div class="col-sm mb-2 mb-sm-0">
-                    <h1 class="page-header-title">{{\App\CPU\translate('Settings')}}</h1>
-                </div>
+                <h2 class="col-sm mb-2 mb-sm-0 h1 mb-0 text-capitalize d-flex align-items-center gap-2">
+                    <img width="20" src="{{asset('/public/assets/back-end/img/profile_setting.png')}}" alt="">
+                    {{\App\CPU\translate('Settings')}}
+                </h2>
 
                 <div class="col-sm-auto">
-                    <a class="btn btn-primary" href="{{route('admin.dashboard')}}">
+                    <a class="btn btn--primary" href="{{route('admin.dashboard')}}">
                         <i class="tio-home mr-1"></i> {{\App\CPU\translate('Dashboard')}}
                     </a>
                 </div>
@@ -54,12 +55,12 @@
                         <ul id="navbarSettings"
                             class="js-sticky-block js-scrollspy navbar-nav navbar-nav-lg nav-tabs card card-navbar-nav">
                             <li class="nav-item">
-                                <a class="nav-link active" href="javascript:" id="generalSection" style="color: black">
+                                <a class="nav-link active" href="javascript:" id="generalSection">
                                     <i class="tio-user-outlined nav-icon"></i>{{\App\CPU\translate('Basic')}} {{\App\CPU\translate('information')}}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="javascript:" id="passwordSection" style="color: black">
+                                <a class="nav-link" href="javascript:" id="passwordSection">
                                     <i class="tio-lock-outlined nav-icon"></i> {{\App\CPU\translate('Password')}}
                                 </a>
                             </li>
@@ -77,7 +78,8 @@
                     <div class="card mb-3 mb-lg-5" id="generalDiv">
                         <!-- Profile Cover -->
                         <div class="profile-cover">
-                            <div class="profile-cover-img-wrapper"></div>
+                            @php($shop_banners = $shop_banner ? asset('storage/app/public/shop/'.$shop_banner) : 'https://images.pexels.com/photos/866398/pexels-photo-866398.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')
+                            <div class="profile-cover-img-wrapper" style="background-image: url({{ $shop_banners }}); background-repeat: no-repeat; background-size: cover;"></div>
                         </div>
                         <!-- End Profile Cover -->
 
@@ -106,10 +108,12 @@
                             <!-- Form -->
                             <!-- Form Group -->
                             <div class="row form-group">
-                                <label for="firstNameLabel" class="col-sm-3 col-form-label input-label">{{\App\CPU\translate('Full')}} {{\App\CPU\translate('name')}}  <i
-                                        class="tio-help-outlined text-body ml-1" data-toggle="tooltip"
-                                        data-placement="top"
-                                        title="Display name"></i></label>
+                                <label for="firstNameLabel" class="col-sm-3 col-form-label input-label">
+                                    {{\App\CPU\translate('Full')}} {{\App\CPU\translate('name')}}
+                                    <i class="tio-help-outlined text-body ml-1"
+                                        title="Display name">
+                                    </i>
+                                </label>
 
                                 <div class="col-sm-9">
                                     <div class="input-group input-group-sm-down-break">
@@ -148,10 +152,9 @@
                                 </div>
                             </div>
                             <div class="row">
-                            <div class="col-md-3 col-form-label">
-                            </div>
+                                <label for="newEmailLabel" class="col-sm-3 input-label">{{\App\CPU\translate('Profile_Image')}}</label>
                                 <div class="form-group col-md-9" id="select-img">
-                                    <span class="badge badge-soft-danger">( {{\App\CPU\translate('ratio')}} 1:1 )</span>
+                                    <span class="d-block mb-2 text-info">( {{\App\CPU\translate('ratio')}} 1:1 )</span>
                                     <div class="custom-file">
                                         <input type="file" name="image" id="customFileUpload" class="custom-file-input"
                                             accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
@@ -160,7 +163,7 @@
                                 </div>
                             </div>
                             <div class="d-flex justify-content-end">
-                                <button type="button" onclick="{{env('APP_MODE')!='demo'?"form_alert('admin-profile-form','Want to update admin info ?')":"call_demo()"}}" class="btn btn-primary">{{\App\CPU\translate('Save changes')}}</button>
+                                <button type="button" onclick="{{env('APP_MODE')!='demo'?"form_alert('admin-profile-form','Want to update admin info ?')":"call_demo()"}}" class="btn btn--primary">{{\App\CPU\translate('Save changes')}}</button>
                             </div>
                             <!-- End Form -->
                         </div>
@@ -224,7 +227,7 @@
                             <!-- End Form Group -->
 
                             <div class="d-flex justify-content-end">
-                                <button type="button" onclick="{{env('APP_MODE')!='demo'?"form_alert('changePasswordForm','Want to update admin password ?')":"call_demo()"}}" class="btn btn-primary">{{\App\CPU\translate('Save')}} {{\App\CPU\translate('changes')}}</button>
+                                <button type="button" onclick="{{env('APP_MODE')!='demo'?"form_alert('changePasswordForm','Want to update admin password ?')":"call_demo()"}}" class="btn btn--primary">{{\App\CPU\translate('Save')}} {{\App\CPU\translate('changes')}}</button>
                             </div>
                         </form>
                         <!-- End Form -->

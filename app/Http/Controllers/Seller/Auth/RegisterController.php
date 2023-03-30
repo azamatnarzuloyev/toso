@@ -10,6 +10,7 @@ use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\CPU\Helpers;
+use Illuminate\Support\Facades\Session;
 use function App\CPU\translate;
 
 class RegisterController extends Controller
@@ -28,16 +29,47 @@ class RegisterController extends Controller
 
     public function store(Request $request)
     {
-
         $this->validate($request, [
-            'email' => 'required|unique:sellers',
-            'shop_address' => 'required',
-            'f_name' => 'required',
-            'l_name' => 'required',
-            'shop_name' => 'required',
-            'phone' => 'required',
-            'password' => 'required|min:8',
+            'image'         => 'required|mimes: jpg,jpeg,png,gif',
+            'logo'          => 'required|mimes: jpg,jpeg,png,gif',
+            'banner'        => 'required|mimes: jpg,jpeg,png,gif',
+            'email'         => 'required|unique:sellers',
+            'shop_address'  => 'required',
+            'f_name'        => 'required',
+            'l_name'        => 'required',
+            'shop_name'     => 'required',
+            'phone'         => 'required',
+            'password'      => 'required|min:8',
         ]);
+
+        if($request['from_submit'] != 'admin') {
+            //recaptcha validation
+            $recaptcha = Helpers::get_business_settings('recaptcha');
+            if (isset($recaptcha) && $recaptcha['status'] == 1) {
+                try {
+                    $request->validate([
+                        'g-recaptcha-response' => [
+                            function ($attribute, $value, $fail) {
+                                $secret_key = Helpers::get_business_settings('recaptcha')['secret_key'];
+                                $response = $value;
+                                $url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . $secret_key . '&response=' . $response;
+                                $response = \file_get_contents($url);
+                                $response = json_decode($response);
+                                if (!$response->success) {
+                                    $fail(\App\CPU\translate('ReCAPTCHA Failed'));
+                                }
+                            },
+                        ],
+                    ]);
+                } catch (\Exception $exception) {
+                }
+            } else {
+                if (strtolower($request->default_captcha_value) != strtolower(Session('default_captcha_code'))) {
+                    Session::forget('default_captcha_code');
+                    return back()->withErrors(\App\CPU\translate('Captcha Failed'));
+                }
+            }
+        }
 
         DB::transaction(function ($r) use ($request) {
             $seller = new Seller();
@@ -80,7 +112,7 @@ class RegisterController extends Controller
             Toastr::success('Shop apply successfully!');
             return redirect()->route('seller.auth.login');
         }
-        
+
 
     }
 }

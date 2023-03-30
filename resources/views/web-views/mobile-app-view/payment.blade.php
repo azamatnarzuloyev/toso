@@ -48,30 +48,12 @@
 </div>
 {{--loader--}}
 
-
 <!-- Page Content-->
 <div class="checkout_details container pb-5 mb-2 mb-md-4">
     <div class="row mt-5">
-        @php($config=\App\CPU\Helpers::get_business_settings('wallet_status'))
-        @if($config==1)
-            <div class="col-md-6 mb-4" style="cursor: pointer">
-                <div class="card">
-                    <div class="card-body" style="height: 100px">
-                        <form action="{{route('checkout-complete-wallet')}}" method="get" class="needs-validation">
-                            <button class="btn btn-block click-if-alone" type="submit">
-                            
-                                <img width="150" style="margin-top: -10px"
-                                        src="{{asset('public/assets/front-end/img/wallet.png')}}"/>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        @endif
-        
         @php($user=\App\CPU\Helpers::get_customer())
         @php($config=\App\CPU\Helpers::get_business_settings('ssl_commerz_payment'))
-        @if($config['status'])
+        @if($payment_method == 'ssl_commerz_payment' && $config['status'])
             <div class="col-md-6 mb-4" style="cursor: pointer">
                 <div class="card">
                     <div class="card-body" style="height: 100px">
@@ -88,7 +70,7 @@
         @endif
 
         @php($config=\App\CPU\Helpers::get_business_settings('paypal'))
-        @if($config['status'])
+        @if($payment_method == 'paypal' && $config['status'])
             <div class="col-md-6 mb-4" style="cursor: pointer">
                 <div class="card">
                     <div class="card-body" style="height: 100px">
@@ -109,7 +91,7 @@
         @php($amount = \App\CPU\CartManager::cart_grand_total() - $coupon_discount)
 
         @php($config=\App\CPU\Helpers::get_business_settings('stripe'))
-        @if($config['status'])
+        @if($payment_method == 'stripe' && $config['status'])
             <div class="col-md-6 mb-4" style="cursor: pointer">
                 <div class="card">
                     <div class="card-body" style="height: 100px">
@@ -146,7 +128,7 @@
         @php($config=\App\CPU\Helpers::get_business_settings('razor_pay'))
         @php($inr=\App\Model\Currency::where(['symbol'=>'₹'])->first())
         @php($usd=\App\Model\Currency::where(['code'=>'usd'])->first())
-        @if(isset($inr) && isset($usd) && $config['status'])
+        @if($payment_method == 'razor_pay' && isset($inr) && isset($usd) && $config['status'])
             <div class="col-md-6 mb-4" style="cursor: pointer">
                 <div class="card">
                     <div class="card-body" style="height: 100px">
@@ -178,7 +160,7 @@
 
 
         @php($config=\App\CPU\Helpers::get_business_settings('paystack'))
-        @if($config['status'])
+        @if($payment_method == 'paystack' && $config['status'])
             <div class="col-md-6 mb-4" style="cursor: pointer">
                 <div class="card">
                     <div class="card-body" style="height: 100px">
@@ -225,7 +207,7 @@
         @php($myr=\App\Model\Currency::where(['code'=>'MYR'])->first())
         @php($usd=\App\Model\Currency::where(['code'=>'usd'])->first())
         @php($config=\App\CPU\Helpers::get_business_settings('senang_pay'))
-        @if(isset($myr) && isset($usd) && $config['status'])
+        @if($payment_method == 'senang_pay' && isset($myr) && isset($usd) && $config['status'])
             <div class="col-md-6 mb-4" style="cursor: pointer">
                 <div class="card">
                     <div class="card-body" style="height: 100px">
@@ -263,7 +245,7 @@
         @endif
 
         @php($config=\App\CPU\Helpers::get_business_settings('paymob_accept'))
-        @if($config['status'])
+        @if($payment_method == 'paymob_accept' && $config['status'])
             <div class="col-md-6 mb-4" style="cursor: pointer">
                 <div class="card">
                     <div class="card-body" style="height: 100px">
@@ -281,20 +263,20 @@
         @endif
 
         @php($config=\App\CPU\Helpers::get_business_settings('bkash'))
-        @if(isset($config)  && $config['status'])
-            <div class="col-md-6 mb-4" style="cursor: pointer">
-                <div class="card">
-                    <div class="card-body" style="height: 100px">
-                        <button class="btn btn-block click-if-alone" id="bKash_button" onclick="BkashPayment()">
+        @if($payment_method == 'bkash' && isset($config)  && $config['status'])
+            <div class="col-sm-6">
+                <div class="card cursor-pointer">
+                    <div class="card-body __h-100px">
+                        <a class="btn btn-block click-if-alone" onclick="location.href='{{route('bkash-make-payment')}}'">
                             <img width="100" src="{{asset('public/assets/front-end/img/bkash.png')}}"/>
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
         @endif
 
         @php($config=\App\CPU\Helpers::get_business_settings('paytabs'))
-        @if(isset($config)  && $config['status'])
+        @if($payment_method == 'paytabs' && isset($config)  && $config['status'])
             <div class="col-md-6 mb-4" style="cursor: pointer">
                 <div class="card">
                     <div class="card-body" style="height: 100px">
@@ -320,7 +302,7 @@
         @endif--}}
 
         @php($config=\App\CPU\Helpers::get_business_settings('mercadopago'))
-        @if(isset($config)  && $config['status'])
+        @if($payment_method == 'mercadopago' && isset($config)  && $config['status'])
             <div class="col-md-6 mb-4" style="cursor: pointer">
                 <div class="card">
                     <div class="card-body" style="height: 100px">
@@ -333,7 +315,7 @@
         @endif
 
         @php($config=\App\CPU\Helpers::get_business_settings('flutterwave'))
-        @if(isset($config)  && $config['status'])
+        @if($payment_method == 'flutterwave' && isset($config)  && $config['status'])
             <div class="col-md-6 mb-4" style="cursor: pointer">
                 <div class="card">
                     <div class="card-body" style="height: 100px">
@@ -351,7 +333,7 @@
         @endif
 
         @php($config=\App\CPU\Helpers::get_business_settings('paytm'))
-        @if(isset($config) && $config['status'])
+        @if($payment_method == 'paytm' && isset($config) && $config['status'])
             <div class="col-md-6 mb-4" style="cursor: pointer">
                 <div class="card">
                     <div class="card-body" style="height: 100px">
@@ -365,7 +347,7 @@
         @endif
 
         @php($config=\App\CPU\Helpers::get_business_settings('liqpay'))
-        @if(isset($config) && $config['status'])
+        @if($payment_method == 'liqpay' && isset($config) && $config['status'])
             <div class="col-md-6 mb-4" style="cursor: pointer">
                 <div class="card">
                     <div class="card-body" style="height: 100px">
@@ -386,14 +368,6 @@
 <script src={{asset("public/assets/back-end/js/toastr.js")}}></script>
 <script src="{{asset('public/assets/front-end')}}/js/sweet_alert.js"></script>
 {!! Toastr::message() !!}
-@php($mode = \App\CPU\Helpers::get_business_settings('bkash')['environment']??'sandbox')
-@if($mode=='live')
-    <script id="myScript"
-            src="https://scripts.pay.bka.sh/versions/1.2.0-beta/checkout/bKash-checkout.js"></script>
-@else
-    <script id="myScript"
-            src="https://scripts.sandbox.bka.sh/versions/1.2.0-beta/checkout/bKash-checkout-sandbox.js"></script>
-@endif
 
 <script>
     setInterval(function () {
@@ -404,137 +378,6 @@
         $('.stripe-button-el').hide();
         $('.razorpay-payment-button').hide();
     }, 10)
-</script>
-
-<script type="text/javascript">
-    function BkashPayment() {
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
-            }
-        });
-        $('#loading').show();
-        // get token
-        $.ajax({
-            url: "{{ route('bkash-get-token') }}",
-            type: 'POST',
-            contentType: 'application/json',
-            success: function (data) {
-                $('#loading').hide();
-                $('pay-with-bkash-button').trigger('click');
-                if (data.hasOwnProperty('msg')) {
-                    showErrorMessage(data) // unknown error
-                }
-            },
-            error: function (err) {
-                $('#loading').hide();
-                showErrorMessage(err);
-            }
-        });
-    }
-
-    let paymentID = '';
-    bKash.init({
-        paymentMode: 'checkout',
-        paymentRequest: {},
-        createRequest: function (request) {
-            setTimeout(function () {
-                createPayment(request);
-            }, 2000)
-        },
-        executeRequestOnAuthorization: function (request) {
-            $.ajax({
-                url: '{{ route('bkash-execute-payment') }}',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    "paymentID": paymentID
-                }),
-                success: function (data) {
-                    if (data) {
-                        if (data.paymentID != null) {
-                            BkashSuccess(data);
-                        } else {
-                            showErrorMessage(data);
-                            bKash.execute().onError();
-                        }
-                    } else {
-                        $.get('{{ route('bkash-query-payment') }}', {
-                            payment_info: {
-                                payment_id: paymentID
-                            }
-                        }, function (data) {
-                            if (data.transactionStatus === 'Completed') {
-                                BkashSuccess(data);
-                            } else {
-                                createPayment(request);
-                            }
-                        });
-                    }
-                },
-                error: function (err) {
-                    bKash.execute().onError();
-                }
-            });
-        },
-        onClose: function () {
-            // for error handle after close bKash Popup
-        }
-    });
-
-    function createPayment(request) {
-        // because of createRequest function finds amount from this request
-        request['amount'] = "{{round(\App\CPU\Convert::usdTobdt($amount),2)}}"; // max two decimal points allowed
-        $.ajax({
-            url: '{{ route('bkash-create-payment') }}',
-            data: JSON.stringify(request),
-            type: 'POST',
-            contentType: 'application/json',
-            success: function (data) {
-                $('#loading').hide();
-                if (data && data.paymentID != null) {
-                    paymentID = data.paymentID;
-                    bKash.create().onSuccess(data);
-                } else {
-                    bKash.create().onError();
-                }
-            },
-            error: function (err) {
-                $('#loading').hide();
-                showErrorMessage(err.responseJSON);
-                bKash.create().onError();
-            }
-        });
-    }
-
-    function BkashSuccess(data) {
-        $.post('{{ route('bkash-success') }}', {
-            payment_info: data
-        }, function (res) {
-            @if(session()->has('payment_mode') && session('payment_mode') == 'app')
-                location.href = '{{ route('payment-success')}}';
-            @else
-                location.href = '{{route('order-placed')}}';
-            @endif
-        });
-    }
-
-    function showErrorMessage(response) {
-        let message = 'Unknown Error';
-        if (response.hasOwnProperty('errorMessage')) {
-            let errorCode = parseInt(response.errorCode);
-            let bkashErrorCode = [2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014,
-                2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030,
-                2031, 2032, 2033, 2034, 2035, 2036, 2037, 2038, 2039, 2040, 2041, 2042, 2043, 2044, 2045, 2046,
-                2047, 2048, 2049, 2050, 2051, 2052, 2053, 2054, 2055, 2056, 2057, 2058, 2059, 2060, 2061, 2062,
-                2063, 2064, 2065, 2066, 2067, 2068, 2069, 503,
-            ];
-            if (bkashErrorCode.includes(errorCode)) {
-                message = response.errorMessage
-            }
-        }
-        Swal.fire("Payment Failed!", message, "error");
-    }
 </script>
 
 <script>

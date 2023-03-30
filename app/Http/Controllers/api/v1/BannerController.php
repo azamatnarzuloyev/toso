@@ -40,7 +40,7 @@ class BannerController extends Controller
             }
             $data[] = $banner;
         }
-      
+
         return response()->json($data, 200);
 
     }

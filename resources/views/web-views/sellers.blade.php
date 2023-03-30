@@ -16,36 +16,16 @@
         .page-item.active .page-link {
             background-color: {{$web_config['primary_color']}}    !important;
         }
-
-        .page-item.active > .page-link {
-            box-shadow: 0 0 black !important;
-        }
-
-        .btnF {
-            cursor: pointer;
-        }
-
-        .list-link:hover {
-            color: #030303 !important;
-        }
-        .seller_div {
-            background: #fcfcfc no-repeat padding-box;
-            border: 1px solid #e2f0ff;
-            border-radius: 5px;
-            opacity: 1;
-            padding: 5px;
-        }
-
     </style>
 @endpush
 
 @section('content')
 
     <!-- Page Content-->
-    <div class="container mb-md-4">
+    <div class="container mb-md-4 {{Session::get('direction') === "rtl" ? 'rtl' : ''}} __inline-65">
         <div class="row mt-3 mb-3 border-bottom">
             <div class="col-md-8">
-                <h4 class="mt-2">{{ \App\CPU\translate('Sellers') }}</h4>
+                <h4 class="mt-2 text-start">{{ \App\CPU\translate('All_Sellers') }}</h4>
             </div>
             <div class="col-md-4">
                 <form action="{{route('search-shop')}}">
@@ -63,12 +43,28 @@
             <!-- Content  -->
             <section class="col-lg-12">
                 <!-- Products grid-->
-                <div class="row mx-n2" style="min-height: 200px">
+                <div class="row mx-n2 __min-h-200px">
                     @foreach($sellers as $shop)
                         <div class="col-lg-2 col-md-3 col-sm-4 col-6 px-2 pb-4 text-center">
-                            <div class="card-body shadow">
+                            <div class="card-body shadow position-relative">
+                                @php($current_date = date('Y-m-d'))
+                                @php($start_date = date('Y-m-d', strtotime($shop['vacation_start_date'])))
+                                @php($end_date = date('Y-m-d', strtotime($shop['vacation_end_date'])))
+                                @if($shop->vacation_status && ($current_date >= $start_date) && ($current_date <= $end_date))
+                                    <a href="{{route('shopView',['id'=>$shop['seller_id']])}}">
+                                        <span class="temporary-closed">
+                                            <span>{{\App\CPU\translate('closed_now')}}</span>
+                                        </span>
+                                    </a>
+                                @elseif($shop->temporary_close)
+                                    <a href="{{route('shopView',['id'=>$shop['seller_id']])}}">
+                                        <span class="temporary-closed">
+                                            <span>{{\App\CPU\translate('closed_now')}}</span>
+                                        </span>
+                                    </a>
+                                @endif
                                 <a href="{{route('shopView',['id'=>$shop['seller_id']])}}">
-                                    <img style="vertical-align: middle;height: 6rem; border-radius: 3%;"
+                                    <img class="__inline-66"
                                          onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'"
                                          src="{{asset("storage/app/public/shop/$shop->image")}}"
                                          alt="{{$shop->name}}">

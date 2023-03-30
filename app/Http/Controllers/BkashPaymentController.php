@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\CPU\CartManager;
 use App\CPU\Convert;
+use App\CPU\Helpers;
 use App\CPU\OrderManager;
+use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class BkashPaymentController extends Controller
 {
@@ -23,7 +26,7 @@ class BkashPaymentController extends Controller
         $bkash_app_secret = $config['api_secret']; // bKash Merchant API APP SECRET
         $bkash_username = $config['username']; // bKash Merchant API USERNAME
         $bkash_password = $config['password']; // bKash Merchant API PASSWORD
-        $bkash_base_url = ($config['environment'] == 'live') ? 'https://checkout.pay.bka.sh/v1.2.0-beta' : 'https://checkout.sandbox.bka.sh/v1.2.0-beta';
+        $bkash_base_url = ($config['environment'] == 'live') ? 'https://tokenized.pay.bka.sh/v1.2.0-beta' : 'https://tokenized.sandbox.bka.sh/v1.2.0-beta';
 
         $this->app_key = $bkash_app_key;
         $this->app_secret = $bkash_app_secret;
@@ -41,7 +44,7 @@ class BkashPaymentController extends Controller
             'app_secret' => $this->app_secret
         );
 
-        $url = curl_init("$this->base_url/checkout/token/grant");
+        $url = curl_init("$this->base_url/tokenized/checkout/token/grant");
         $post_token = json_encode($post_token);
         $header = array(
             'Content-Type:application/json',
@@ -65,106 +68,111 @@ class BkashPaymentController extends Controller
 
         session()->put('bkash_token', $response['id_token']);
 
-        return response()->json(['success', true]);
+        return $response;
     }
 
-    public function createPayment(Request $request)
+    public function make_tokenize_payment(Request $request)
     {
         $discount = session()->has('coupon_discount') ? session('coupon_discount') : 0;
-        $value = CartManager::cart_grand_total() - $discount;
+        $order_amount = CartManager::cart_grand_total() - $discount;
 
-        if (((string)$request->amount != (string) round(Convert::usdTobdt($value),2))) {
-            return response()->json([
-                'errorMessage' => 'Amount Mismatch',
-                'errorCode' => 2006
-            ], 422);
-        }
+        $user = Helpers::get_customer();
+        $response = self::getToken();
+        $auth = $response['id_token'];
+        session()->put('token', $auth);
+        $callbackURL = route('bkash-callback', ['token' => $auth]);
 
-        $token = session()->get('bkash_token');
+        $requestbody = array(
+            'mode' => '0011',
+            'amount' => (string)$order_amount,
+            'currency' => 'BDT',
+            'intent' => 'sale',
+            'payerReference' => $user['phone'],
+            'merchantInvoiceNumber' => 'invoice_' . Str::random('15'),
+            'callbackURL' => $callbackURL
+        );
 
-        $request['intent'] = 'sale';
-        $request['currency'] = 'BDT';
-        $request['merchantInvoiceNumber'] = rand();
+        $url = curl_init($this->base_url . '/tokenized/checkout/create');
+        $requestbodyJson = json_encode($requestbody);
 
-        $url = curl_init("$this->base_url/checkout/payment/create");
-        $request_data_json = json_encode($request->all());
         $header = array(
             'Content-Type:application/json',
-            "authorization: $token",
-            "x-app-key: $this->app_key"
+            'Authorization:' . $auth,
+            'X-APP-Key:' . $this->app_key
         );
 
         curl_setopt($url, CURLOPT_HTTPHEADER, $header);
         curl_setopt($url, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($url, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($url, CURLOPT_POSTFIELDS, $request_data_json);
+        curl_setopt($url, CURLOPT_POSTFIELDS, $requestbodyJson);
         curl_setopt($url, CURLOPT_FOLLOWLOCATION, 1);
         curl_setopt($url, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         $resultdata = curl_exec($url);
         curl_close($url);
-        return json_decode($resultdata, true);
+
+        $obj = json_decode($resultdata);
+        return redirect()->away($obj->{'bkashURL'});
+
     }
 
-    public function executePayment(Request $request)
-    {
-        $token = session()->get('bkash_token');
+    public function callback(Request $request){
+        $paymentID = $request['paymentID'];
+        $auth = $request['token'];
 
-        $paymentID = $request->paymentID;
-        $url = curl_init("$this->base_url/checkout/payment/execute/" . $paymentID);
+        $request_body = array(
+            'paymentID' => $paymentID
+        );
+        $url = curl_init($this->base_url . '/tokenized/checkout/execute');
+
+        $request_body_json = json_encode($request_body);
+
         $header = array(
             'Content-Type:application/json',
-            "authorization:$token",
-            "x-app-key:$this->app_key"
+            'Authorization:' . $auth,
+            'X-APP-Key:' . $this->app_key
         );
-
         curl_setopt($url, CURLOPT_HTTPHEADER, $header);
         curl_setopt($url, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($url, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($url, CURLOPT_POSTFIELDS, $request_body_json);
         curl_setopt($url, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($url, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         $resultdata = curl_exec($url);
+        info($resultdata);
         curl_close($url);
-        return json_decode($resultdata, true);
-    }
+        $obj = json_decode($resultdata);
 
-    public function queryPayment(Request $request)
-    {
-        $token = session()->get('bkash_token');
-        $paymentID = $request->payment_info['payment_id'];
+        if ($obj->statusCode == '0000') {
+            $order_ids = [];
+            $unique_id = OrderManager::gen_unique_id();
+            foreach (CartManager::get_cart_group_ids() as $group_id) {
+                $data = [
+                    'payment_method' => 'bkash',
+                    'order_status' => 'confirmed',
+                    'payment_status' => 'paid',
+                    'transaction_ref' => $obj->trxID ?? null,
+                    'order_group_id' => $unique_id,
+                    'cart_group_id' => $group_id
+                ];
+                $order_id = OrderManager::generate_order($data);
+                array_push($order_ids, $order_id);
+            }
+            CartManager::cart_clean();
 
-        $url = curl_init("$this->base_url/checkout/payment/query/" . $paymentID);
-        $header = array(
-            'Content-Type:application/json',
-            "authorization:$token",
-            "x-app-key:$this->app_key"
-        );
+            if (auth('customer')->check()) {
+                Toastr::success('Payment success.');
+                return view('web-views.checkout-complete');
+            }
+            return response()->json(['message' => 'Payment succeeded'], 200);
 
-        curl_setopt($url, CURLOPT_HTTPHEADER, $header);
-        curl_setopt($url, CURLOPT_CUSTOMREQUEST, "GET");
-        curl_setopt($url, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($url, CURLOPT_FOLLOWLOCATION, 1);
-        $resultdata = curl_exec($url);
-        curl_close($url);
-        return json_decode($resultdata, true);
-    }
-
-    public function bkashSuccess(Request $request)
-    {
-        $order_ids = [];
-        $unique_id = OrderManager::gen_unique_id();
-        foreach (CartManager::get_cart_group_ids() as $group_id) {
-            $data = [
-                'payment_method' => 'bkash',
-                'order_status' => 'confirmed',
-                'payment_status' => 'paid',
-                'transaction_ref' => $request['trxID'],
-                'order_group_id' => $unique_id,
-                'cart_group_id' => $group_id
-            ];
-            $order_id = OrderManager::generate_order($data);
-            array_push($order_ids, $order_id);
+        } else {
+            if (auth('customer')->check()) {
+                Toastr::error('Payment failed.');
+                return redirect('/');
+            }
+            return response()->json(['message' => 'Payment failed'], 403);
         }
-        CartManager::cart_clean();
-        return response()->json(['status' => true]);
+
     }
 }
 

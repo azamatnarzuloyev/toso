@@ -2,28 +2,29 @@
 
 namespace App\CPU;
 
-use App\Model\OrderDetail;
-use App\Model\Product;
 use App\Model\Review;
-use App\Model\ShippingMethod;
+use App\Model\Product;
+use App\Model\OrderDetail;
 use App\Model\Translation;
+use App\Model\ShippingMethod;
 use Illuminate\Support\Facades\DB;
+use Brian2694\Toastr\Facades\Toastr;
 
 class ProductManager
 {
     public static function get_product($id)
     {
-        return Product::active()->with(['rating'])->where('id', $id)->first();
+        return Product::active()->with(['rating', 'seller.shop','tags'])->where('id', $id)->first();
     }
 
     public static function get_latest_products($limit = 10, $offset = 1)
     {
-        $paginator = Product::active()->with(['rating'])->latest()->paginate($limit, ['*'], 'page', $offset);
+        $paginator = Product::active()->with(['rating','tags'])->latest()->paginate($limit, ['*'], 'page', $offset);
         /*$paginator->count();*/
         return [
             'total_size' => $paginator->total(),
-            'limit' => (integer)$limit,
-            'offset' => (integer)$offset,
+            'limit' => (int)$limit,
+            'offset' => (int)$offset,
             'products' => $paginator->items()
         ];
     }
@@ -31,15 +32,15 @@ class ProductManager
     public static function get_featured_products($limit = 10, $offset = 1)
     {
         //change review to ratting
-        $paginator = Product::with(['rating'])->active()
+        $paginator = Product::with(['rating','tags'])->active()
             ->where('featured', 1)
             ->withCount(['order_details'])->orderBy('order_details_count', 'DESC')
             ->paginate($limit, ['*'], 'page', $offset);
 
         return [
             'total_size' => $paginator->total(),
-            'limit' => (integer)$limit,
-            'offset' => (integer)$offset,
+            'limit' => (int)$limit,
+            'offset' => (int)$offset,
             'products' => $paginator->items()
         ];
     }
@@ -60,14 +61,14 @@ class ProductManager
         //     array_push($data, $review->product);
         // }
         //change review to ratting
-        $reviews = Product::with(['rating'])->active()
-        ->withCount(['reviews'])->orderBy('reviews_count', 'DESC')
-        ->paginate($limit, ['*'], 'page', $offset);
+        $reviews = Product::with(['rating','tags'])->active()
+            ->withCount(['reviews'])->orderBy('reviews_count', 'DESC')
+            ->paginate($limit, ['*'], 'page', $offset);
 
         return [
             'total_size' => $reviews->total(),
-            'limit' => (integer)$limit,
-            'offset' => (integer)$offset,
+            'limit' => (int)$limit,
+            'offset' => (int)$offset,
             'products' => $reviews
         ];
     }
@@ -91,8 +92,8 @@ class ProductManager
 
         return [
             'total_size' => $paginator->total(),
-            'limit' => (integer)$limit,
-            'offset' => (integer)$offset,
+            'limit' => (int)$limit,
+            'offset' => (int)$offset,
             'products' => $data
         ];
     }
@@ -100,7 +101,7 @@ class ProductManager
     public static function get_related_products($product_id)
     {
         $product = Product::find($product_id);
-        return Product::active()->with(['rating'])->where('category_ids', $product->category_ids)
+        return Product::active()->with(['rating','tags'])->where('category_ids', $product->category_ids)
             ->where('id', '!=', $product->id)
             ->limit(10)
             ->get();
@@ -111,34 +112,42 @@ class ProductManager
         /*$key = explode(' ', $name);*/
         $key = [base64_decode($name)];
 
-        $paginator = Product::active()->with(['rating'])->where(function ($q) use ($key) {
+        $paginator = Product::active()->with(['rating','tags'])->where(function ($q) use ($key) {
             foreach ($key as $value) {
-                $q->orWhere('name', 'like', "%{$value}%");
+                $q->orWhere('name', 'like', "%{$value}%")
+                ->orWhereHas('tags',function($query)use($key){
+                    $query->where(function($q)use($key){
+                        foreach ($key as $value) {
+                            $q->where('tag', 'like', "%{$value}%");
+                        }
+                    });
+                });
             }
         })->paginate($limit, ['*'], 'page', $offset);
 
         return [
             'total_size' => $paginator->total(),
-            'limit' => (integer)$limit,
-            'offset' => (integer)$offset,
+            'limit' => (int)$limit,
+            'offset' => (int)$offset,
             'products' => $paginator->items()
         ];
     }
     public static function search_products_web($name, $limit = 10, $offset = 1)
     {
-        /*$key = explode(' ', $name);*/
         $key = explode(' ', $name);
-
-        $paginator = Product::active()->with(['rating'])->where(function ($q) use ($key) {
+        $paginator = Product::active()->with(['rating','tags'])->where(function ($q) use ($key) {
             foreach ($key as $value) {
-                $q->orWhere('name', 'like', "%{$value}%");
+                $q->orWhere('name', 'like', "%{$value}%")
+                ->orWhereHas('tags',function($query)use($value){
+                    $query->where('tag', 'like', "%{$value}%");
+                });
             }
         })->paginate($limit, ['*'], 'page', $offset);
 
         return [
             'total_size' => $paginator->total(),
-            'limit' => (integer)$limit,
-            'offset' => (integer)$offset,
+            'limit' => (int)$limit,
+            'offset' => (int)$offset,
             'products' => $paginator->items()
         ];
     }
@@ -151,30 +160,34 @@ class ProductManager
             ->where('value', 'like', "%{$name}%")
             ->pluck('translationable_id');
 
-        $paginator = Product::WhereIn('id', $product_ids)->paginate($limit, ['*'], 'page', $offset);
+        $paginator = Product::with('tags')->WhereIn('id', $product_ids)->paginate($limit, ['*'], 'page', $offset);
 
         return [
             'total_size' => $paginator->total(),
-            'limit' => (integer)$limit,
-            'offset' => (integer)$offset,
+            'limit' => (int)$limit,
+            'offset' => (int)$offset,
             'products' => $paginator->items()
         ];
     }
 
     public static function translated_product_search_web($name, $limit = 10, $offset = 1)
     {
-        $name = explode(' ', $name);
+        $key = explode(' ', $name);
         $product_ids = Translation::where('translationable_type', 'App\Model\Product')
             ->where('key', 'name')
-            ->where('value', 'like', "%{$name}%")
+            ->where(function ($q) use ($key) {
+                foreach ($key as $value) {
+                    $q->orWhere('value', 'like', "%{$value}%");
+                }
+            })
             ->pluck('translationable_id');
 
-        $paginator = Product::WhereIn('id', $product_ids)->paginate($limit, ['*'], 'page', $offset);
+        $paginator = Product::with('tags')->WhereIn('id', $product_ids)->paginate($limit, ['*'], 'page', $offset);
 
         return [
             'total_size' => $paginator->total(),
-            'limit' => (integer)$limit,
-            'offset' => (integer)$offset,
+            'limit' => (int)$limit,
+            'offset' => (int)$offset,
             'products' => $paginator->items()
         ];
     }
@@ -256,15 +269,30 @@ class ProductManager
 
     public static function get_seller_products($seller_id, $limit = 10, $offset = 1)
     {
-        $paginator = Product::active()->with(['rating'])
+        $paginator = Product::active()->with(['rating','tags'])
             ->where(['user_id' => $seller_id, 'added_by' => 'seller'])
             ->latest()
             ->paginate($limit, ['*'], 'page', $offset);
         /*$paginator->count();*/
         return [
             'total_size' => $paginator->total(),
-            'limit' => (integer)$limit,
-            'offset' => (integer)$offset,
+            'limit' => (int)$limit,
+            'offset' => (int)$offset,
+            'products' => $paginator->items()
+        ];
+    }
+
+    public static function get_seller_all_products($seller_id, $limit = 10, $offset = 1)
+    {
+        $paginator = Product::with(['rating','tags'])
+            ->where(['user_id' => $seller_id, 'added_by' => 'seller'])
+            ->latest()
+            ->paginate($limit, ['*'], 'page', $offset);
+        /*$paginator->count();*/
+        return [
+            'total_size' => $paginator->total(),
+            'limit' => (int)$limit,
+            'offset' => (int)$offset,
             'products' => $paginator->items()
         ];
     }
@@ -272,12 +300,25 @@ class ProductManager
     public static function get_discounted_product($limit = 10, $offset = 1)
     {
         //change review to ratting
-        $paginator = Product::with(['rating'])->active()->where('discount', '!=', 0)->latest()->paginate($limit, ['*'], 'page', $offset);
+        $paginator = Product::with(['rating','tags'])->active()->where('discount', '!=', 0)->latest()->paginate($limit, ['*'], 'page', $offset);
         return [
             'total_size' => $paginator->total(),
-            'limit' => (integer)$limit,
-            'offset' => (integer)$offset,
+            'limit' => (int)$limit,
+            'offset' => (int)$offset,
             'products' => $paginator->items()
         ];
+    }
+    public static function export_product_reviews($data)
+    {
+        $storage = [];
+        foreach ($data as $item) {
+            $storage[] = [
+                'product' => $item->product['name'] ?? '',
+                'customer' => isset($item->customer) ? $item->customer->f_name .' '. $item->customer->l_name : '' ,
+                'comment' => $item->comment,
+                'rating' => $item->rating
+            ];
+        }
+        return $storage;
     }
 }

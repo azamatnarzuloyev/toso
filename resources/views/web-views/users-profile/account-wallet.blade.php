@@ -45,7 +45,7 @@
                             <option>{{\App\CPU\translate('Delayed')}}</option>
                             <option>{{\App\CPU\translate('Canceled')}}</option>
                         </select>
-                    </div><a class="btn btn-primary btn-sm d-none d-lg-inline-block" href="{{route('customer.auth.logout')}}"><i class="czi-sign-out {{Session::get('direction') === "rtl" ? 'ml-2' : 'mr-2'}}"></i>{{\App\CPU\translate('Sign out')}}</a>
+                    </div><a class="btn btn--primary btn-sm d-none d-lg-inline-block" href="{{route('customer.auth.logout')}}"><i class="czi-sign-out {{Session::get('direction') === "rtl" ? 'ml-2' : 'mr-2'}}"></i>{{\App\CPU\translate('Sign out')}}</a>
                 </div>
                 <!-- Orders list-->
                 <div class="table-responsive font-size-md">

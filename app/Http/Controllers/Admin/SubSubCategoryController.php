@@ -80,7 +80,7 @@ class SubSubCategoryController extends Controller
             'name.required' => 'Category name is required!',
             'parent_id.required' => 'Sub Category field is required!',
         ]);
-        
+
         $category = Category::find($request->id);
         $category->name = $request->name;
         $category->slug = Str::slug($request->name);
@@ -109,7 +109,7 @@ class SubSubCategoryController extends Controller
     public function getSubCategory(Request $request)
     {
         $data = Category::where("parent_id",$request->id)->get();
-        $output="";
+        $output='<option value="" disabled selected>Select main category</option>';
         foreach($data as $row)
         {
             $output .= '<option value="'.$row->id.'">'.$row->name.'</option>';

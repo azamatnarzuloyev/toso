@@ -1,5 +1,5 @@
 {{--code improved Md. Al imrun Khandakar--}}
-<div class="navbar-tool dropdown {{Session::get('direction') === "rtl" ? 'mr-3' : 'ml-3'}}"
+<div class="navbar-tool dropdown {{Session::get('direction') === "rtl" ? 'mr-md-3' : 'ml-md-3'}}"
      style="margin-{{Session::get('direction') === "rtl" ? 'left' : 'right'}}: 6px">
     <a class="navbar-tool-icon-box bg-secondary dropdown-toggle" href="{{route('shop-cart')}}">
         <span class="navbar-tool-label">
@@ -12,11 +12,10 @@
         {{\App\CPU\Helpers::currency_converter(\App\CPU\CartManager::cart_total_applied_discount(\App\CPU\CartManager::get_cart()))}}
     </a>
     <!-- Cart dropdown-->
-    <div class="dropdown-menu dropdown-menu-{{Session::get('direction') === "rtl" ? 'left' : 'right'}}"
-         style="width: 20rem;">
+    <div class="dropdown-menu dropdown-menu-{{Session::get('direction') === "rtl" ? 'left' : 'right'}} __w-20rem ">
         <div class="widget widget-cart px-3 pt-2 pb-3">
             @if($cart->count() > 0)
-                <div style="height: 15rem;" data-simplebar data-simplebar-auto-hide="false">
+                <div class="__h-15rem" data-simplebar data-simplebar-auto-hide="false">
                     @php($sub_total=0)
                     @php($total_tax=0)
                     @foreach($cart as  $cartItem)
@@ -37,7 +36,7 @@
                                     <h6 class="widget-product-title">
                                         <a href="{{route('product',$cartItem['slug'])}}">{{Str::limit($cartItem['name'],30)}}</a></h6>
                                     @foreach(json_decode($cartItem['variations'],true) as $key =>$variation)
-                                        <span style="font-size: 14px">{{$key}} : {{$variation}}</span><br>
+                                        <span class="__text-14px">{{$key}} : {{$variation}}</span><br>
                                     @endforeach
                                     <div class="widget-product-meta">
                                         <span
@@ -70,12 +69,12 @@
                             class="czi-arrow-{{Session::get('direction') === "rtl" ? 'left mr-1 ml-n1' : 'right ml-1 mr-n1'}}"></i>
                     </a>
                 </div>
-                <a class="btn btn-primary btn-sm btn-block" href="{{route('checkout-details')}}">
+                <a class="btn btn--primary btn-sm btn-block" href="{{route('checkout-details')}}">
                     <i class="czi-card {{Session::get('direction') === "rtl" ? 'ml-2' : 'mr-2'}} font-size-base align-middle"></i>{{\App\CPU\translate('Checkout')}}
                 </a>
             @else
                 <div class="widget-cart-item">
-                    <h6 class="text-danger text-center"><i
+                    <h6 class="text-danger text-center m-0"><i
                             class="fa fa-cart-arrow-down"></i> {{\App\CPU\translate('Empty')}} {{\App\CPU\translate('Cart')}}
                     </h6>
                 </div>

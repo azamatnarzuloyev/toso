@@ -38,13 +38,13 @@
     color: black;
 }
 a {
-    color: black !important;
+    color: black;
     text-decoration: none;
-    background-color: transparent
+    background-color: transparent;
 }
 
 .page-footer {
-    background:  #373A41;
+    background: #373a41;
     color: white;
 }
 
@@ -55,7 +55,7 @@ a {
 }
 
 .social-btn i {
-    line-height: 1.90rem;
+    line-height: 1.9rem;
 }
 
 .for-margin {
@@ -67,7 +67,7 @@ a {
 }
 
 .footer-heder {
-    color: #FFFFFF;
+    color: #ffffff;
 }
 
 .widget-list-link {
@@ -78,12 +78,12 @@ a {
     border: 0.001px solid #2d3542;
 }
 
-.btn-secondary{
-    color: white!important;
+.btn-secondary {
+    color: white !important;
 }
 
-.btn-outline-primary:hover{
-    color: white!important;
+.btn-outline-primary:hover {
+    color: white !important;
 }
 
 @media (max-width: 452px) {
@@ -97,4 +97,3 @@ a {
     overflow: hidden;
     white-space: nowrap;
 }
-

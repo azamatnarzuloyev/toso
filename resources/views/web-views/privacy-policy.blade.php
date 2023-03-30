@@ -13,31 +13,15 @@
     <meta property="twitter:url" content="{{env('APP_URL')}}">
     <meta property="twitter:description" content="{!! substr($web_config['about']->value,0,100) !!}">
 
-    <style>
-        .headerTitle {
-            font-size: 25px;
-            font-weight: 700;
-            margin-top: 2rem;
-        }
-
-        .for-container {
-            width: 91%;
-            border: 1px solid #D8D8D8;
-            margin-top: 3%;
-            margin-bottom: 3%;
-        }
-
-        .for-padding {
-            padding: 3%;
-        }
-    </style>
 @endpush
 
 @section('content')
-    <div class="container for-container rtl" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
-        <h2 class="text-center mt-3 headerTitle">{{\App\CPU\translate('Privacy policy')}}</h2>
-        <div class="for-padding">
-            {!! $privacy_policy['value'] !!}
+    <div class="container py-5 rtl" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
+        <h2 class="text-center mb-3 headerTitle">{{\App\CPU\translate('privacy_policy')}}</h2>
+        <div class="card __card">
+            <div class="card-body">
+                {!! $privacy_policy['value'] !!}
+            </div>
         </div>
     </div>
 @endsection

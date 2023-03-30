@@ -8,80 +8,89 @@
 
 @section('content')
     <div class="content container-fluid">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{route('seller.dashboard.index')}}">{{\App\CPU\translate('Dashboard')}}</a>
-                </li>
-                <li class="breadcrumb-item" aria-current="page">{{\App\CPU\translate('Withdraw')}}  </li>
-            </ol>
-        </nav>
+        <!-- Page Title -->
+        <div class="mb-3">
+            <h2 class="h1 mb-0 text-capitalize d-flex align-items-center gap-2">
+                <img width="20" src="{{asset('/public/assets/back-end/img/withdraw-icon.png')}}" alt="">
+                {{\App\CPU\translate('Withdraw')}}
+            </h2>
+        </div>
+        <!-- End Page Title -->
 
-        <div class="row" style="margin-top: 20px">
+        <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h5>{{ \App\CPU\translate('Withdraw Request Table')}}
-                            <span style="color: red;">({{ $withdraw_requests->total() }})</span>
+                    <div class="card-header flex-wrap gap-2">
+                        <h5 class="mb-0 text-capitalize">{{ \App\CPU\translate('Withdraw Request Table')}}
+                            <span class="badge badge-soft-dark radius-50 fz-12 ml-1">{{ $withdraw_requests->total() }}</span>
                         </h5>
-                        <select name="withdraw_status_filter" onchange="status_filter(this.value)" class="custom-select float-right" style="width: 200px">
+                        <select name="withdraw_status_filter" onchange="status_filter(this.value)" class="custom-select max-w-200">
                             <option value="all" {{session()->has('withdraw_status_filter') && session('withdraw_status_filter') == 'all'?'selected':''}}>{{\App\CPU\translate('All')}}</option>
                             <option value="approved" {{session()->has('withdraw_status_filter') && session('withdraw_status_filter') == 'approved'?'selected':''}}>{{\App\CPU\translate('Approved')}}</option>
                             <option value="denied" {{session()->has('withdraw_status_filter') && session('withdraw_status_filter') == 'denied'?'selected':''}}>{{\App\CPU\translate('Denied')}}</option>
                             <option value="pending" {{session()->has('withdraw_status_filter') && session('withdraw_status_filter') == 'pending'?'selected':''}}>{{\App\CPU\translate('Pending')}}</option>
-
                         </select>
                     </div>
-                    <div class="card-body" style="padding: 0">
-                        <div class="table-responsive">
-                            <table id="datatable"
-                                   style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};"
-                                   class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table"
-                                   style="width: 100%">
-                                <thead class="thead-light">
+
+                    <td class="table-responsive">
+                        <table id="datatable"
+                                style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};"
+                                class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table">
+                            <thead class="thead-light thead-50 text-capitalize">
                                 <tr>
-                                    <th>{{\App\CPU\translate('SL#')}}</th>
+                                    <th>{{\App\CPU\translate('SL')}}</th>
                                     <th>{{\App\CPU\translate('amount')}}</th>
                                     <th>{{\App\CPU\translate('request_time')}}</th>
                                     <th>{{\App\CPU\translate('status')}}</th>
-                                    <th style="width: 5px">{{\App\CPU\translate('Action')}}</th>
+                                    <th class="text-center">{{\App\CPU\translate('Action')}}</th>
                                 </tr>
-                                </thead>
-                                <tbody>
+                            </thead>
+                            <tbody>
+                            @if($withdraw_requests->count() > 0)
                                 @foreach($withdraw_requests as $key=>$withdraw_request)
                                     <tr>
-                                        <td scope="row">{{$withdraw_requests->firstitem()+$key}}</td>
+                                        <td>{{$withdraw_requests->firstitem()+$key}}</td>
                                         <td>{{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($withdraw_request['amount']))}}</td>
                                         <td>{{date("F jS, Y", strtotime($withdraw_request->created_at))}}</td>
                                         <td>
                                             @if($withdraw_request->approved==0)
-                                                <label class="badge badge-primary">{{\App\CPU\translate('Pending')}}</label>
+                                                <label class="badge badge-soft--primary">{{\App\CPU\translate('Pending')}}</label>
                                             @elseif($withdraw_request->approved==1)
-                                                <label class="badge badge-success">{{\App\CPU\translate('Approved')}}</label>
+                                                <label class="badge badge-soft-success">{{\App\CPU\translate('Approved')}}</label>
                                             @else
-                                                <label class="badge badge-danger">{{\App\CPU\translate('Denied')}}</label>
+                                                <label class="badge badge-soft-danger">{{\App\CPU\translate('Denied')}}</label>
                                             @endif
                                         </td>
-                                        <td>
+                                        <td class="text-center">
                                             @if($withdraw_request->approved==0)
                                                 <button id="{{route('seller.business-settings.withdraw.cancel', [$withdraw_request['id']])}}"
                                                         onclick="close_request('{{ route('seller.business-settings.withdraw.cancel', [$withdraw_request['id']]) }}')"
-                                                   class="btn btn-primary btn-sm">
+                                                    class="btn btn--primary btn-sm">
                                                     {{\App\CPU\translate('close')}}
                                                 </button>
                                             @else
-                                                <span class="btn btn-primary btn-sm disabled">
+                                                <span class="btn btn--primary btn-sm disabled">
                                                     {{\App\CPU\translate('close')}}
                                                 </span>
                                             @endif
                                         </td>
                                     </tr>
                                 @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                            @else
+                                <td colspan="5" class="text-center">
+                                    <img class="mb-3 w-160" src="{{asset('public/assets/back-end')}}/svg/illustrations/sorry.svg" alt="Image Description">
+                                    <p class="mb-0">{{\App\CPU\translate('No data to show')}}</p>
+                                </td>
+                            @endif
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="card-footer">
-                        {{$withdraw_requests->links()}}
+
+                    <div class="table-responsive mt-4">
+                        <div class="px-4 d-flex justify-content-lg-end">
+                            <!-- Pagination -->
+                            {{$withdraw_requests->links()}}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -129,7 +138,7 @@
               confirmButtonText: "{{\App\CPU\translate('OK')}}",
           })
               .then((willDelete) => {
-                  if (willDelete) {
+                  if (willDelete.value) {
                       window.location.href = (route_name);
                   }
               });

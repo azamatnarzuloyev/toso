@@ -16,28 +16,16 @@
     <style>
         .active{
             background: {{$web_config['secondary_color']}};
-            color: gray!important;
         }
-        .active-category-text{
-            color: white!important;
-        }
-
-        .side-category-bar{
-            border: 1px solid #0000001f;
-            border-radius: 6px;
-            cursor: pointer;
-            background: white;
-        }
-
     </style>
 @endpush
 
 @section('content')
     <!-- Page Content-->
-    <div class="container p-3 rtl" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
+    <div class="container p-3 rtl __inline-52" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
         <div class="row">
             <div class="col-md-3"></div>
-            <div class="col-md-9">
+            <div class="col-md-9 text-center">
                 <h4>{{\App\CPU\translate('category')}}</h4>
             </div>
         </div>
@@ -46,10 +34,10 @@
             <div class="col-lg-3 col-md-4">
                 @foreach(\App\CPU\CategoryManager::parents() as $category)
                     <div class="card-header mb-2 p-2 side-category-bar" onclick="get_categories('{{route('category-ajax',[$category['id']])}}')">
-                        <img src="{{asset("storage/app/public/category/$category->icon")}}" onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'" style="width: 18px; height: 18px; margin-right: 5px;">
-                        {{-- <label class="ml-2 category-name-{{$key}}" style="cursor: pointer"> --}}
+                        <img src="{{asset("storage/app/public/category/$category->icon")}}" onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'" class="__img-18 mr-1">
+
                             {{$category['name']}}
-                        {{-- </label> --}}
+
                     </div>
                 @endforeach
             </div>

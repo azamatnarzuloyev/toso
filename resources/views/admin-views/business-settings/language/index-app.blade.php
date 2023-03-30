@@ -5,19 +5,10 @@
 @push('css_or_js')
     <link href="{{ asset('public/assets/select2/css/select2.min.css')}}" rel="stylesheet">
     <link href="{{ asset('public/assets/back-end/css/custom.css')}}" rel="stylesheet">
-    <style>
-        .image-preview {
-            height: 17px!important;
-            display: inline-block!important;
-            margin-right: 5px!important;
-            margin-left: 3px!important;
-            margin-top: -5px!important;
-        }
-    </style>
 @endpush
 
 @section('content')
-    <div class="content container-fluid">
+    <div class="content container-fluid __inline-3">
         <!-- Page Heading -->
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -62,7 +53,7 @@
                                 </select>
                             </div>
                             <button type="submit"
-                                    class="btn btn-primary float-right ml-3">{{\App\CPU\translate('Save')}}</button>
+                                    class="btn btn--primary float-right ml-3">{{\App\CPU\translate('Save')}}</button>
                         </form>
                     </div>
                 </div>

@@ -1,159 +1,90 @@
-<div class="col-sm-6 col-lg-3 mb-3 mb-lg-5">
+<div class="col-sm-6 col-lg-3">
     <!-- Card -->
-    <a class="card card-hover-shadow h-100" href="{{route('seller.orders.list',['pending'])}}" style="background: #FFFFFF;">
-        <div class="card-body">
-            <div class="flex-between align-items-center mb-1">
-                <div style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
-                    <h6 class="card-subtitle" style="color: #F14A16!important;">{{\App\CPU\translate('pending')}}</h6>
-                    <span class="card-title h2" style="color: #F14A16!important;">
-                        {{$data['pending']}}
-                    </span>
-                </div>
-                <div class="mt-2">
-                    <i class="tio-shopping-cart" style="font-size: 30px;color: #F14A16;"></i>
-                </div>
-            </div>
-            <!-- End Row -->
+    <a class="order-stats order-stats_pending" href="{{route('seller.orders.list',['pending'])}}">
+        <div class="order-stats__content">
+            <img width="20" src="{{asset('/public/assets/back-end/img/pending.png')}}" alt="">
+            <h6 class="order-stats__subtitle">{{\App\CPU\translate('pending')}}</h6>
         </div>
+        <span class="order-stats__title">{{$data['pending']}}</span>
+    </a>
+    <!-- End Card -->
+</div>
+<div class="col-sm-6 col-lg-3">
+    <!-- Card -->
+    <a class="order-stats order-stats_confirmed" href="{{route('seller.orders.list',['confirmed'])}}">
+        <div class="order-stats__content">
+            <img width="20" src="{{asset('/public/assets/back-end/img/confirmed.png')}}" alt="">
+            <h6 class="order-stats__subtitle">{{\App\CPU\translate('Confirmed')}}</h6>
+        </div>
+        <span class="order-stats__title">{{$data['confirmed']}}</span>
+    </a>
+    <!-- End Card -->
+</div>
+<div class="col-sm-6 col-lg-3">
+    <!-- Card -->
+    <a class="order-stats order-stats_packaging" href="{{route('seller.orders.list',['processing'])}}">
+        <div class="order-stats__content">
+            <img width="20" src="{{asset('/public/assets/back-end/img/packaging.png')}}" alt="">
+            <h6 class="order-stats__subtitle">{{\App\CPU\translate('packaging')}}</h6>
+        </div>
+        <span class="order-stats__title">{{$data['processing']}}</span>
+    </a>
+    <!-- End Card -->
+</div>
+<div class="col-sm-6 col-lg-3">
+    <!-- Card -->
+    <a class="order-stats order-stats_out-for-delivery" href="{{route('seller.orders.list',['out_for_delivery'])}}">
+        <div class="order-stats__content">
+            <img width="20" src="{{asset('/public/assets/back-end/img/out-of-delivery.png')}}" alt="">
+            <h6 class="order-stats__subtitle">{{\App\CPU\translate('Out_For_Delivery')}}</h6>
+        </div>
+        <span class="order-stats__title">{{$data['out_for_delivery']}}</span>
     </a>
     <!-- End Card -->
 </div>
 
-<div class="col-sm-6 col-lg-3 mb-3 mb-lg-5">
-    <!-- Card -->
-    <a class="card card-hover-shadow h-100" href="{{route('seller.orders.list',['confirmed'])}}" style="background: #FFFFFF;">
-        <div class="card-body">
-            <div class="flex-between align-items-center mb-1">
-                <div style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
-                    <h6 class="card-subtitle" style="color: #F14A16!important;">{{\App\CPU\translate('confirmed')}}</h6>
-                    <span class="card-title h2" style="color: #F14A16!important;">
-                         {{$data['confirmed']}}
-                     </span>
-                </div>
 
-                <div class="mt-2">
-                    <i class="tio-checkmark-circle" style="font-size: 30px;color: #F14A16"></i>
-                </div>
-            </div>
-            <!-- End Row -->
+<div class="ol-sm-6 col-lg-3">
+    <!-- Card -->
+    <a class="order-stats order-stats_delivered" href="{{route('seller.orders.list',['delivered'])}}">
+        <div class="order-stats__content">
+            <img width="20" src="{{asset('/public/assets/back-end/img/delivered.png')}}" alt="">
+            <h6 class="order-stats__subtitle">{{\App\CPU\translate('delivered')}}</h6>
         </div>
+        <span class="order-stats__title">{{$data['delivered']}}</span>
     </a>
     <!-- End Card -->
 </div>
-
-<div class="col-sm-6 col-lg-3 mb-3 mb-lg-5">
+<div class="ol-sm-6 col-lg-3">
     <!-- Card -->
-    <a class="card card-hover-shadow h-100" href="{{route('seller.orders.list',['processing'])}}" style="background: #FFFFFF">
-        <div class="card-body">
-            <div class="flex-between align-items-center gx-2 mb-1">
-                <div style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
-                    <h6 class="card-subtitle" style="color: #F14A16!important;">{{\App\CPU\translate('Processing')}}</h6>
-                    <span class="card-title h2" style="color: #F14A16!important;">
-                        {{$data['processing']}}
-                    </span>
-                </div>
-
-                <div class="mt-2">
-                    <i class="tio-time" style="font-size: 30px;color: #F14A16;"></i>
-                </div>
-            </div>
-            <!-- End Row -->
+    <a class="order-stats order-stats_canceled" href="{{route('seller.orders.list',['canceled'])}}">
+        <div class="order-stats__content">
+            <img width="20" src="{{asset('/public/assets/back-end/img/canceled.png')}}" alt="">
+            <h6 class="order-stats__subtitle">{{\App\CPU\translate('canceled')}}</h6>
         </div>
+        <span class="order-stats__title">{{$data['canceled']}}</span>
     </a>
     <!-- End Card -->
 </div>
-
-<div class="col-sm-6 col-lg-3 mb-3 mb-lg-5">
+<div class="ol-sm-6 col-lg-3">
     <!-- Card -->
-    <a class="card card-hover-shadow h-100" href="{{route('seller.orders.list',['out_for_delivery'])}}" style="background: #FFFFFF">
-        <div class="card-body">
-            <div class="flex-between align-items-center gx-2 mb-1">
-                <div style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
-                    <h6 class="card-subtitle" style="color: #F14A16!important;">{{\App\CPU\translate('out_for_delivery')}}</h6>
-                    <span class="card-title h2" style="color: #F14A16!important;">
-                        {{$data['out_for_delivery']}}
-                    </span>
-                </div>
-
-                <div class="mt-2">
-                    <i class="tio-bike" style="font-size: 30px;color: white"></i>
-                </div>
-            </div>
-            <!-- End Row -->
+    <a class="order-stats order-stats_returned" href="{{route('seller.orders.list',['returned'])}}">
+        <div class="order-stats__content">
+            <img width="20" src="{{asset('/public/assets/back-end/img/returned.png')}}" alt="">
+            <h6 class="order-stats__subtitle">{{\App\CPU\translate('returned')}}</h6>
         </div>
+        <span class="order-stats__title">{{$data['returned']}}</span>
     </a>
     <!-- End Card -->
 </div>
-
-<div class="col-12">
-    <div class="card card-body" style="background: #FFFFFF!important;">
-        <div class="row gx-lg-4">
-            <div class="col-sm-6 col-lg-3">
-                <div class="media flex-between align-items-center" style="cursor: pointer"
-                     onclick="location.href='{{route('seller.orders.list',['delivered'])}}'">
-                    <div class="media-body" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
-                        <h6 class="card-subtitle">{{\App\CPU\translate('delivered')}}</h6>
-                        <span class="card-title h3">{{$data['delivered']}}</span>
-                    </div>
-                    <div>
-                        <span class="icon icon-sm icon-soft-secondary icon-circle ml-3">
-                            <i class="tio-checkmark-circle-outlined"></i>
-                        </span>
-                    </div>
-                </div>
-                <div class="d-lg-none">
-                    <hr>
-                </div>
-            </div>
-
-            <div class="col-sm-6 col-lg-3 column-divider-sm">
-                <div class="media flex-between align-items-center" style="cursor: pointer"
-                     onclick="location.href='{{route('seller.orders.list',['canceled'])}}'">
-                    <div class="media-body" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
-                        <h6 class="card-subtitle">{{\App\CPU\translate('canceled')}}</h6>
-                        <span class="card-title h3">{{$data['canceled']}}</span>
-                    </div>
-                    <span class="icon icon-sm icon-soft-secondary icon-circle ml-3">
-                      <i class="tio-remove-from-trash"></i>
-                    </span>
-                </div>
-                <div class="d-lg-none">
-                    <hr>
-                </div>
-            </div>
-
-            <div class="col-sm-6 col-lg-3 column-divider-lg">
-                <div class="media flex-between align-items-center" style="cursor: pointer"
-                     onclick="location.href='{{route('seller.orders.list',['returned'])}}'">
-                    <div class="media-body" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
-                        <h6 class="card-subtitle">{{\App\CPU\translate('returned')}}</h6>
-                        <span class="card-title h3">{{$data['returned']}}</span>
-                    </div>
-                    <span class="icon icon-sm icon-soft-secondary icon-circle ml-3">
-                      <i class="tio-history"></i>
-                    </span>
-                </div>
-                <div class="d-lg-none">
-                    <hr>
-                </div>
-            </div>
-
-            <div class="col-sm-6 col-lg-3 column-divider-sm">
-                <div class="media flex-between align-items-center" style="cursor: pointer"
-                     onclick="location.href='{{route('seller.orders.list',['failed'])}}'">
-                    <div class="media-body" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
-                        <h6 class="card-subtitle">{{\App\CPU\translate('failed')}}</h6>
-                        <span
-                            class="card-title h3">{{$data['failed']}}</span>
-                    </div>
-                    <span class="icon icon-sm icon-soft-secondary icon-circle ml-3">
-                      <i class="tio-message-failed"></i>
-                    </span>
-                </div>
-                <div class="d-lg-none">
-                    <hr>
-                </div>
-            </div>
+<div class="ol-sm-6 col-lg-3">
+    <!-- Card -->
+    <a class="order-stats order-stats_failed" href="{{route('seller.orders.list',['failed'])}}">
+        <div class="order-stats__content">
+            <img width="20" src="{{asset('/public/assets/back-end/img/failed-to-deliver.png')}}" alt="">
+            <h6 class="order-stats__subtitle">{{\App\CPU\translate('Failed_To_Delivery')}}</h6>
         </div>
-    </div>
+        <span class="order-stats__title">{{$data['failed']}}</span>
+    </a>
+    <!-- End Card -->
 </div>

@@ -13,41 +13,20 @@
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&amp;display=swap" rel="stylesheet">
     <!-- CSS Implementing Plugins -->
+    <link rel="stylesheet" href="{{asset('public/assets/back-end')}}/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{asset('public/assets/back-end')}}/css/vendor.min.css">
     <link rel="stylesheet" href="{{asset('public/assets/back-end')}}/vendor/icon-set/style.css">
     <!-- CSS Front Template -->
-    <link rel="stylesheet" href="{{asset('public/assets/back-end')}}/css/theme.minc619.css?v=1.0">
     <link rel="stylesheet" href="{{asset('public/assets/back-end')}}/css/toastr.css">
-    <style>
-        .input-icons i {
-            position: absolute;
-            cursor: pointer;
-        }
-
-        .input-icons {
-            width: 100%;
-            margin-bottom: 10px;
-        }
-
-        .icon {
-            padding: 9% 0 0 0;
-            min-width: 40px;
-        }
-
-        .input-field {
-            width: 94%;
-            padding: 10px 0 10px 10px;
-            text-align: center;
-            border-right-style: none;
-        }
-    </style>
+    <link rel="stylesheet" href="{{asset('public/assets/back-end')}}/css/theme.minc619.css?v=1.0">
+    <link rel="stylesheet" href="{{asset('public/assets/back-end')}}/css/style.css">
 </head>
 
 <body>
 <!-- ========== MAIN CONTENT ========== -->
-<main id="content" role="main" class="main" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
-    <div class="position-fixed top-0 right-0 left-0 bg-img-hero"
-         style="height: 32rem; background-image: url({{asset('public/assets/admin')}}/svg/components/abstract-bg-4.svg);">
+<main id="content" role="main" class="main">
+    <div class="position-fixed top-0 right-0 left-0 bg-img-hero __h-32rem"
+         style="background-image: url({{asset('public/assets/admin')}}/svg/components/abstract-bg-4.svg);">
         <!-- SVG Bottom Shape -->
         <figure class="position-absolute right-0 bottom-0 left-0">
             <svg preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 1921 273">
@@ -61,9 +40,8 @@
     <div class="container py-5 py-sm-7">
         @php($e_commerce_logo=\App\Model\BusinessSetting::where(['type'=>'company_web_logo'])->first()->value)
         <a class="d-flex justify-content-center mb-5" href="javascript:">
-            <img class="z-index-2" src="{{asset("storage/app/public/company/".$e_commerce_logo)}}" alt="Logo"
-                 onerror="this.src='{{asset('public/assets/back-end/img/400x400/img2.jpg')}}'"
-                 style="width: 8rem;">
+            <img class="z-index-2" height="40" src="{{asset("storage/app/public/company/".$e_commerce_logo)}}" alt="Logo"
+                 onerror="this.src='{{asset('public/assets/back-end/img/400x400/img2.jpg')}}'">
         </a>
 
         <div class="row justify-content-center">
@@ -81,7 +59,7 @@
                                     <center><h1 class="h4 text-gray-900 mb-4">{{\App\CPU\translate('welcome_back_to_seller_login')}}</h1>
                                     </center>
                                 </div>
-                                
+
                             </div>
 
                             <!-- Form Group -->
@@ -89,7 +67,6 @@
                                 <label class="input-label" for="signinSrEmail">{{\App\CPU\translate('your_email')}}</label>
 
                                 <input type="email" class="form-control form-control-lg" name="email" id="signinSrEmail"
-                                       style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};"
                                        tabindex="1" placeholder="email@address.com" aria-label="email@address.com"
                                        required data-msg="Please enter a valid email address.">
                             </div>
@@ -98,7 +75,7 @@
                             <!-- Form Group -->
                             <div class="js-form-message form-group">
                                 <label class="input-label" for="signupSrPassword" tabindex="0">
-                                    <span class="d-flex justify-content-between align-items-center" style="direction: {{Session::get('direction')}}">
+                                    <span class="d-flex justify-content-between align-items-center">
                                       {{\App\CPU\translate('password')}}
                                             <a href="{{route('seller.auth.forgot-password')}}">
                                                 {{\App\CPU\translate('forgot_password')}}
@@ -108,7 +85,6 @@
 
                                 <div class="input-group input-group-merge">
                                     <input type="password" class="js-toggle-password form-control form-control-lg"
-                                           style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};"
                                            name="password" id="signupSrPassword" placeholder="8+ characters required"
                                            aria-label="8+ characters required" required
                                            data-msg="Your password is invalid. Please try again."
@@ -141,24 +117,24 @@
                             {{-- recaptcha --}}
                             @php($recaptcha = \App\CPU\Helpers::get_business_settings('recaptcha'))
                             @if(isset($recaptcha) && $recaptcha['status'] == 1)
-                                <div id="recaptcha_element" style="width: 100%;" data-type="image"></div>
+                                <div id="recaptcha_element" class="w-100" data-type="image"></div>
                                 <br/>
                             @else
-                                <div class="row p-2">
+                                <div class="row py-2">
                                     <div class="col-6 pr-0">
-                                        <input type="text" class="form-control form-control-lg" name="default_captcha_value" value=""
-                                            placeholder="{{\App\CPU\translate('Enter captcha value')}}" style="border: none" autocomplete="off">
+                                        <input type="text" class="form-control __h-40" name="default_captcha_value" value=""
+                                            placeholder="{{\App\CPU\translate('Enter captcha value')}}" class="border-0" autocomplete="off">
                                     </div>
-                                    <div class="col-6 input-icons" style="background-color: #FFFFFF; border-radius: 5px;">
-                                        <a onclick="javascript:re_captcha();">
-                                            <img src="{{ URL('/seller/auth/code/captcha/1') }}" class="input-field" id="default_recaptcha_id" style="display: inline;width: 90%; height: 75%">
-                                            <i class="tio-refresh icon"></i>
+                                <div class="col-6 input-icons mb-2 w-100 rounded bg-white">
+                                        <a onclick="javascript:re_captcha();"  class="d-flex align-items-center align-items-center">
+                                            <img src="{{ URL('/seller/auth/code/captcha/1') }}" class="rounded __h-40" id="default_recaptcha_id">
+                                        <i class="tio-refresh position-relative cursor-pointer p-2"></i>
                                         </a>
                                     </div>
                                 </div>
                             @endif
 
-                            <button type="submit" class="btn btn-lg btn-block btn-primary">{{\App\CPU\translate('sign_in')}}</button>
+                            <button type="submit" class="btn btn-lg btn-block btn--primary">{{\App\CPU\translate('sign_in')}}</button>
                         </form>
                         <!-- End Form -->
                     </div>
@@ -170,7 +146,7 @@
                                     <span>{{\App\CPU\translate('Password')}} : 12345678</span>
                                 </div>
                                 <div class="col-2">
-                                    <button class="btn btn-primary" onclick="copy_cred()"><i class="tio-copy"></i>
+                                    <button class="btn btn--primary" onclick="copy_cred()"><i class="tio-copy"></i>
                                     </button>
                                 </div>
                             </div>

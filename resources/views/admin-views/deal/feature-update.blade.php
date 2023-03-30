@@ -6,21 +6,19 @@
 
 @section('content')
 <div class="content container-fluid">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{ \App\CPU\translate('Dashboard')}}</a></li>
-            <li class="breadcrumb-item" aria-current="page">{{ \App\CPU\translate('feature_deal')}}</li>
-            <li class="breadcrumb-item">{{\App\CPU\translate('Update Deal')}}</li>
-        </ol>
-    </nav>
+    <!-- Page Title -->
+    <div class="mb-3">
+        <h2 class="h1 mb-0 text-capitalize d-flex gap-2 align-items-center">
+            <img width="20" src="{{asset('/public/assets/back-end/img/featured_deal.png')}}" alt="">
+            {{\App\CPU\translate('update_feature_deal')}}
+        </h2>
+    </div>
+    <!-- End Page Title -->
 
     <!-- Content Row -->
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header">
-                    {{ \App\CPU\translate('deal_form')}}
-                </div>
                 <div class="card-body">
                     <form action="{{route('admin.deal.update',[$deal['id']])}}" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};" method="post">
                         @csrf
@@ -29,9 +27,9 @@
                         @php($default_lang = 'en')
 
                         @php($default_lang = json_decode($language)[0])
-                        <ul class="nav nav-tabs mb-4">
+                        <ul class="nav nav-tabs w-fit-content mb-4">
                             @foreach(json_decode($language) as $lang)
-                                <li class="nav-item">
+                                <li class="nav-item text-capitalize">
                                     <a class="nav-link lang_link {{$lang == $default_lang? 'active':''}}"
                                        href="#"
                                        id="{{$lang}}-link">{{\App\CPU\Helpers::get_language_name($lang).'('.strtoupper($lang).')'}}</a>
@@ -54,7 +52,7 @@
                                 <div class="row {{$lang != $default_lang ? 'd-none':''}} lang_form" id="{{$lang}}-form">
                                     <input type="text" name="deal_type" value="feature_deal"  class="d-none">
                                     <div class="col-md-12">
-                                        <label for="name">{{ \App\CPU\translate('title')}}  ({{strtoupper($lang)}})</label>
+                                        <label for="name" class="title-color text-capitalize">{{ \App\CPU\translate('title')}}  ({{strtoupper($lang)}})</label>
                                         <input type="text" name="title[]" class="form-control" id="title"
                                                value="{{$lang==$default_lang?$deal['title']:($translate[$lang]['title']??'')}}"
                                                placeholder="{{\App\CPU\translate('Ex')}} : {{\App\CPU\translate('LUX')}}"
@@ -64,13 +62,13 @@
                                 <input type="hidden" name="lang[]" value="{{$lang}}" id="lang">
                             @endforeach
                             <div class="row">
-                                <div class="col-md-6">
-                                    <label for="name">{{ \App\CPU\translate('start_date')}}</label>
+                                <div class="col-md-6 mt-3">
+                                    <label for="name" class="title-color text-capitalize">{{ \App\CPU\translate('start_date')}}</label>
                                     <input type="date" value="{{date('Y-m-d',strtotime($deal['start_date']))}}" name="start_date" required
                                            class="form-control">
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="name">{{ \App\CPU\translate('end_date')}}</label>
+                                <div class="col-md-6 mt-3">
+                                    <label for="name" class="title-color text-capitalize">{{ \App\CPU\translate('end_date')}}</label>
                                     <input type="date" value="{{date('Y-m-d', strtotime($deal['end_date']))}}" name="end_date" required
                                            class="form-control">
                                 </div>
@@ -78,9 +76,9 @@
 
                         </div>
 
-                        <div class="pl-0">
-                            <button type="submit"
-                                    class="btn btn-primary float-right">{{ \App\CPU\translate('update')}}</button>
+                        <div class="d-flex justify-content-end gap-3">
+                            <button type="reset" id="reset" class="btn btn-secondary">{{ \App\CPU\translate('reset')}}</button>
+                            <button type="submit" class="btn btn--primary">{{ \App\CPU\translate('update')}}</button>
                         </div>
                     </form>
                 </div>

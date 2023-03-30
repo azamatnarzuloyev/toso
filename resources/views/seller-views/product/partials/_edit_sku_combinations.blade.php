@@ -22,7 +22,7 @@
         <tr>
             <td>
                 <label for="" class="control-label">{{ $combination['type'] }}</label>
-                <input value="{{ $combination['type'] }}" name="type[]" style="display: none">
+                <input value="{{ $combination['type'] }}" name="type[]" class="d-none">
             </td>
             <td>
                 <input type="number" name="price_{{ $combination['type'] }}"

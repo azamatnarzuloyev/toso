@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{Session::get('direction')}}" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{Session::get('direction')}}"
+      style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -12,22 +13,27 @@
     <!-- Favicon -->
     <link rel="shortcut icon" href="">
     <!-- Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&amp;display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap"
+          rel="stylesheet">
     <!-- CSS Implementing Plugins -->
     <link rel="stylesheet" href="{{asset('public/assets/back-end')}}/css/vendor.min.css">
+    <link rel="stylesheet" href="{{asset('public/assets/back-end')}}/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{asset('public/assets/back-end')}}/css/custom.css">
 
 
     <link rel="stylesheet" href="{{asset('public/assets/back-end')}}/vendor/icon-set/style.css">
     <!-- CSS Front Template -->
     <link rel="stylesheet" href="{{asset('public/assets/back-end')}}/css/theme.minc619.css?v=1.0">
+    <link rel="stylesheet" href="{{asset('public/assets/back-end')}}/css/style.css">
     @if(Session::get('direction') === "rtl")
         <link rel="stylesheet" href="{{asset('public/assets/back-end')}}/css/menurtl.css">
     @endif
     {{-- light box --}}
     <link rel="stylesheet" href="{{asset('public/css/lightbox.css')}}">
     @stack('css_or_js')
-    <style>
+    <!-- <style>
         :root {
             --theameColor: #045cff;
         }
@@ -35,140 +41,11 @@
         .rtl {
             direction: {{ Session::get('direction') }};
         }
-        .flex-start {
-            display: flex;
-            justify-content:flex-start;
-        }
-        .flex-between {
-            display: flex;
-            justify-content:space-between;
-        }
-        .row-reverse {
-            display: flex;
-            flex-direction: row-reverse;
-        }
-        .row-center {
-            display: flex;
-            justify-content:center;
-        }
 
         .select2-results__options {
             text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};
         }
-
-        .scroll-bar {
-            max-height: calc(100vh - 100px);
-            overflow-y: auto !important;
-        }
-
-        ::-webkit-scrollbar-track {
-            box-shadow: inset 0 0 1px #cfcfcf;
-            /*border-radius: 5px;*/
-        }
-
-        ::-webkit-scrollbar {
-            width: 3px !important;
-            height: 3px !important;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            /*border-radius: 5px;*/
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #003638;
-        }
-
-        @media only screen and (max-width: 768px) {
-            /* For mobile phones: */
-            .map-warper {
-                height: 250px;
-                padding-bottom: 10px;
-            }
-            
-        }
-
-        
-
-        .deco-none {
-            color: inherit;
-            text-decoration: inherit;
-        }
-
-        .qcont:first-letter {
-            text-transform: capitalize
-        }
-    </style>
-    <style>
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 48px;
-            height: 23px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 15px;
-            width: 15px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        input:checked + .slider {
-            background-color: #377dff;
-        }
-
-        input:focus + .slider {
-            box-shadow: 0 0 1px #377dff;
-        }
-
-        input:checked + .slider:before {
-            -webkit-transform: translateX(26px);
-            -ms-transform: translateX(26px);
-            transform: translateX(26px);
-        }
-
-        /* Rounded sliders */
-        .slider.round {
-            border-radius: 34px;
-        }
-
-        .slider.round:before {
-            border-radius: 50%;
-        }
-        @media only screen and (min-width: 768px) {
-            .view-web-site-info {
-                display: none;
-            }
-        
-        }
-        
-
-    </style>
+    </style> -->
     <script
         src="{{asset('public/assets/back-end')}}/vendor/hs-navbar-vertical-aside/hs-navbar-vertical-aside-mini-cache.js"></script>
     <link rel="stylesheet" href="{{asset('public/assets/back-end')}}/css/toastr.css">
@@ -178,15 +55,16 @@
 <!-- Builder -->
 @include('layouts.back-end.partials._front-settings')
 <!-- End Builder -->
+<span class="d-none" id="placeholderImg" data-img="{{asset('public/assets/back-end/img/400x400/img3.png')}}"></span>
 {{--loader--}}
 <div class="row">
-    <div class="col-12" style="margin-top:10rem;position: fixed;z-index: 9999;">
-        <div id="loading" style="display: none;">
-           <center>
-            <img width="200"
-                 src="{{asset('storage/app/public/company')}}/{{\App\CPU\Helpers::get_business_settings('loader_gif')}}"
-                 onerror="this.src='{{asset('public/assets/front-end/img/loader.gif')}}'">
-           </center>
+    <div class="col-12 position-fixed z-9999 mt-10rem">
+        <div id="loading" class="d--none">
+            <center>
+                <img width="200"
+                     src="{{asset('storage/app/public/company')}}/{{\App\CPU\Helpers::get_business_settings('loader_gif')}}"
+                     onerror="this.src='{{asset('public/assets/front-end/img/loader.gif')}}'">
+            </center>
         </div>
     </div>
 </div>
@@ -198,14 +76,14 @@
 
 <!-- END ONLY DEV -->
 
-<main id="content" role="main" class="main pointer-event" style="background-color: #ffffff">
+<main id="content" role="main" class="main pointer-event">
     <!-- Content -->
-@yield('content')
-<!-- End Content -->
+    @yield('content')
+    <!-- End Content -->
 
     <!-- Footer -->
-@include('layouts.back-end.partials._footer')
-<!-- End Footer -->
+    @include('layouts.back-end.partials._footer')
+    <!-- End Footer -->
 
     @include('layouts.back-end.partials._modals')
 
@@ -237,8 +115,55 @@
 @endif
 <!-- JS Plugins Init. -->
 <script>
-
     $(document).on('ready', function () {
+        "use strict"
+
+        // Convert SVG code
+        // =======================================================
+        $("img.svg").each(function () {
+            var $img = jQuery(this);
+            var imgID = $img.attr("id");
+            var imgClass = $img.attr("class");
+            var imgURL = $img.attr("src");
+
+            jQuery.get(
+                imgURL,
+                function (data) {
+                    // Get the SVG tag, ignore the rest
+                    var $svg = jQuery(data).find("svg");
+
+                    // Add replaced image's ID to the new SVG
+                    if (typeof imgID !== "undefined") {
+                        $svg = $svg.attr("id", imgID);
+                    }
+                    // Add replaced image's classes to the new SVG
+                    if (typeof imgClass !== "undefined") {
+                        $svg = $svg.attr("class", imgClass + " replaced-svg");
+                    }
+
+                    // Remove any invalid XML tags as per http://validator.w3.org
+                    $svg = $svg.removeAttr("xmlns:a");
+
+                    // Check if the viewport is set, else we gonna set it if we can.
+                    if (
+                        !$svg.attr("viewBox") &&
+                        $svg.attr("height") &&
+                        $svg.attr("width")
+                    ) {
+                        $svg.attr(
+                            "viewBox",
+                            "0 0 " + $svg.attr("height") + " " + $svg.attr("width")
+                        );
+                    }
+
+                    // Replace image with new SVG
+                    $img.replaceWith($svg);
+                },
+                "xml"
+            );
+        });
+
+
         // ONLY DEV
         // =======================================================
         if (window.localStorage.getItem('hs-builder-popover') === null) {
@@ -355,8 +280,13 @@
     });
 </script>
 <script>
-    function openInfoWeb()
-    {
+    $("#reset").on('click', function () {
+        let placeholderImg = $("#placeholderImg").data('img');
+        $('#viewer').attr('src', placeholderImg);
+        $('.spartan_remove_row').click();
+    });
+
+    function openInfoWeb() {
         var x = document.getElementById("website_info");
         if (x.style.display === "none") {
             x.style.display = "block";
@@ -386,6 +316,7 @@
     }
 </script>
 <script>
+    @if(\App\CPU\Helpers::module_permission_check('order_management') && env('APP_MODE')!='dev')
     setInterval(function () {
         $.get({
             url: '{{route('admin.get-order-data')}}',
@@ -399,6 +330,7 @@
             },
         });
     }, 10000);
+    @endif
 
     function check_order() {
         location.href = '{{route('admin.orders.list',['status'=>'all'])}}';
@@ -475,12 +407,17 @@
 
 <!-- ck editor -->
 
-<script>
+<!-- <script>
     initSample();
-</script>
+</script> -->
 
 <script>
-    
+
+</script>
+<script>
+    function getRndInteger() {
+        return Math.floor(Math.random() * 90000) + 100000;
+    }
 </script>
 </body>
 </html>

@@ -8,17 +8,19 @@
 @section('content')
     <div class="content container-fluid">
         <!-- Page Heading -->
-        <nav aria-label="breadcrumb" style="width:100%; text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
+        <nav aria-label="breadcrumb" class="w-100"
+             style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{\App\CPU\translate('Dashboard')}}</a>
+                <li class="breadcrumb-item"><a
+                        href="{{route('admin.dashboard')}}">{{\App\CPU\translate('Dashboard')}}</a>
                 </li>
                 <li class="breadcrumb-item" aria-current="page">{{\App\CPU\translate('Language')}}</li>
             </ol>
         </nav>
 
-        <div class="row" style="margin-top: 20px">
+        <div class="row __mt-20">
             <div class="col-md-12">
-                <div class="card" style="width:100%; text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
+                <div class="card" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
                     <div class="card-header">
                         <h5>{{\App\CPU\translate('language_content_table')}}</h5>
                         <a href="{{route('admin.business-settings.language.index')}}"
@@ -31,34 +33,49 @@
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                 <thead>
                                 <tr>
-                                    <th scope="col">{{\App\CPU\translate('SL#')}}</th>
-                                    <th scope="col">{{\App\CPU\translate('key')}}</th>
-                                    <th scope="col">{{\App\CPU\translate('value')}}</th>
-                                    <th scope="col"></th>
-                                {{--<th scope="col"></th>--}}
+                                    <th>{{\App\CPU\translate('SL#')}}</th>
+                                    <th style="width: 400px">{{\App\CPU\translate('key')}}</th>
+                                    <th style="min-width: 300px">{{\App\CPU\translate('value')}}</th>
+                                    <th>{{\App\CPU\translate('auto_translate')}}</th>
+                                    <th>{{\App\CPU\translate('update')}}</th>
                                 </tr>
                                 </thead>
 
                                 <tbody>
-                                @foreach($lang_data as $count=>$language)
-                                    <tr id="lang-{{$language['key']}}">
-                                        <td>{{$count+1}}</td>
+                                @php($count=0)
+                                @foreach($full_data as $key=>$value)
+                                    @php($count++)
+                                    <tr id="lang-{{$count}}">
+                                        <td>{{$count}}</td>
                                         <td>
-                                            <input type="text" name="key[]" value="{{$language['key']}}" hidden>
-                                            <label>{{$language['key']}}</label>
+                                            @php($key=\App\CPU\Helpers::remove_invalid_charcaters($key))
+                                            <input type="text" name="key[]"
+                                                   value="{{$key}}" hidden>
+                                            <label>{{$key}}</label>
                                         </td>
                                         <td>
                                             <input type="text" class="form-control" name="value[]"
-                                                   id="value-{{$count+1}}"
-                                                   value="{{$language['value']}}">
+                                                   id="value-{{$count}}"
+                                                   value="{{$value}}">
                                         </td>
-                                        <td style="width: 100px">
+                                        <td class="__w-100px">
                                             <button type="button"
-                                                    onclick="update_lang('{{$language['key']}}',$('#value-{{$count+1}}').val())"
-                                                    class="btn btn-primary">{{\App\CPU\translate('Update')}}
+                                                    onclick="auto_translate('{{$key}}',{{$count}})"
+                                                    class="btn btn-ghost-success btn-block"><i class="tio-globe"></i>
                                             </button>
                                         </td>
-                                    
+                                        <td class="__w-100px">
+                                            <button type="button"
+                                                    onclick="update_lang('{{$key}}',$('#value-{{$count}}').val())"
+                                                    class="btn btn--primary btn-block"><i class="tio-save-outlined"></i>
+                                            </button>
+                                        </td>
+{{--                                        <td class="__w-100px">--}}
+{{--                                            <button type="button"--}}
+{{--                                                    onclick="remove_key('{{$key}}',{{$count}})"--}}
+{{--                                                    class="btn btn-danger btn-block"><i class="tio-add-to-trash"></i>--}}
+{{--                                            </button>--}}
+{{--                                        </td>--}}
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -108,7 +125,7 @@
             });
         }
 
-        function remove_key(key) {
+        function remove_key(key, id) {
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
@@ -125,7 +142,34 @@
                 },
                 success: function (response) {
                     toastr.success('{{\App\CPU\translate('Key removed successfully')}}');
-                    $('#lang-'+key).hide();
+                    $('#lang-' + id).hide();
+                },
+                complete: function () {
+                    $('#loading').hide();
+                },
+            });
+        }
+
+        function auto_translate(key, id) {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                }
+            });
+            $.ajax({
+                url: "{{route('admin.business-settings.language.auto-translate',[$lang])}}",
+                method: 'POST',
+                data: {
+                    key: key
+                },
+                beforeSend: function () {
+                    $('#loading').show();
+                },
+                success: function (response) {
+                    toastr.success('{{\App\CPU\translate('Key translated successfully')}}');
+                    console.log(response.translated_data)
+                    $('#value-'+id).val(response.translated_data);
+                    //$('#value-' + id).text(response.translated_data);
                 },
                 complete: function () {
                     $('#loading').hide();

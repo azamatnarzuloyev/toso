@@ -7,7 +7,6 @@
             <div class="col-md-8">
                 <div class="mar-ver pad-btm text-center">
                     <h1 class="h3">6valley Software Update</h1>
-                    <?php echo str_rot13('<n uers="uggcf://AhyyWhatyr.pbz">Ahyyrq Ol AhyyWhatyr.pbz</n>');?> 
                 </div>
                 <div class="card mt-3">
                     <div class="card-body">

@@ -8,39 +8,35 @@
 
 @section('content')
     <div class="content container-fluid">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{\App\CPU\translate('Dashboard')}}</a>
-                </li>
-                <li class="breadcrumb-item" aria-current="page">{{\App\CPU\translate('terms_and_condition')}}</li>
-            </ol>
-        </nav>
+        <!-- Page Title -->
+        <div class="mb-3">
+            <h2 class="h1 mb-0 text-capitalize d-flex align-items-center gap-2">
+                <img width="20" src="{{asset('/public/assets/back-end/img/Pages.png')}}" alt="">
+                {{\App\CPU\translate('pages')}}
+            </h2>
+        </div>
+        <!-- End Page Title -->
 
-        <div class="row" style="margin-top: 20px">
+        <!-- Inlile Menu -->
+        @include('admin-views.business-settings.pages-inline-menu')
+        <!-- End Inlile Menu -->
+
+        <div class="row">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <div class="row justify-content-between pl-4 pr-4">
-                            <div>
-                                <h2>{{\App\CPU\translate('terms_and_condition')}}</h2>
-                            </div>
-                        </div>
+                        <h5 class="mb-0">{{\App\CPU\translate('terms_and_condition')}}</h5>
                     </div>
 
                     <form action="{{route('admin.business-settings.update-terms')}}" method="post">
                         @csrf
                         <div class="card-body">
                             <div class="form-group">
-                                <div class="col-md-12">
-                                    <label for="editor">{{\App\CPU\translate('terms_and_condition')}}</label>
-                                    <textarea class="form-control" id="editor"
-                                        name="value">{{$terms_condition->value}}</textarea>
-                                </div>
+                                <textarea class="form-control" id="editor"
+                                    name="value">{{$terms_condition->value}}</textarea>
                             </div>
                             <div class="form-group">
-                                <div class="col-md-12">
-                                    <input class="form-control btn-primary" type="submit" name="btn">
-                                </div>
+                                <input class="form-control btn--primary" type="submit" value="{{\App\CPU\translate('submit')}}" name="btn">
                             </div>
                         </div>
                     </form>

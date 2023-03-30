@@ -14,6 +14,10 @@ class Wishlist extends Model
         'updated_at'  => 'datetime',
     ];
 
+    public function wishlistProduct()
+    {
+        return $this->belongsTo(Product::class, 'product_id')->active();
+    }
     public function product()
     {
         return $this->belongsTo(Product::class, 'product_id')->select(['id','slug']);

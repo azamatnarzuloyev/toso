@@ -1,4 +1,4 @@
-<div class="chartjs-custom mx-auto" style="height: 20rem;">
+<div class="chartjs-custom mx-auto __h-20rem">
     <canvas id="business-overview" class="mt-2"></canvas>
 </div>
 
