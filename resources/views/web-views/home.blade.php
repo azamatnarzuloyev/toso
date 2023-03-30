@@ -558,41 +558,7 @@
     </div>
     @endif
 
-    {{--brands--}}
-    <section class="container rtl mt-3">
-        <!-- Heading-->
-        <div class="section-header">
-            <div style="color: black;font-weight: 700;
-            font-size: 22px;">
-                <span> {{\App\CPU\translate('brands')}}</span>
-            </div>
-            <div style="margin-right:2px;">
-                <a class="text-capitalize view-all-text" href="{{route('brands')}}">
-                    {{ \App\CPU\translate('view_all')}}
-                    <i class="czi-arrow-{{Session::get('direction') === "rtl" ? 'left-circle mr-1 ml-n1 mt-1 float-left' : 'right-circle ml-1 mr-n1'}}"></i>
-                </a>
-            </div>
-        </div>
-    {{--<hr class="view_border">--}}
-    <!-- Grid-->
-    
-        <div class="mt-3 mb-3 brand-slider">
-            <div class="owl-carousel owl-theme p-2" id="brands-slider">
-                @foreach($brands as $brand)
-                    <div class="text-center">
-                        <a href="{{route('products',['id'=> $brand['id'],'data_from'=>'brand','page'=>1])}}">
-                            <div class="d-flex align-items-center justify-content-center"
-                                 style="height:100px;margin:5px;">
-                                <img style="border-radius: 50%;"
-                                    onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'"
-                                    src="{{asset("storage/app/public/brand/$brand->image")}}" alt="{{$brand->name}}">
-                            </div>
-                        </a>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    </section>
+   
 
     <!-- Products grid (featured products)-->
     @if ($featured_products->count() > 0 )
